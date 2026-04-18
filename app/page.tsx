@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
+import AddToCartButton from "./components/AddToCartButton";
+import CartSidebar from "./components/CartSidebar";
 
 export default async function Home() {
   const products = await db.product.findMany({
@@ -10,18 +12,16 @@ export default async function Home() {
   return (
     <main>
       <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <div className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-        </div>
-        <div className="flex-1" />
-        <input
-          placeholder="Search natural products..."
-          className="border border-gray-200 rounded-xl px-3 py-2 text-sm w-64 bg-gray-50"
-        />
-        <button className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg">
-          Sign up
-        </button>
-      </nav>
+      <div className="text-lg font-medium">
+        pure<span className="text-emerald-700">well</span>
+      </div>
+      <div className="flex-1" />
+      <input
+        placeholder="Search natural products..."
+        className="border border-gray-200 rounded-xl px-3 py-2 text-sm w-64 bg-gray-50"
+      />
+      <CartSidebar />
+    </nav>
 
       <div className="bg-emerald-50 border-b border-emerald-100 px-5 py-8">
         <h1 className="text-2xl font-medium text-emerald-900 mb-2">
@@ -84,9 +84,14 @@ export default async function Home() {
                   <span className="text-sm font-medium">
                     ${product.price.toFixed(2)}
                   </span>
-                  <button className="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-md">
-                    Add
-                  </button>
+                  <AddToCartButton
+                    id={product.id}
+                    name={product.name}
+                    brand={product.brand}
+                    price={product.price}
+                    imageUrl={product.imageUrl}
+                    slug={product.slug}
+                  />
                 </div>
               </div>
             </Link>
