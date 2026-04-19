@@ -31,9 +31,12 @@ export default async function Home() {
           Shop curated all-natural products, discover homemade wellness recipes,
           and get AI-powered supplement recommendations.
         </p>
-        <button className="bg-emerald-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg">
-          Take the wellness quiz →
-        </button>
+          <Link
+            href="/quiz"
+            className="bg-emerald-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg inline-block hover:bg-emerald-700 transition-colors"
+          >
+            Take the wellness quiz →
+          </Link>
       </div>
 
       <div className="px-5 py-6">
