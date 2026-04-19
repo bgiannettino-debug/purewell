@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
 import AddToCartButton from "./components/AddToCartButton";
+import AddToCartSmall from "./components/AddToCartSmall";
 import CategoryFilter from "./components/CategoryFilter";
 import Navbar from "./components/Navbar";
 

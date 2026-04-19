@@ -21,19 +21,18 @@ export default function CartSidebar() {
   useEffect(() => setMounted(true), []);
 
   const handleCheckout = async () => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      clearCart();
-      window.location.href = data.url;
-    } else {
-      alert("Something went wrong. Please try again.");
-    }
-  };
+  const res = await fetch("/api/checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  });
+  const data = await res.json();
+  if (data.url) {
+    window.location.href = data.url;
+  } else {
+    alert("Something went wrong. Please try again.");
+  }
+};
 
   return (
     <>

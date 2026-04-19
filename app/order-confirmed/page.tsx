@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Navbar from "../components/Navbar";
+import ClearCart from "../components/ClearCart";
 
 export default function OrderConfirmed() {
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      <ClearCart />
       <Navbar />
 
       <div style={{ maxWidth: "520px", margin: "0 auto", padding: "60px 24px", textAlign: "center" }}>

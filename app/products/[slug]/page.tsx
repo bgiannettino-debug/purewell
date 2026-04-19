@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
 import AddToCartButton from "../../components/AddToCartButton";
+import AddToCartSmall from "../../components/AddToCartSmall";
 import Navbar from "../../components/Navbar";
 
 export const dynamic = "force-dynamic";
@@ -179,16 +180,17 @@ export default async function ProductPage({ params }: Props) {
                     <div style={{ padding: "12px" }}>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "2px" }}>{related.brand}</div>
                       <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "8px", lineHeight: 1.3 }}>{related.name}</div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>${related.price.toFixed(2)}</span>
-                        <AddToCartButton
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                        <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>
+                          ${related.price.toFixed(2)}
+                        </span>
+                        <AddToCartSmall
                           id={related.id}
                           name={related.name}
                           brand={related.brand}
                           price={related.price}
                           imageUrl={related.imageUrl}
                           slug={related.slug}
-                          fullWidth={true}
                         />
                       </div>
                     </div>
