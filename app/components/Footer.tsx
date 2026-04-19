@@ -33,9 +33,67 @@ export default function Footer() {
   return (
     <footer style={{ background: "#2d2a24", color: "#c5bfb5", marginTop: "48px" }}>
 
+      <style>{`
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 40px;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 48px 24px 32px;
+        }
+        .footer-bottom {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 16px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .newsletter-row {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 24px !important;
+            padding: 32px 20px 24px !important;
+          }
+          .footer-bottom {
+            flex-direction: column !important;
+            text-align: center !important;
+            padding: 16px 20px !important;
+          }
+          .newsletter-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            padding: 20px !important;
+          }
+          .newsletter-input-row {
+            width: 100% !important;
+          }
+          .newsletter-input-row input {
+            width: 100% !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       {/* Main grid */}
-      <div className="footer-grid" style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 32px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "40px" }}></div>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 32px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "40px" }}>
+      <div className="footer-grid">
 
         {/* Brand */}
         <div>
@@ -57,10 +115,7 @@ export default function Footer() {
           </p>
           <div style={{ display: "flex", gap: "8px" }}>
             {socialLinks.map((s) => (
-              <div
-                key={s}
-                style={{ width: "32px", height: "32px", background: "#3d3a34", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "600", color: "#c5bfb5", cursor: "pointer" }}
-              >
+              <div key={s} style={{ width: "32px", height: "32px", background: "#3d3a34", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "600", color: "#c5bfb5", cursor: "pointer" }}>
                 {s}
               </div>
             ))}
@@ -112,7 +167,7 @@ export default function Footer() {
 
       {/* Newsletter */}
       <div style={{ borderTop: "1px solid #3d3a34", borderBottom: "1px solid #3d3a34" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "20px", flexWrap: "wrap" }}>
+        <div className="newsletter-row">
           <div>
             <div style={{ fontSize: "14px", fontWeight: "600", color: "#fff", marginBottom: "2px" }}>
               Join the PureWell community
@@ -121,7 +176,7 @@ export default function Footer() {
               Weekly wellness tips, new recipes, and exclusive discounts.
             </div>
           </div>
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className="newsletter-input-row" style={{ display: "flex", gap: "8px" }}>
             <input
               type="email"
               placeholder="your@email.com"
@@ -135,8 +190,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="footer-bottom" style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}></div>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}>
+      <div className="footer-bottom">
         <div style={{ fontSize: "12px", color: "#6b6560" }}>
           2026 PureWell. All rights reserved.
         </div>
