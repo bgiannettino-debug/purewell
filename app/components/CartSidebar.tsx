@@ -26,9 +26,7 @@ export default function CartSidebar() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ items }),
     });
-
     const data = await res.json();
-
     if (data.url) {
       clearCart();
       window.location.href = data.url;
@@ -39,14 +37,19 @@ export default function CartSidebar() {
 
   return (
     <>
-      {/* Cart button in nav */}
+      {/* Cart button */}
       <button
         onClick={openCart}
-        className="relative flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg"
+        style={{ display: "flex", alignItems: "center", gap: "8px", background: "#2d2a24", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", border: "none", cursor: "pointer" }}
       >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M1 1h2l1.5 7h6L12 4H4"/>
+          <circle cx="5.5" cy="12" r="1"/>
+          <circle cx="10" cy="12" r="1"/>
+        </svg>
         Cart
         {mounted && count() > 0 && (
-          <span className="bg-white text-emerald-700 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+          <span style={{ background: "#3d6b4f", color: "#fff", fontSize: "11px", fontWeight: "700", width: "18px", height: "18px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
             {count()}
           </span>
         )}
@@ -55,25 +58,34 @@ export default function CartSidebar() {
       {/* Overlay */}
       {mounted && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40"
           onClick={closeCart}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40 }}
         />
       )}
 
       {/* Sidebar */}
-      <div
-        className={`fixed top-0 right-0 h-full w-96 bg-white z-50 shadow-xl transform transition-transform duration-300 ${
-          mounted && isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+      <div style={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        height: "100%",
+        width: "400px",
+        background: "#fff",
+        zIndex: 50,
+        transform: mounted && isOpen ? "translateX(0)" : "translateX(100%)",
+        transition: "transform 0.3s ease",
+        display: "flex",
+        flexDirection: "column",
+        borderLeft: "1px solid #e7e3dc",
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <div className="text-base font-medium">
-            Your cart ({mounted ? count() : 0} items)
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderBottom: "1px solid #e7e3dc" }}>
+          <div style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
+            Your cart {mounted && count() > 0 && `(${count()} items)`}
           </div>
           <button
             onClick={closeCart}
-            className="text-gray-400 hover:text-gray-600 text-xl"
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#9c9488", fontSize: "18px", lineHeight: 1 }}
           >
             ✕
           </button>
@@ -81,33 +93,23 @@ export default function CartSidebar() {
 
         {/* Empty state */}
         {!mounted || items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-            <div className="text-4xl mb-3">🌿</div>
-            <div className="text-sm mb-4">Your cart is empty</div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#9c9488" }}>
+            <div style={{ fontSize: "48px", marginBottom: "12px" }}>🌿</div>
+            <div style={{ fontSize: "14px", marginBottom: "16px" }}>Your cart is empty</div>
             <button
               onClick={closeCart}
-              className="text-sm text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg hover:bg-emerald-50 transition-colors"
+              style={{ fontSize: "13px", color: "#3d6b4f", background: "#eef5f0", border: "1px solid #c8ddd0", padding: "8px 16px", borderRadius: "10px", cursor: "pointer" }}
             >
               Continue shopping
             </button>
           </div>
         ) : (
           <>
-            {/* Cart items */}
-            <div className="overflow-y-auto h-[calc(100vh-220px)] px-5 py-4">
+            {/* Items */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
               {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-3 mb-4 pb-4 border-b border-gray-100"
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "64px",
-                      height: "64px",
-                    }}
-                    className="bg-emerald-50 rounded-lg overflow-hidden flex-shrink-0"
-                  >
+                <div key={item.id} style={{ display: "flex", gap: "12px", marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0ece6" }}>
+                  <div style={{ position: "relative", width: "64px", height: "64px", background: "#f5f2ed", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
                     {item.imageUrl && (
                       <Image
                         src={item.imageUrl}
@@ -117,36 +119,32 @@ export default function CartSidebar() {
                       />
                     )}
                   </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "2px" }}>
                       {item.name}
                     </div>
-                    <div className="text-xs text-gray-400 mb-2">
+                    <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px" }}>
                       {item.brand}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ display: "flex", alignItems: "center", border: "1px solid #e7e3dc", borderRadius: "8px", overflow: "hidden" }}>
                         <button
-                          onClick={() =>
-                            item.qty === 1
-                              ? removeItem(item.id)
-                              : updateQty(item.id, item.qty - 1)
-                          }
-                          className="px-2 py-1 text-gray-500 hover:bg-gray-50 text-sm"
+                          onClick={() => item.qty === 1 ? removeItem(item.id) : updateQty(item.id, item.qty - 1)}
+                          style={{ width: "28px", height: "28px", background: "#faf8f5", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "14px" }}
                         >
                           −
                         </button>
-                        <span className="px-3 text-sm font-medium">
+                        <span style={{ width: "32px", textAlign: "center", fontSize: "13px", fontWeight: "500", color: "#2d2a24" }}>
                           {item.qty}
                         </span>
                         <button
                           onClick={() => updateQty(item.id, item.qty + 1)}
-                          className="px-2 py-1 text-gray-500 hover:bg-gray-50 text-sm"
+                          style={{ width: "28px", height: "28px", background: "#faf8f5", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "14px" }}
                         >
                           +
                         </button>
                       </div>
-                      <div className="text-sm font-medium">
+                      <div style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>
                         ${(item.price * item.qty).toFixed(2)}
                       </div>
                     </div>
@@ -156,22 +154,39 @@ export default function CartSidebar() {
             </div>
 
             {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 px-5 py-4 border-t border-gray-100 bg-white">
-              <div className="flex justify-between mb-3">
-                <span className="text-sm text-gray-600">Total</span>
-                <span className="text-base font-medium">
+            <div style={{ padding: "16px 20px", borderTop: "1px solid #e7e3dc", background: "#faf8f5" }}>
+              {/* Free shipping progress */}
+              {total() < 35 && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "12px", color: "#6b6560", marginBottom: "6px" }}>
+                    Add <strong style={{ color: "#3d6b4f" }}>${(35 - total()).toFixed(2)}</strong> more for free shipping
+                  </div>
+                  <div style={{ height: "4px", background: "#e7e3dc", borderRadius: "2px", overflow: "hidden" }}>
+                    <div style={{ height: "100%", background: "#3d6b4f", borderRadius: "2px", width: `${Math.min((total() / 35) * 100, 100)}%`, transition: "width 0.3s" }} />
+                  </div>
+                </div>
+              )}
+              {total() >= 35 && (
+                <div style={{ fontSize: "12px", color: "#3d6b4f", fontWeight: "500", marginBottom: "12px", textAlign: "center" }}>
+                  🎉 You qualify for free shipping!
+                </div>
+              )}
+
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
+                <span style={{ fontSize: "14px", color: "#6b6560" }}>Subtotal</span>
+                <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                   ${total().toFixed(2)}
                 </span>
               </div>
               <button
                 onClick={handleCheckout}
-                className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors mb-2"
+                style={{ width: "100%", background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: "pointer", marginBottom: "8px" }}
               >
                 Checkout →
               </button>
               <button
                 onClick={closeCart}
-                className="w-full border border-emerald-200 text-emerald-700 font-medium py-3 rounded-xl hover:bg-emerald-50 transition-colors"
+                style={{ width: "100%", background: "#fff", color: "#6b6560", fontSize: "13px", fontWeight: "500", padding: "11px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer" }}
               >
                 Continue shopping
               </button>
