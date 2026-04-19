@@ -20,12 +20,12 @@ export default function Footer() {
   ];
 
   const companyLinks = [
-    { label: "About PureWell", href: "#" },
-    { label: "Our standards", href: "#" },
-    { label: "Contact us", href: "#" },
-    { label: "Shipping policy", href: "#" },
-    { label: "Return policy", href: "#" },
-    { label: "FAQ", href: "#" },
+  { label: "About PureWell", href: "/about" },
+  { label: "Our standards", href: "/about#standards" },
+  { label: "Contact us", href: "#" },
+  { label: "Shipping policy", href: "#" },
+  { label: "Return policy", href: "#" },
+  { label: "FAQ", href: "#" },
   ];
 
   const socialLinks = ["IG", "TK", "FB", "YT"];
