@@ -6,6 +6,24 @@ import AddToCartButton from "../../components/AddToCartButton";
 import AddToCartSmall from "../../components/AddToCartSmall";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await db.product.findUnique({ where: { slug } });
+
+  if (!product) return { title: "Product not found" };
+
+  return {
+    title: `${product.name} — ${product.brand}`,
+    description: `${product.description} Certifications: ${product.certifications.join(", ")}. Shop natural health products at PureWell.`,
+    openGraph: {
+      title: `${product.name} — ${product.brand}`,
+      description: product.description,
+      images: product.imageUrl ? [product.imageUrl] : [],
+    },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

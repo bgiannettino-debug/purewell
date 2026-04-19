@@ -3,6 +3,25 @@ import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const recipe = await db.recipe.findUnique({ where: { slug } });
+
+  if (!recipe) return { title: "Recipe not found" };
+
+  const goals = recipe.goals as string[];
+
+  return {
+    title: recipe.name,
+    description: `${recipe.description} Prep time: ${recipe.prepTime} minutes. Goals: ${goals.join(", ")}. Free DIY wellness recipe.`,
+    openGraph: {
+      title: recipe.name,
+      description: recipe.description,
+    },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

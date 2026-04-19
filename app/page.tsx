@@ -6,6 +6,12 @@ import AddToCartSmall from "./components/AddToCartSmall";
 import CategoryFilter from "./components/CategoryFilter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Natural Health Products & Wellness Supplements",
+  description: "Browse 26+ curated all-natural supplements, essential oils, herbal teas, and wellness products. Non-GMO, organic, and third-party tested.",
+};
 
 export const dynamic = "force-dynamic";
 

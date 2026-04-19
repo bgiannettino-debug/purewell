@@ -2,6 +2,12 @@ import Link from "next/link";
 import { db } from "../../lib/db";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Free DIY Wellness Recipes",
+  description: "Free homemade wellness recipes using natural ingredients. Elderberry syrup, golden milk, sleep lattes, and more. Make natural remedies at home.",
+};
 
 export const dynamic = "force-dynamic";
 
