@@ -13,6 +13,9 @@ type CartItem = {
 
 type CartStore = {
   items: CartItem[];
+  isOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
   addItem: (item: Omit<CartItem, "qty">) => void;
   removeItem: (id: string) => void;
   updateQty: (id: string, qty: number) => void;
@@ -25,6 +28,9 @@ export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isOpen: false,
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
 
       addItem: (item) => {
         const existing = get().items.find((i) => i.id === item.id);
@@ -37,6 +43,7 @@ export const useCart = create<CartStore>()(
         } else {
           set({ items: [...get().items, { ...item, qty: 1 }] });
         }
+        set({ isOpen: true });
       },
 
       removeItem: (id) =>
@@ -50,13 +57,14 @@ export const useCart = create<CartStore>()(
         }),
 
       clearCart: () => set({ items: [] }),
-
       total: () =>
         get().items.reduce((sum, i) => sum + i.price * i.qty, 0),
-
       count: () =>
         get().items.reduce((sum, i) => sum + i.qty, 0),
     }),
-    { name: "purewell-cart" }
+    {
+      name: "purewell-cart",
+      partialize: (state) => ({ items: state.items }),
+    }
   )
 );

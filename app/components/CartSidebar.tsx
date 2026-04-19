@@ -2,17 +2,42 @@
 
 import { useCart } from "../../lib/cartStore";
 import Image from "next/image";
-import { useState } from "react";
 
 export default function CartSidebar() {
-  const { items, removeItem, updateQty, total, count } = useCart();
-  const [open, setOpen] = useState(false);
+  const {
+    items,
+    removeItem,
+    updateQty,
+    total,
+    count,
+    isOpen,
+    openCart,
+    closeCart,
+    clearCart,
+  } = useCart();
+
+  const handleCheckout = async () => {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      clearCart();
+      window.location.href = data.url;
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <>
       {/* Cart button in nav */}
       <button
-        onClick={() => setOpen(true)}
+        onClick={openCart}
         className="relative flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg"
       >
         Cart
@@ -24,46 +49,59 @@ export default function CartSidebar() {
       </button>
 
       {/* Overlay */}
-      {open && (
+      {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 z-40"
-          onClick={() => setOpen(false)}
+          onClick={closeCart}
         />
       )}
 
       {/* Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-96 bg-white z-50 shadow-xl transform transition-transform duration-300 ${
-          open ? "translate-x-0" : "translate-x-full"
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
+        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="text-base font-medium">
             Your cart ({count()} items)
           </div>
           <button
-            onClick={() => setOpen(false)}
+            onClick={closeCart}
             className="text-gray-400 hover:text-gray-600 text-xl"
           >
             ✕
           </button>
         </div>
 
+        {/* Empty state */}
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
             <div className="text-4xl mb-3">🌿</div>
-            <div className="text-sm">Your cart is empty</div>
+            <div className="text-sm mb-4">Your cart is empty</div>
+            <button
+              onClick={closeCart}
+              className="text-sm text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg hover:bg-emerald-50 transition-colors"
+            >
+              Continue shopping
+            </button>
           </div>
         ) : (
           <>
-            <div className="overflow-y-auto h-[calc(100vh-200px)] px-5 py-4">
+            {/* Cart items */}
+            <div className="overflow-y-auto h-[calc(100vh-220px)] px-5 py-4">
               {items.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-3 mb-4 pb-4 border-b border-gray-100"
                 >
                   <div
-                    style={{ position: "relative", width: "64px", height: "64px" }}
+                    style={{
+                      position: "relative",
+                      width: "64px",
+                      height: "64px",
+                    }}
                     className="bg-emerald-50 rounded-lg overflow-hidden flex-shrink-0"
                   >
                     {item.imageUrl && (
@@ -113,6 +151,7 @@ export default function CartSidebar() {
               ))}
             </div>
 
+            {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0 px-5 py-4 border-t border-gray-100 bg-white">
               <div className="flex justify-between mb-3">
                 <span className="text-sm text-gray-600">Total</span>
@@ -120,8 +159,17 @@ export default function CartSidebar() {
                   ${total().toFixed(2)}
                 </span>
               </div>
-              <button className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl">
+              <button
+                onClick={handleCheckout}
+                className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors mb-2"
+              >
                 Checkout →
+              </button>
+              <button
+                onClick={closeCart}
+                className="w-full border border-emerald-200 text-emerald-700 font-medium py-3 rounded-xl hover:bg-emerald-50 transition-colors"
+              >
+                Continue shopping
               </button>
             </div>
           </>

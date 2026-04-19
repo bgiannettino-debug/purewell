@@ -1,12 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
+import AddToCartButton from "../../components/AddToCartButton";
+import CartSidebar from "../../components/CartSidebar";
 
-export default async function ProductPage({
-  params,
-}: {
+type Props = {
   params: Promise<{ slug: string }>;
-}) {
+};
+
+export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
 
   const product = await db.product.findUnique({
@@ -18,9 +21,14 @@ export default async function ProductPage({
   return (
     <main>
       <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <div className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-        </div>
+      <div className="text-lg font-medium">
+        pure<span className="text-emerald-700">well</span>
+      </div>
+      <div className="flex-1" />
+        <Link href="/" className="text-sm text-emerald-700">
+            ← Back to products
+        </Link>
+        <CartSidebar />
       </nav>
 
       <div className="max-w-4xl mx-auto px-5 py-8 grid grid-cols-2 gap-10">
@@ -44,7 +52,7 @@ export default async function ProductPage({
           <div className="text-sm text-emerald-700 font-medium mb-1">
             {product.brand}
           </div>
-          <h1 className="text-2xl font-medium text-gray-900 mb-2">
+          <h1 className="text-2xl font-medium text-gray-900 mb-3">
             {product.name}
           </h1>
 
@@ -63,25 +71,26 @@ export default async function ProductPage({
             {product.description}
           </p>
 
-          <div className="text-2xl font-medium text-gray-900 mb-4">
+          <div className="text-2xl font-medium text-gray-900 mb-5">
             ${product.price.toFixed(2)}
           </div>
 
-          <button className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl mb-3">
-            Add to cart
-          </button>
-
-          <button className="w-full border border-emerald-200 text-emerald-700 font-medium py-3 rounded-xl">
-            Save for later
-          </button>
+          <AddToCartButton
+            id={product.id}
+            name={product.name}
+            brand={product.brand}
+            price={product.price}
+            imageUrl={product.imageUrl}
+            slug={product.slug}
+          />
 
           <div className="mt-6 bg-emerald-50 rounded-xl p-4">
             <div className="text-xs font-medium text-emerald-800 uppercase tracking-wide mb-2">
               Why this product
             </div>
             <p className="text-sm text-emerald-700">
-              This is part of your AI-recommended wellness protocol. Backed by
-              clinical research and verified by third-party testing.
+              Backed by clinical research and verified by third-party testing.
+              Part of your personalized wellness protocol.
             </p>
           </div>
         </div>
