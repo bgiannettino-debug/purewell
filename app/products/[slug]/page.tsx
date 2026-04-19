@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import AddToCartButton from "../../components/AddToCartButton";
 import CartSidebar from "../../components/CartSidebar";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
