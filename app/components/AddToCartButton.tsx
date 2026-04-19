@@ -16,8 +16,11 @@ export default function AddToCartButton(props: Props) {
 
   return (
     <button
-      onClick={() => addItem(props)}
-      className="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-md hover:bg-emerald-700 transition-colors"
+      onClick={(e) => {
+        e.preventDefault();
+        addItem(props);
+      }}
+      className="bg-emerald-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-emerald-800 transition-colors"
     >
       Add
     </button>
