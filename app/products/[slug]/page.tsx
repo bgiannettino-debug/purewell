@@ -65,6 +65,16 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </div>
 
+      {/* Back button */}
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px 0" }}>
+      <Link
+        href="/"
+        style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none" }}
+      >
+            ← Back to products
+      </Link>
+    </div>
+
       {/* Main product */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
         <div className="product-detail-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "start" }}>

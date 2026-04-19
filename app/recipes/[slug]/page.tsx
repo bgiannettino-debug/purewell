@@ -73,9 +73,9 @@ export default async function RecipePage({ params }: Props) {
         {/* Back link */}
         <Link
           href="/recipes"
-          style={{ fontSize: "13px", color: "#6b6560", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "20px" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none", marginBottom: "24px" }}
         >
-          ← All recipes
+          ← Back to recipes
         </Link>
 
         {/* Goal tags */}
