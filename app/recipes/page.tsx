@@ -31,9 +31,16 @@ export default async function RecipesPage() {
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
       <Navbar />
 
+      {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "40px 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "12px" }}>
+          <Link
+            href="/"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none", marginBottom: "20px" }}
+          >
+            ← Back to products
+          </Link>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "12px", marginLeft: "12px" }}>
             🌿 DIY wellness recipes
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#2d2a24", marginBottom: "8px" }}>
@@ -45,6 +52,7 @@ export default async function RecipesPage() {
         </div>
       </div>
 
+      {/* Recipe grid */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
         <div className="recipe-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
           {recipes.map((recipe) => {

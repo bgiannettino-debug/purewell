@@ -37,7 +37,7 @@ export default function Navbar() {
       </div>
 
       {/* Main nav */}
-      <nav style={{ padding: "14px 24px", display: "flex", alignItems: "center", gap: "16px", maxWidth: "1200px", margin: "0 auto" }}>
+      <nav style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
@@ -66,7 +66,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop search */}
-        <form className="nav-search" onSubmit={handleSearch} style={{ flex: 1, display: "flex", maxWidth: "280px" }}>
+        <form className="nav-search" onSubmit={handleSearch} style={{ flex: 1, display: "flex", minWidth: "180px", maxWidth: "260px" }}>
           <div style={{ position: "relative", width: "100%" }}>
             <svg style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9c9488" }} width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="5.5" cy="5.5" r="4" />
@@ -76,7 +76,7 @@ export default function Navbar() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              style={{ width: "100%", paddingLeft: "30px", paddingRight: "12px", paddingTop: "8px", paddingBottom: "8px", fontSize: "13px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", outline: "none", color: "#2d2a24" }}
+              style={{ width: "100%", paddingLeft: "30px", paddingRight: "12px", paddingTop: "8px", paddingBottom: "8px", fontSize: "13px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", outline: "none", color: "#2d2a24", minWidth: "180px" }}
             />
           </div>
         </form>
