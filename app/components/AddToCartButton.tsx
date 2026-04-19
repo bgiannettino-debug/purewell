@@ -20,7 +20,7 @@ export default function AddToCartButton(props: Props) {
         e.preventDefault();
         addItem(props);
       }}
-      className="bg-emerald-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-emerald-800 transition-colors"
+      style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", fontWeight: "500", padding: "6px 12px", borderRadius: "8px", border: "none", cursor: "pointer" }}
     >
       Add
     </button>

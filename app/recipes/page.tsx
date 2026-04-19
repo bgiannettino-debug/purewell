@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { db } from "../../lib/db";
-import CartSidebar from "../components/CartSidebar";
+import Navbar from "../components/Navbar";
 
 export const dynamic = "force-dynamic";
 
-const goalColors: Record<string, string> = {
-  sleep: "bg-purple-50 text-purple-700",
-  stress: "bg-blue-50 text-blue-700",
-  immune: "bg-emerald-50 text-emerald-700",
-  energy: "bg-amber-50 text-amber-700",
-  gut: "bg-orange-50 text-orange-700",
-  joints: "bg-red-50 text-red-700",
-  hormones: "bg-pink-50 text-pink-700",
-  skin: "bg-rose-50 text-rose-700",
+const goalColors: Record<string, { bg: string; color: string }> = {
+  sleep:   { bg: "#f0eef8", color: "#6b5fa8" },
+  stress:  { bg: "#eef3f8", color: "#4a6fa8" },
+  immune:  { bg: "#eef5f0", color: "#3d6b4f" },
+  energy:  { bg: "#fef6e7", color: "#8a6020" },
+  gut:     { bg: "#fef2ec", color: "#8a4a20" },
+  joints:  { bg: "#fef0ee", color: "#8a3020" },
+  hormones:{ bg: "#fdf0f5", color: "#8a3060" },
+  skin:    { bg: "#fdf2f5", color: "#8a3050" },
 };
 
 export default async function RecipesPage() {
@@ -21,72 +21,78 @@ export default async function RecipesPage() {
   });
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <Link href="/" className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-        </Link>
-        <div className="flex-1" />
-        <CartSidebar />
-      </nav>
+    <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      <Navbar />
 
-      <div className="bg-emerald-50 border-b border-emerald-100 px-5 py-8">
-        <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-          DIY wellness recipes
+      {/* Hero */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "40px 24px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "12px" }}>
+            🌿 DIY wellness recipes
+          </div>
+          <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#2d2a24", marginBottom: "8px" }}>
+            Make it at home
+          </h1>
+          <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, maxWidth: "480px", marginBottom: "0" }}>
+            Free homemade wellness recipes using natural ingredients. Each recipe links to the products you need — or use what you already have.
+          </p>
         </div>
-        <h1 className="text-2xl font-medium text-emerald-900 mb-2">
-          Make it at home
-        </h1>
-        <p className="text-sm text-emerald-700 max-w-lg">
-          Free homemade wellness recipes using natural ingredients. Each recipe
-          links to the products you need — or use what you already have.
-        </p>
       </div>
 
-      <div className="max-w-4xl mx-auto px-5 py-8">
-        <div className="grid grid-cols-2 gap-4">
+      {/* Recipe grid */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
           {recipes.map((recipe) => {
             const goals = recipe.goals as string[];
             return (
               <Link
                 href={`/recipes/${recipe.slug}`}
                 key={recipe.id}
-                className="bg-white border border-gray-100 rounded-2xl p-5 hover:border-emerald-200 transition-colors"
+                style={{ textDecoration: "none" }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex gap-2 flex-wrap">
-                    {goals.map((goal) => (
-                      <span
-                        key={goal}
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${
-                          goalColors[goal] || "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {goal}
+                <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", cursor: "pointer" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "10px" }}>
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                      {goals.map((goal) => {
+                        const colors = goalColors[goal] || { bg: "#f0f0f0", color: "#666" };
+                        return (
+                          <span
+                            key={goal}
+                            style={{ fontSize: "11px", background: colors.bg, color: colors.color, padding: "3px 9px", borderRadius: "99px", fontWeight: "500", textTransform: "capitalize" }}
+                          >
+                            {goal}
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <span style={{ fontSize: "11px", color: "#9c9488", whiteSpace: "nowrap", marginLeft: "8px" }}>
+                      {recipe.prepTime} min
+                    </span>
+                  </div>
+
+                  <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24", marginBottom: "6px", textTransform: "capitalize" }}>
+                    {recipe.name}
+                  </h2>
+                  <p style={{ fontSize: "13px", color: "#6b6560", lineHeight: 1.6, marginBottom: "14px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {recipe.description}
+                  </p>
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", gap: "16px" }}>
+                      <span style={{ fontSize: "11px", color: "#9c9488" }}>
+                        {recipe.servings} serving{recipe.servings > 1 ? "s" : ""}
                       </span>
-                    ))}
+                      <span style={{ fontSize: "11px", color: "#9c9488" }}>
+                        ~${recipe.costPerServing.toFixed(2)}/serving
+                      </span>
+                      <span style={{ fontSize: "11px", color: "#9c9488" }}>
+                        {recipe.difficulty}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "12px", fontWeight: "600", color: "#3d6b4f" }}>
+                      Free →
+                    </span>
                   </div>
-                  <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
-                    {recipe.prepTime} min
-                  </span>
-                </div>
-
-                <h2 className="text-base font-medium text-gray-900 mb-2 capitalize">
-                  {recipe.name}
-                </h2>
-                <p className="text-sm text-gray-500 leading-relaxed mb-4 line-clamp-2">
-                  {recipe.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-3 text-xs text-gray-400">
-                    <span>{recipe.servings} serving{recipe.servings > 1 ? "s" : ""}</span>
-                    <span>~${recipe.costPerServing.toFixed(2)}/serving</span>
-                    <span>{recipe.difficulty}</span>
-                  </div>
-                  <span className="text-xs font-medium text-emerald-600">
-                    Free →
-                  </span>
                 </div>
               </Link>
             );

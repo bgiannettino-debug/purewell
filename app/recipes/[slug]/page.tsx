@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
-import CartSidebar from "../../components/CartSidebar";
+import Navbar from "../../components/Navbar";
 
 export const dynamic = "force-dynamic";
 
@@ -16,15 +16,15 @@ type Ingredient = {
   name: string;
 };
 
-const goalColors: Record<string, string> = {
-  sleep: "bg-purple-50 text-purple-700",
-  stress: "bg-blue-50 text-blue-700",
-  immune: "bg-emerald-50 text-emerald-700",
-  energy: "bg-amber-50 text-amber-700",
-  gut: "bg-orange-50 text-orange-700",
-  joints: "bg-red-50 text-red-700",
-  hormones: "bg-pink-50 text-pink-700",
-  skin: "bg-rose-50 text-rose-700",
+const goalColors: Record<string, { bg: string; color: string }> = {
+  sleep:   { bg: "#f0eef8", color: "#6b5fa8" },
+  stress:  { bg: "#eef3f8", color: "#4a6fa8" },
+  immune:  { bg: "#eef5f0", color: "#3d6b4f" },
+  energy:  { bg: "#fef6e7", color: "#8a6020" },
+  gut:     { bg: "#fef2ec", color: "#8a4a20" },
+  joints:  { bg: "#fef0ee", color: "#8a3020" },
+  hormones:{ bg: "#fdf0f5", color: "#8a3060" },
+  skin:    { bg: "#fdf2f5", color: "#8a3050" },
 };
 
 type Props = {
@@ -45,101 +45,91 @@ export default async function RecipePage({ params }: Props) {
   const ingredients = recipe.ingredients as Ingredient[];
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <Link href="/" className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-        </Link>
-        <div className="flex-1" />
+    <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      <Navbar />
+
+      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "32px 24px" }}>
+
+        {/* Back link */}
         <Link
           href="/recipes"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          style={{ fontSize: "13px", color: "#6b6560", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "20px" }}
         >
           ← All recipes
         </Link>
-        <CartSidebar />
-      </nav>
 
-      <div className="max-w-2xl mx-auto px-5 py-8">
-        <div className="flex gap-2 flex-wrap mb-3">
-          {goals.map((goal) => (
-            <span
-              key={goal}
-              className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${
-                goalColors[goal] || "bg-gray-100 text-gray-600"
-              }`}
-            >
-              {goal}
-            </span>
-          ))}
+        {/* Goal tags */}
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
+          {goals.map((goal) => {
+            const colors = goalColors[goal] || { bg: "#f0f0f0", color: "#666" };
+            return (
+              <span
+                key={goal}
+                style={{ fontSize: "11px", background: colors.bg, color: colors.color, padding: "4px 10px", borderRadius: "99px", fontWeight: "500", textTransform: "capitalize" }}
+              >
+                {goal}
+              </span>
+            );
+          })}
         </div>
 
-        <h1 className="text-2xl font-medium text-gray-900 mb-3 capitalize">
+        {/* Title */}
+        <h1 style={{ fontSize: "26px", fontWeight: "700", color: "#2d2a24", marginBottom: "10px", textTransform: "capitalize" }}>
           {recipe.name}
         </h1>
-        <p className="text-sm text-gray-500 leading-relaxed mb-6">
+        <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "24px" }}>
           {recipe.description}
         </p>
 
-        <div className="grid grid-cols-4 gap-3 mb-8">
-          <div className="bg-white border border-gray-100 rounded-xl p-3 text-center">
-            <div className="text-lg font-medium text-gray-900">
-              {recipe.prepTime}
+        {/* Meta cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "28px" }}>
+          {[
+            { value: `${recipe.prepTime} min`, label: "Prep time" },
+            { value: `$${recipe.costPerServing.toFixed(2)}`, label: "Per serving" },
+            { value: `${recipe.servings}`, label: recipe.servings > 1 ? "Servings" : "Serving" },
+            { value: recipe.difficulty, label: "Difficulty" },
+          ].map((item) => (
+            <div key={item.label} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: "700", color: "#2d2a24" }}>{item.value}</div>
+              <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "2px" }}>{item.label}</div>
             </div>
-            <div className="text-xs text-gray-400 mt-0.5">Minutes</div>
-          </div>
-          <div className="bg-white border border-gray-100 rounded-xl p-3 text-center">
-            <div className="text-lg font-medium text-gray-900">
-              ${recipe.costPerServing.toFixed(2)}
-            </div>
-            <div className="text-xs text-gray-400 mt-0.5">Per serving</div>
-          </div>
-          <div className="bg-white border border-gray-100 rounded-xl p-3 text-center">
-            <div className="text-lg font-medium text-gray-900">
-              {recipe.servings}
-            </div>
-            <div className="text-xs text-gray-400 mt-0.5">Servings</div>
-          </div>
-          <div className="bg-white border border-gray-100 rounded-xl p-3 text-center">
-            <div className="text-lg font-medium text-gray-900">
-              {recipe.difficulty}
-            </div>
-            <div className="text-xs text-gray-400 mt-0.5">Difficulty</div>
-          </div>
+          ))}
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-6">
-          <h2 className="text-base font-medium text-gray-900 mb-4">
+        {/* Ingredients */}
+        <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "16px" }}>
+          <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24", marginBottom: "16px" }}>
             Ingredients
           </h2>
-          <ul className="space-y-3">
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
             {ingredients.map((ing, i) => (
-              <li key={i} className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" />
-                <span className="text-sm font-medium text-emerald-700 min-w-16">
+              <li key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#3d6b4f", flexShrink: 0 }} />
+                <span style={{ fontSize: "13px", fontWeight: "600", color: "#3d6b4f", minWidth: "64px" }}>
                   {ing.amount}
                 </span>
-                <span className="text-sm text-gray-700">{ing.name}</span>
+                <span style={{ fontSize: "13px", color: "#2d2a24" }}>{ing.name}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-6">
-          <h2 className="text-base font-medium text-gray-900 mb-4">
+        {/* Steps */}
+        <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "16px" }}>
+          <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24", marginBottom: "16px" }}>
             Instructions
           </h2>
-          <div className="space-y-5">
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             {steps.map((step) => (
-              <div key={step.step} className="flex gap-4">
-                <div className="w-7 h-7 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xs font-medium text-emerald-700 flex-shrink-0 mt-0.5">
+              <div key={step.step} style={{ display: "flex", gap: "14px" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#eef5f0", border: "1px solid #c8ddd0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "600", color: "#3d6b4f", flexShrink: 0, marginTop: "2px" }}>
                   {step.step}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900 mb-1">
+                  <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>
                     {step.title}
                   </div>
-                  <div className="text-sm text-gray-500 leading-relaxed">
+                  <div style={{ fontSize: "13px", color: "#6b6560", lineHeight: 1.6 }}>
                     {step.instruction}
                   </div>
                 </div>
@@ -148,25 +138,26 @@ export default async function RecipePage({ params }: Props) {
           </div>
         </div>
 
-        <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 mb-6">
-          <div className="text-sm font-medium text-emerald-800 mb-1">
+        {/* Shop CTA */}
+        <div style={{ background: "#eef5f0", border: "1px solid #c8ddd0", borderRadius: "16px", padding: "20px", marginBottom: "16px" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>
             Shop the ingredients
           </div>
-          <p className="text-sm text-emerald-700 mb-3">
-            Find the natural products used in this recipe in our store.
+          <p style={{ fontSize: "13px", color: "#6b6560", marginBottom: "12px" }}>
+            Find natural products used in this recipe in our store.
           </p>
           <Link
             href="/"
-            className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl inline-block hover:bg-emerald-700 transition-colors"
+            style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "10px 20px", borderRadius: "10px", textDecoration: "none", display: "inline-block" }}
           >
             Browse products →
           </Link>
         </div>
 
-        <div className="text-xs text-gray-400 text-center leading-relaxed">
-          These recipes are for general wellness purposes only and have not been
-          evaluated by the FDA. Consult your healthcare provider before use if
-          pregnant, nursing, or on medications.
+        {/* Disclaimer */}
+        <div style={{ fontSize: "11px", color: "#9c9488", textAlign: "center", lineHeight: 1.6 }}>
+          These recipes are for general wellness purposes only and have not been evaluated by the FDA.
+          Consult your healthcare provider before use if pregnant, nursing, or on medications.
         </div>
       </div>
     </main>

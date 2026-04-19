@@ -19,108 +19,79 @@ export default function Navbar() {
   };
 
   return (
-    <header>
-      {/* Top bar */}
-      <div className="bg-stone-800 text-stone-200 text-xs text-center py-2 px-4">
+    <header style={{ background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
+      {/* Announcement bar */}
+      <div style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", textAlign: "center", padding: "8px 16px" }}>
         🌿 Free shipping on orders over $35 · All natural · Third-party tested
       </div>
 
       {/* Main nav */}
-      <nav className="bg-stone-50 border-b border-stone-200 px-5 py-4">
-        <div className="max-w-6xl mx-auto flex items-center gap-6">
+      <nav style={{ padding: "14px 24px", display: "flex", alignItems: "center", gap: "24px", maxWidth: "1200px", margin: "0 auto" }}>
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
-                <path d="M8 6 Q10 8 10 10" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/>
-              </svg>
-            </div>
-            <div>
-              <div className="text-base font-semibold text-stone-800 leading-none">
-                pure<span className="text-emerald-700">well</span>
-              </div>
-              <div className="text-xs text-stone-400 leading-none mt-0.5">
-                natural wellness
-              </div>
-            </div>
-          </Link>
-
-          {/* Nav links */}
-          <div className="hidden md:flex items-center gap-6 flex-shrink-0">
-            <Link
-              href="/?category=supplements"
-              className="text-sm text-stone-600 hover:text-emerald-700 transition-colors font-medium"
-            >
-              Supplements
-            </Link>
-            <Link
-              href="/?category=essential-oils"
-              className="text-sm text-stone-600 hover:text-emerald-700 transition-colors font-medium"
-            >
-              Essential oils
-            </Link>
-            <Link
-              href="/?category=herbal-teas"
-              className="text-sm text-stone-600 hover:text-emerald-700 transition-colors font-medium"
-            >
-              Herbal teas
-            </Link>
-            <Link
-              href="/recipes"
-              className="text-sm text-stone-600 hover:text-emerald-700 transition-colors font-medium"
-            >
-              Recipes
-            </Link>
-            <Link
-              href="/quiz"
-              className="text-sm text-stone-600 hover:text-emerald-700 transition-colors font-medium"
-            >
-              Wellness quiz
-            </Link>
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+          <div style={{ width: "32px", height: "32px", background: "#3d6b4f", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
+            </svg>
           </div>
+          <div>
+            <div style={{ fontSize: "16px", fontWeight: "600", color: "#2d2a24", lineHeight: 1 }}>
+              pure<span style={{ color: "#3d6b4f" }}>well</span>
+            </div>
+            <div style={{ fontSize: "11px", color: "#9c9488", lineHeight: 1, marginTop: "2px" }}>
+              natural wellness
+            </div>
+          </div>
+        </Link>
 
-          {/* Search */}
-          <form
-            onSubmit={handleSearch}
-            className="flex-1 flex items-center gap-2 max-w-sm"
+        {/* Nav links */}
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          {[
+            { href: "/?category=supplements", label: "Supplements" },
+            { href: "/?category=essential-oils", label: "Essential oils" },
+            { href: "/?category=herbal-teas", label: "Herbal teas" },
+            { href: "/recipes", label: "Recipes" },
+            { href: "/quiz", label: "Wellness quiz" },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              style={{ fontSize: "13px", color: "#5c5650", textDecoration: "none", fontWeight: "500" }}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Search */}
+        <form onSubmit={handleSearch} style={{ flex: 1, display: "flex", maxWidth: "280px" }}>
+          <div style={{ position: "relative", width: "100%" }}>
+            <svg
+              style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9c9488" }}
+              width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"
+            >
+              <circle cx="5.5" cy="5.5" r="4"/>
+              <line x1="9" y1="9" x2="13" y2="13"/>
+            </svg>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products..."
+              style={{ width: "100%", paddingLeft: "30px", paddingRight: "12px", paddingTop: "8px", paddingBottom: "8px", fontSize: "13px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", outline: "none", color: "#2d2a24" }}
+            />
+          </div>
+        </form>
+
+        {/* Quiz CTA + Cart */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+          <Link
+            href="/quiz"
+            style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", textDecoration: "none" }}
           >
-            <div className="relative flex-1">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <circle cx="5.5" cy="5.5" r="4"/>
-                <line x1="9" y1="9" x2="13" y2="13"/>
-              </svg>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search natural products..."
-                className="w-full pl-8 pr-3 py-2 text-sm bg-white border border-stone-200 rounded-xl focus:outline-none focus:border-emerald-400 text-stone-700 placeholder-stone-400"
-              />
-            </div>
-          </form>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <Link
-              href="/quiz"
-              className="hidden md:flex items-center gap-1.5 bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-emerald-800 transition-colors"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3">
-                <path d="M7 1l1.2 3.5H12L9.4 6.7l1 3.3L7 8.2l-3.4 1.8 1-3.3L2 4.5h3.8z"/>
-              </svg>
-              Take the quiz
-            </Link>
-            <CartSidebar />
-          </div>
+            Take the quiz
+          </Link>
+          <CartSidebar />
         </div>
       </nav>
     </header>

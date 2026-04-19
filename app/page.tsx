@@ -58,59 +58,46 @@ export default async function Home({ searchParams }: Props) {
       <Navbar />
 
       {/* Hero */}
-      <div
-        className="px-5 py-14 border-b border-stone-200"
-        style={{ background: "linear-gradient(135deg, #faf7f2 0%, #f0ebe0 50%, #e8f5ee 100%)" }}
-      >
-        <div className="max-w-6xl mx-auto grid grid-cols-2 gap-10 items-center">
+      <div style={{ background: "#faf8f5", borderBottom: "1px solid #e7e3dc", padding: "48px 24px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
           <div>
-            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full mb-4">
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "16px" }}>
               <span>🌿</span> AI-powered natural wellness
             </div>
-            <h1 className="text-4xl font-semibold text-stone-800 leading-tight mb-4">
+            <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#2d2a24", lineHeight: 1.25, marginBottom: "14px" }}>
               Your natural health<br />
-              <span className="text-emerald-700">companion</span>
+              <span style={{ color: "#3d6b4f" }}>companion</span>
             </h1>
-            <p className="text-stone-500 mb-6 leading-relaxed max-w-md">
-              Curated all-natural supplements, homemade wellness recipes, and
-              AI-powered health protocols — all in one place.
+            <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "24px", maxWidth: "400px" }}>
+              Curated all-natural supplements, homemade wellness recipes, and AI-powered health protocols — all in one place.
             </p>
-            <div className="flex gap-3">
+            <div style={{ display: "flex", gap: "10px" }}>
               <Link
                 href="/quiz"
-                className="bg-emerald-700 text-white font-medium px-6 py-3 rounded-xl hover:bg-emerald-800 transition-colors"
+                style={{ background: "#3d6b4f", color: "#fff", fontWeight: "600", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}
               >
                 Take the wellness quiz →
               </Link>
               <Link
                 href="/recipes"
-                className="bg-white text-stone-700 border border-stone-200 font-medium px-6 py-3 rounded-xl hover:bg-stone-50 transition-colors"
+                style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}
               >
-                Browse recipes
+                 Browse recipes
               </Link>
             </div>
-            <div className="flex gap-6 mt-8">
-              <div>
-                <div className="text-xl font-semibold text-stone-800">26+</div>
-                <div className="text-xs text-stone-400">Natural products</div>
-              </div>
-              <div>
-                <div className="text-xl font-semibold text-stone-800">8</div>
-                <div className="text-xs text-stone-400">Free recipes</div>
-              </div>
-              <div>
-                <div className="text-xl font-semibold text-stone-800">100%</div>
-                <div className="text-xs text-stone-400">All natural</div>
-              </div>
+            <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
+              {[["26+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
+                <div key={label}>
+                  <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
+                  <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {["bg-emerald-50", "bg-amber-50", "bg-stone-100", "bg-emerald-100"].map((bg, i) => (
-              <div
-                key={i}
-                className={`${bg} rounded-2xl h-32 flex items-center justify-center text-3xl`}
-              >
-                {["🌿", "🍯", "🌸", "🫚"][i]}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            {[["#eef5f0", "🌿"], ["#fef6e7", "🍯"], ["#faf0ee", "🌸"], ["#eef5f0", "🫚"]].map(([bg, emoji], i) => (
+              <div key={i} style={{ background: bg, borderRadius: "16px", height: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px" }}>
+                {emoji}
               </div>
             ))}
           </div>
@@ -128,109 +115,101 @@ export default async function Home({ searchParams }: Props) {
       </div>
 
       {/* Products */}
-      <div className="px-5 py-8 bg-stone-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-stone-800">
-              {category && category !== "all"
-                ? categories.find((c) => c.id === category)?.label
-                : "All products"}{" "}
-              <span className="text-stone-400 font-normal text-sm">
-                ({products.length} items)
-              </span>
-            </h2>
-            <form method="GET" action="/" className="flex gap-2">
-              {category && category !== "all" && (
-                <input type="hidden" name="category" value={category} />
-              )}
-              <input
-                name="search"
-                defaultValue={search || ""}
-                placeholder="Search..."
-                className="border border-stone-200 rounded-xl px-3 py-2 text-sm w-40 bg-white focus:outline-none focus:border-emerald-400"
-              />
-              <button
-                type="submit"
-                className="bg-emerald-700 text-white text-sm px-4 py-2 rounded-xl hover:bg-emerald-800 transition-colors"
-              >
-                Search
-              </button>
-            </form>
-          </div>
+<div style={{ background: "#faf8f5", padding: "32px 24px" }}>
+  <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+      <h2 style={{ fontSize: "17px", fontWeight: "600", color: "#2d2a24" }}>
+        {category && category !== "all"
+          ? categories.find((c) => c.id === category)?.label
+          : "All products"}{" "}
+        <span style={{ color: "#9c9488", fontWeight: "400", fontSize: "14px" }}>
+          ({products.length} items)
+        </span>
+      </h2>
+      <form method="GET" action="/" style={{ display: "flex", gap: "8px" }}>
+        {category && category !== "all" && (
+          <input type="hidden" name="category" value={category} />
+        )}
+        <input
+          name="search"
+          defaultValue={search || ""}
+          placeholder="Search..."
+          style={{ border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 12px", fontSize: "13px", width: "160px", background: "#fff", color: "#2d2a24", outline: "none" }}
+        />
+        <button
+          type="submit"
+          style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", border: "none", cursor: "pointer" }}
+        >
+          Search
+        </button>
+      </form>
+    </div>
 
-          {products.length === 0 ? (
-            <div className="text-center py-16 text-stone-400">
-              <div className="text-4xl mb-3">🌿</div>
-              <div className="text-sm">No products found.</div>
-              <Link href="/" className="text-emerald-600 text-sm mt-3 inline-block">
-                Clear filters
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-4 gap-4">
-              {products.map((product: Product) => (
-                <Link href={`/products/${product.slug}`} key={product.id}>
-                  <div className="bg-white border border-stone-100 rounded-2xl overflow-hidden hover:border-emerald-200 hover:shadow-sm transition-all cursor-pointer group">
-                    <div
-                      style={{ position: "relative", width: "100%", height: "160px" }}
-                      className="bg-stone-50"
-                    >
-                      {product.imageUrl ? (
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.name}
-                          fill
-                          style={{ objectFit: "cover" }}
-                          className="group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="h-full flex items-center justify-center text-stone-300 text-sm">
-                          No image
-                        </div>
-                      )}
-                      <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
-                        {product.certifications.slice(0, 1).map((cert) => (
-                          <span
-                            key={cert}
-                            className="text-xs bg-white bg-opacity-90 text-emerald-700 px-2 py-0.5 rounded-full font-medium border border-emerald-100"
-                          >
-                            {cert}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="p-4">
-                      <div className="text-xs text-stone-400 mb-1">
-                        {product.brand}
-                      </div>
-                      <div className="text-sm font-semibold text-stone-800 mb-1 leading-tight">
-                        {product.name}
-                      </div>
-                      <div className="text-xs text-stone-400 mb-3 line-clamp-2 leading-relaxed">
-                        {product.description}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base font-semibold text-stone-800">
-                          ${product.price.toFixed(2)}
-                        </span>
-                        <AddToCartButton
-                          id={product.id}
-                          name={product.name}
-                          brand={product.brand}
-                          price={product.price}
-                          imageUrl={product.imageUrl}
-                          slug={product.slug}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+    {products.length === 0 ? (
+      <div style={{ textAlign: "center", padding: "64px 0", color: "#9c9488" }}>
+        <div style={{ fontSize: "40px", marginBottom: "12px" }}>🌿</div>
+        <div style={{ fontSize: "14px" }}>No products found.</div>
+        <Link href="/" style={{ color: "#3d6b4f", fontSize: "13px", marginTop: "8px", display: "inline-block" }}>
+          Clear filters
+        </Link>
       </div>
+    ) : (
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        {products.map((product: Product) => (
+          <Link href={`/products/${product.slug}`} key={product.id} style={{ textDecoration: "none" }}>
+            <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", transition: "border-color 0.15s" }}>
+              <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed" }}>
+                {product.imageUrl ? (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                ) : (
+                  <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5bfb5", fontSize: "13px" }}>
+                    No image
+                  </div>
+                )}
+                <div style={{ position: "absolute", top: "8px", left: "8px" }}>
+                  {product.certifications.slice(0, 1).map((cert) => (
+                    <span key={cert} style={{ fontSize: "10px", background: "rgba(255,255,255,0.92)", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: "500", border: "1px solid #c8ddd0" }}>
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div style={{ padding: "14px" }}>
+                <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "3px" }}>
+                  {product.brand}
+                </div>
+                <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px", lineHeight: 1.3 }}>
+                  {product.name}
+                </div>
+                <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                  {product.description}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
+                    ${product.price.toFixed(2)}
+                  </span>
+                  <AddToCartButton
+                    id={product.id}
+                    name={product.name}
+                    brand={product.brand}
+                    price={product.price}
+                    imageUrl={product.imageUrl}
+                    slug={product.slug}
+                  />
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
     </main>
   );
 }
