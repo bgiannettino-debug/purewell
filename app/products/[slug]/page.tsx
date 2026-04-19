@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import AddToCartButton from "../../components/AddToCartButton";
 import AddToCartSmall from "../../components/AddToCartSmall";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -201,6 +202,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
         )}
       </div>
+      <Footer />
     </main>
   );
 }

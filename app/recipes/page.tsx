@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "../../lib/db";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +100,7 @@ export default async function RecipesPage() {
           })}
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

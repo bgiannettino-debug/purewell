@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -160,6 +161,7 @@ export default async function RecipePage({ params }: Props) {
           Consult your healthcare provider before use if pregnant, nursing, or on medications.
         </div>
       </div>
+      <Footer />
     </main>
   );
 }
