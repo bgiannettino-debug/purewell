@@ -34,6 +34,7 @@ export default function Footer() {
     <footer style={{ background: "#2d2a24", color: "#c5bfb5", marginTop: "48px" }}>
 
       {/* Main grid */}
+      <div className="footer-grid" style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 32px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "40px" }}></div>
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 32px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "40px" }}>
 
         {/* Brand */}
@@ -134,6 +135,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
+      <div className="footer-bottom" style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}></div>
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}>
         <div style={{ fontSize: "12px", color: "#6b6560" }}>
           2026 PureWell. All rights reserved.
