@@ -1,9 +1,22 @@
-import type { Product } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
 import AddToCartButton from "./components/AddToCartButton";
 import CartSidebar from "./components/CartSidebar";
+
+type Product = {
+  id: string;
+  name: string;
+  slug: string;
+  brand: string;
+  description: string;
+  price: number;
+  imageUrl: string | null;
+  certifications: string[];
+  category: string;
+  inStock: boolean;
+  createdAt: Date;
+};
 
 export default async function Home() {
   const products = await db.product.findMany({
@@ -13,16 +26,16 @@ export default async function Home() {
   return (
     <main>
       <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-      <div className="text-lg font-medium">
-        pure<span className="text-emerald-700">well</span>
-      </div>
-      <div className="flex-1" />
-      <input
-        placeholder="Search natural products..."
-        className="border border-gray-200 rounded-xl px-3 py-2 text-sm w-64 bg-gray-50"
-      />
-      <CartSidebar />
-    </nav>
+        <div className="text-lg font-medium">
+          pure<span className="text-emerald-700">well</span>
+        </div>
+        <div className="flex-1" />
+        <input
+          placeholder="Search natural products..."
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm w-64 bg-gray-50"
+        />
+        <CartSidebar />
+      </nav>
 
       <div className="bg-emerald-50 border-b border-emerald-100 px-5 py-8">
         <h1 className="text-2xl font-medium text-emerald-900 mb-2">
@@ -32,12 +45,12 @@ export default async function Home() {
           Shop curated all-natural products, discover homemade wellness recipes,
           and get AI-powered supplement recommendations.
         </p>
-          <Link
-            href="/quiz"
-            className="bg-emerald-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg inline-block hover:bg-emerald-700 transition-colors"
-          >
-            Take the wellness quiz →
-          </Link>
+        <Link
+          href="/quiz"
+          className="bg-emerald-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg inline-block hover:bg-emerald-700 transition-colors"
+        >
+          Take the wellness quiz →
+        </Link>
       </div>
 
       <div className="px-5 py-6">
