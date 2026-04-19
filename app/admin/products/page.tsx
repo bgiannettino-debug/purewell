@@ -167,10 +167,10 @@ export default function AdminProducts() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         <Link
-                          href={`/products/${product.id}`}
+                          href={`/admin/products/edit/${product.id}`}
                           className="text-xs text-emerald-600 hover:text-emerald-700"
                         >
-                          View
+                          Edit
                         </Link>
                         <button
                           onClick={() =>
