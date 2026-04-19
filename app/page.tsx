@@ -1,3 +1,4 @@
+import type { Product } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
@@ -44,7 +45,7 @@ export default async function Home() {
           Featured products — {products.length} items
         </h2>
         <div className="grid grid-cols-4 gap-3">
-          {products.map((product) => (
+          {products.map((product: Product) => (
             <Link href={`/products/${product.slug}`} key={product.id}>
               <div className="bg-white border border-gray-100 rounded-xl p-4 hover:border-emerald-200 transition-colors cursor-pointer">
                 <div
