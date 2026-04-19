@@ -2,6 +2,7 @@
 
 import { useCart } from "../../lib/cartStore";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function CartSidebar() {
   const {
@@ -15,6 +16,9 @@ export default function CartSidebar() {
     closeCart,
     clearCart,
   } = useCart();
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const handleCheckout = async () => {
     const res = await fetch("/api/checkout", {
@@ -41,7 +45,7 @@ export default function CartSidebar() {
         className="relative flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg"
       >
         Cart
-        {count() > 0 && (
+        {mounted && count() > 0 && (
           <span className="bg-white text-emerald-700 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
             {count()}
           </span>
@@ -49,7 +53,7 @@ export default function CartSidebar() {
       </button>
 
       {/* Overlay */}
-      {isOpen && (
+      {mounted && isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 z-40"
           onClick={closeCart}
@@ -59,13 +63,13 @@ export default function CartSidebar() {
       {/* Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-96 bg-white z-50 shadow-xl transform transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+          mounted && isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="text-base font-medium">
-            Your cart ({count()} items)
+            Your cart ({mounted ? count() : 0} items)
           </div>
           <button
             onClick={closeCart}
@@ -76,7 +80,7 @@ export default function CartSidebar() {
         </div>
 
         {/* Empty state */}
-        {items.length === 0 ? (
+        {!mounted || items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
             <div className="text-4xl mb-3">🌿</div>
             <div className="text-sm mb-4">Your cart is empty</div>
