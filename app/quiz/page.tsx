@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const goals = [
-  { id: "sleep", label: "Better sleep" },
-  { id: "stress", label: "Stress & anxiety relief" },
-  { id: "energy", label: "Energy & focus" },
-  { id: "immune", label: "Immune support" },
-  { id: "gut", label: "Gut & digestion" },
-  { id: "skin", label: "Skin & hair health" },
-  { id: "joints", label: "Joint & muscle support" },
-  { id: "hormones", label: "Hormonal balance" },
+  { id: "sleep", label: "Better sleep", desc: "Fall asleep faster, sleep deeper" },
+  { id: "stress", label: "Stress & anxiety relief", desc: "Feel calmer, more resilient" },
+  { id: "energy", label: "Energy & focus", desc: "Sustained energy without crashes" },
+  { id: "immune", label: "Immune support", desc: "Stay healthy year-round" },
+  { id: "gut", label: "Gut & digestion", desc: "Bloating, regularity, microbiome" },
+  { id: "skin", label: "Skin & hair health", desc: "Glow from the inside out" },
+  { id: "joints", label: "Joint & muscle support", desc: "Mobility, recovery, inflammation" },
+  { id: "hormones", label: "Hormonal balance", desc: "Cycle, mood, thyroid support" },
 ];
 
 const diets = [
@@ -74,276 +74,288 @@ export default function QuizPage() {
     }
   };
 
-  const steps = [
-    // Step 0 — Welcome
-    <div key="welcome" className="text-center">
-      <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h1 className="text-2xl font-medium text-gray-900 mb-3">
-        Build your wellness plan
-      </h1>
-      <p className="text-sm text-gray-500 mb-8 max-w-sm mx-auto leading-relaxed">
-        Answer 5 quick questions and our AI will create a personalized natural
-        health protocol matched to your goals.
-      </p>
-      <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto mb-8">
-        {["100% natural", "AI-powered", "Free to start"].map((f) => (
-          <div key={f} className="bg-emerald-50 rounded-xl p-3 text-center">
-            <div className="text-xs font-medium text-emerald-800">{f}</div>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={() => setStep(1)}
-        className="bg-emerald-600 text-white font-medium px-8 py-3 rounded-xl hover:bg-emerald-700 transition-colors"
-      >
-        Start the quiz →
-      </button>
-    </div>,
-
-    // Step 1 — Goals
-    <div key="goals">
-      <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-        Question 1 of 5
-      </div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">
-        What are your top health goals?
-      </h2>
-      <p className="text-sm text-gray-500 mb-6">Choose all that apply.</p>
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        {goals.map((goal) => (
-          <button
-            key={goal.id}
-            onClick={() => toggleGoal(goal.id)}
-            className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all text-left ${
-              answers.goals.includes(goal.id)
-                ? "bg-emerald-50 border-emerald-400 text-emerald-800"
-                : "bg-white border-gray-200 text-gray-700 hover:border-emerald-200"
-            }`}
-          >
-            {goal.label}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={() => setStep(2)}
-        disabled={answers.goals.length === 0}
-        className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        Continue →
-      </button>
-    </div>,
-
-    // Step 2 — Stress
-    <div key="stress">
-      <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-        Question 2 of 5
-      </div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">
-        How would you rate your current stress level?
-      </h2>
-      <p className="text-sm text-gray-500 mb-8">
-        1 = very low · 5 = very high
-      </p>
-      <div className="flex gap-3 mb-4">
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            onClick={() =>
-              setAnswers((prev) => ({ ...prev, stressLevel: n }))
-            }
-            className={`flex-1 py-4 rounded-xl text-lg font-medium border transition-all ${
-              answers.stressLevel === n
-                ? "bg-emerald-50 border-emerald-400 text-emerald-800"
-                : "bg-white border-gray-200 text-gray-600 hover:border-emerald-200"
-            }`}
-          >
-            {n}
-          </button>
-        ))}
-      </div>
-      <div className="flex justify-between text-xs text-gray-400 mb-8">
-        <span>Very low</span>
-        <span>Very high</span>
-      </div>
-      <button
-        onClick={() => setStep(3)}
-        className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors"
-      >
-        Continue →
-      </button>
-    </div>,
-
-    // Step 3 — Diet
-    <div key="diet">
-      <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-        Question 3 of 5
-      </div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">
-        Any dietary preferences or restrictions?
-      </h2>
-      <p className="text-sm text-gray-500 mb-6">Choose all that apply.</p>
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        {diets.map((diet) => (
-          <button
-            key={diet.id}
-            onClick={() => toggleDiet(diet.id)}
-            className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all text-left ${
-              answers.diet.includes(diet.id)
-                ? "bg-emerald-50 border-emerald-400 text-emerald-800"
-                : "bg-white border-gray-200 text-gray-700 hover:border-emerald-200"
-            }`}
-          >
-            {diet.label}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={() => setStep(4)}
-        disabled={answers.diet.length === 0}
-        className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        Continue →
-      </button>
-    </div>,
-
-    // Step 4 — Format & Budget
-    <div key="format">
-      <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-        Question 4 of 5
-      </div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">
-        How do you prefer your wellness routine?
-      </h2>
-      <p className="text-sm text-gray-500 mb-6">Pick one.</p>
-      <div className="flex flex-col gap-3 mb-6">
-        {[
-          { id: "diy", label: "DIY — I love making things at home", desc: "Teas, lattes, homemade remedies" },
-          { id: "supplements", label: "Supplements — quick and easy", desc: "Just take a capsule with water" },
-          { id: "mixed", label: "Mix of both", desc: "Some DIY rituals plus key supplements" },
-        ].map((opt) => (
-          <button
-            key={opt.id}
-            onClick={() => setAnswers((prev) => ({ ...prev, format: opt.id }))}
-            className={`px-4 py-3 rounded-xl text-sm border transition-all text-left ${
-              answers.format === opt.id
-                ? "bg-emerald-50 border-emerald-400"
-                : "bg-white border-gray-200 hover:border-emerald-200"
-            }`}
-          >
-            <div className="font-medium text-gray-900">{opt.label}</div>
-            <div className="text-gray-500 text-xs mt-0.5">{opt.desc}</div>
-          </button>
-        ))}
-      </div>
-      <h2 className="text-base font-medium text-gray-900 mb-4">
-        Monthly wellness budget?
-      </h2>
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        {[
-          { id: "under-25", label: "Under $25" },
-          { id: "25-60", label: "$25 – $60" },
-          { id: "60-100", label: "$60 – $100" },
-          { id: "100+", label: "$100+" },
-        ].map((opt) => (
-          <button
-            key={opt.id}
-            onClick={() => setAnswers((prev) => ({ ...prev, budget: opt.id }))}
-            className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
-              answers.budget === opt.id
-                ? "bg-emerald-50 border-emerald-400 text-emerald-800"
-                : "bg-white border-gray-200 text-gray-700 hover:border-emerald-200"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={() => setStep(5)}
-        disabled={!answers.format || !answers.budget}
-        className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        Continue →
-      </button>
-    </div>,
-
-    // Step 5 — Duration
-    <div key="duration">
-      <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">
-        Question 5 of 5
-      </div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">
-        How long have you been dealing with these concerns?
-      </h2>
-      <p className="text-sm text-gray-500 mb-6">This helps set realistic expectations.</p>
-      <div className="flex flex-col gap-3 mb-8">
-        {[
-          { id: "just-starting", label: "Just starting to notice issues" },
-          { id: "few-months", label: "A few months" },
-          { id: "over-a-year", label: "Over a year" },
-          { id: "comes-and-goes", label: "It comes and goes" },
-        ].map((opt) => (
-          <button
-            key={opt.id}
-            onClick={() =>
-              setAnswers((prev) => ({ ...prev, duration: opt.id }))
-            }
-            className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all text-left ${
-              answers.duration === opt.id
-                ? "bg-emerald-50 border-emerald-400 text-emerald-800"
-                : "bg-white border-gray-200 text-gray-700 hover:border-emerald-200"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={handleSubmit}
-        disabled={!answers.duration || loading}
-        className="w-full bg-emerald-600 text-white font-medium py-3 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {loading ? "Building your plan..." : "Build my wellness plan →"}
-      </button>
-    </div>,
-  ];
-
-  const progress = (step / 5) * 100;
+  const progress = step === 0 ? 0 : Math.round((step / 5) * 100);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <Link href="/" className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-        </Link>
-        <div className="flex-1" />
-        {step > 0 && (
-          <div className="text-sm text-gray-400">
-            Step {step} of 5
+    <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      {/* Nav */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "28px", height: "28px", background: "#3d6b4f", borderRadius: "7px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
+            </svg>
           </div>
+          <span style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
+            pure<span style={{ color: "#3d6b4f" }}>well</span>
+          </span>
+        </Link>
+        {step > 0 && (
+          <span style={{ fontSize: "12px", color: "#9c9488" }}>Step {step} of 5</span>
         )}
-      </nav>
+      </div>
 
+      {/* Progress bar */}
       {step > 0 && (
-        <div className="h-1 bg-gray-100">
-          <div
-            className="h-full bg-emerald-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+        <div style={{ height: "3px", background: "#e7e3dc" }}>
+          <div style={{ height: "100%", background: "#3d6b4f", width: `${progress}%`, transition: "width 0.3s" }} />
         </div>
       )}
 
-      <div className="max-w-lg mx-auto px-5 py-12">
-        {steps[step]}
+      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "40px 24px" }}>
 
+        {/* Step 0 — Welcome */}
+        {step === 0 && (
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: "64px", height: "64px", background: "#eef5f0", border: "1px solid #c8ddd0", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+              <span style={{ fontSize: "28px" }}>🌿</span>
+            </div>
+            <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#2d2a24", marginBottom: "10px" }}>
+              Build your wellness plan
+            </h1>
+            <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "28px", maxWidth: "400px", margin: "0 auto 28px" }}>
+              Answer 5 quick questions and our AI will create a personalized natural health protocol matched to your specific goals.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", maxWidth: "380px", margin: "0 auto 28px" }}>
+              {[["🌿", "100% natural"], ["⭐", "AI-powered"], ["✓", "Free to start"]].map(([icon, label]) => (
+                <div key={label} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "12px", padding: "12px 8px", textAlign: "center" }}>
+                  <div style={{ fontSize: "18px", marginBottom: "4px" }}>{icon}</div>
+                  <div style={{ fontSize: "11px", fontWeight: "500", color: "#6b6560" }}>{label}</div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setStep(1)}
+              style={{ background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px 32px", borderRadius: "12px", border: "none", cursor: "pointer" }}
+            >
+              Start the quiz →
+            </button>
+            <div style={{ fontSize: "12px", color: "#9c9488", marginTop: "12px" }}>
+              Takes about 2 minutes · no account required
+            </div>
+          </div>
+        )}
+
+        {/* Step 1 — Goals */}
+        {step === 1 && (
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px" }}>
+              Question 1 of 5
+            </div>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              What are your top health goals?
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "20px" }}>
+              Choose all that apply.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "24px" }}>
+              {goals.map((goal) => {
+                const selected = answers.goals.includes(goal.id);
+                return (
+                  <button
+                    key={goal.id}
+                    onClick={() => toggleGoal(goal.id)}
+                    style={{ padding: "12px 14px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", cursor: "pointer", textAlign: "left" }}
+                  >
+                    <div style={{ fontSize: "13px", fontWeight: "600", color: selected ? "#3d6b4f" : "#2d2a24", marginBottom: "2px" }}>
+                      {goal.label}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#9c9488" }}>{goal.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setStep(2)}
+              disabled={answers.goals.length === 0}
+              style={{ width: "100%", background: answers.goals.length > 0 ? "#3d6b4f" : "#c5bfb5", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: answers.goals.length > 0 ? "pointer" : "not-allowed" }}
+            >
+              Continue →
+            </button>
+          </div>
+        )}
+
+        {/* Step 2 — Stress */}
+        {step === 2 && (
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px" }}>
+              Question 2 of 5
+            </div>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              How would you rate your current stress level?
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "20px" }}>
+              1 = very low · 5 = very high
+            </p>
+            <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+              {[1, 2, 3, 4, 5].map((n) => {
+                const selected = answers.stressLevel === n;
+                return (
+                  <button
+                    key={n}
+                    onClick={() => setAnswers((prev) => ({ ...prev, stressLevel: n }))}
+                    style={{ flex: 1, padding: "14px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", fontSize: "16px", fontWeight: "700", color: selected ? "#3d6b4f" : "#6b6560", cursor: "pointer" }}
+                  >
+                    {n}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#9c9488", marginBottom: "24px" }}>
+              <span>Very low</span><span>Very high</span>
+            </div>
+            <button
+              onClick={() => setStep(3)}
+              style={{ width: "100%", background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: "pointer" }}
+            >
+              Continue →
+            </button>
+          </div>
+        )}
+
+        {/* Step 3 — Diet */}
+        {step === 3 && (
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px" }}>
+              Question 3 of 5
+            </div>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              Any dietary preferences or restrictions?
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "20px" }}>
+              Choose all that apply.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "24px" }}>
+              {diets.map((diet) => {
+                const selected = answers.diet.includes(diet.id);
+                return (
+                  <button
+                    key={diet.id}
+                    onClick={() => toggleDiet(diet.id)}
+                    style={{ padding: "12px 14px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", cursor: "pointer", textAlign: "left", fontSize: "13px", fontWeight: "600", color: selected ? "#3d6b4f" : "#2d2a24" }}
+                  >
+                    {diet.label}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setStep(4)}
+              disabled={answers.diet.length === 0}
+              style={{ width: "100%", background: answers.diet.length > 0 ? "#3d6b4f" : "#c5bfb5", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: answers.diet.length > 0 ? "pointer" : "not-allowed" }}
+            >
+              Continue →
+            </button>
+          </div>
+        )}
+
+        {/* Step 4 — Format & Budget */}
+        {step === 4 && (
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px" }}>
+              Question 4 of 5
+            </div>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              How do you prefer your wellness routine?
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "16px" }}>Pick one.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "20px" }}>
+              {[
+                { id: "diy", label: "DIY — I love making things at home", desc: "Teas, lattes, homemade remedies" },
+                { id: "supplements", label: "Supplements — quick and easy", desc: "Just take a capsule with water" },
+                { id: "mixed", label: "Mix of both", desc: "Some DIY rituals plus key supplements" },
+              ].map((opt) => {
+                const selected = answers.format === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setAnswers((prev) => ({ ...prev, format: opt.id }))}
+                    style={{ padding: "12px 14px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", cursor: "pointer", textAlign: "left" }}
+                  >
+                    <div style={{ fontSize: "13px", fontWeight: "600", color: selected ? "#3d6b4f" : "#2d2a24", marginBottom: "2px" }}>{opt.label}</div>
+                    <div style={{ fontSize: "11px", color: "#9c9488" }}>{opt.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <h2 style={{ fontSize: "16px", fontWeight: "600", color: "#2d2a24", marginBottom: "12px" }}>
+              Monthly wellness budget?
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "24px" }}>
+              {[
+                { id: "under-25", label: "Under $25" },
+                { id: "25-60", label: "$25 – $60" },
+                { id: "60-100", label: "$60 – $100" },
+                { id: "100+", label: "$100+" },
+              ].map((opt) => {
+                const selected = answers.budget === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setAnswers((prev) => ({ ...prev, budget: opt.id }))}
+                    style={{ padding: "12px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", cursor: "pointer", fontSize: "13px", fontWeight: "600", color: selected ? "#3d6b4f" : "#2d2a24" }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setStep(5)}
+              disabled={!answers.format || !answers.budget}
+              style={{ width: "100%", background: answers.format && answers.budget ? "#3d6b4f" : "#c5bfb5", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: answers.format && answers.budget ? "pointer" : "not-allowed" }}
+            >
+              Continue →
+            </button>
+          </div>
+        )}
+
+        {/* Step 5 — Duration */}
+        {step === 5 && (
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px" }}>
+              Question 5 of 5
+            </div>
+            <h2 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              How long have you been dealing with these concerns?
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "20px" }}>
+              This helps us set realistic expectations.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
+              {[
+                { id: "just-starting", label: "Just starting to notice issues" },
+                { id: "few-months", label: "A few months" },
+                { id: "over-a-year", label: "Over a year" },
+                { id: "comes-and-goes", label: "It comes and goes" },
+              ].map((opt) => {
+                const selected = answers.duration === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setAnswers((prev) => ({ ...prev, duration: opt.id }))}
+                    style={{ padding: "13px 14px", borderRadius: "12px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#fff", cursor: "pointer", textAlign: "left", fontSize: "13px", fontWeight: "600", color: selected ? "#3d6b4f" : "#2d2a24" }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={!answers.duration || loading}
+              style={{ width: "100%", background: answers.duration && !loading ? "#3d6b4f" : "#c5bfb5", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: answers.duration && !loading ? "pointer" : "not-allowed" }}
+            >
+              {loading ? "Building your plan..." : "Build my wellness plan →"}
+            </button>
+          </div>
+        )}
+
+        {/* Back button */}
         {step > 0 && (
           <button
             onClick={() => setStep(step - 1)}
-            className="mt-4 text-sm text-gray-400 hover:text-gray-600 w-full text-center"
+            style={{ marginTop: "16px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#9c9488", width: "100%", textAlign: "center" }}
           >
             ← Back
           </button>

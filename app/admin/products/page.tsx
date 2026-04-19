@@ -23,10 +23,7 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     const res = await fetch("/api/admin/products");
-    if (res.status === 401) {
-      router.push("/admin");
-      return;
-    }
+    if (res.status === 401) { router.push("/admin"); return; }
     const data = await res.json();
     setProducts(data.products);
     setLoading(false);
@@ -42,141 +39,94 @@ export default function AdminProducts() {
     fetchProducts();
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useEffect(() => { fetchProducts(); }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100">
-        <div className="text-lg font-medium">
-          pure<span className="text-emerald-700">well</span>
-          <span className="text-sm text-gray-400 font-normal ml-2">
-            Admin
-          </span>
+    <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      {/* Nav */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "14px 24px", display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ width: "28px", height: "28px", background: "#3d6b4f", borderRadius: "7px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
+          </svg>
         </div>
-        <div className="flex-1" />
-        <Link
-          href="/"
-          className="text-sm text-gray-500 hover:text-gray-700"
-        >
-          View store
+        <span style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
+          pure<span style={{ color: "#3d6b4f" }}>well</span>
+          <span style={{ fontSize: "12px", color: "#9c9488", fontWeight: "400", marginLeft: "6px" }}>Admin</span>
+        </span>
+        <div style={{ flex: 1 }} />
+        <Link href="/" style={{ fontSize: "13px", color: "#6b6560", textDecoration: "none" }}>
+          View store ↗
         </Link>
-      </nav>
+      </div>
 
-      <div className="max-w-5xl mx-auto px-5 py-8">
-        <div className="flex items-center justify-between mb-6">
+      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
           <div>
-            <h1 className="text-xl font-medium text-gray-900">Products</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {products.length} products in your catalog
-            </p>
+            <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "2px" }}>Products</h1>
+            <p style={{ fontSize: "13px", color: "#9c9488" }}>{products.length} products in your catalog</p>
           </div>
           <Link
             href="/admin/products/new"
-            className="bg-emerald-600 text-white text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-emerald-700 transition-colors"
+            style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "600", padding: "10px 18px", borderRadius: "10px", textDecoration: "none" }}
           >
             + Add product
           </Link>
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-gray-400">
-            Loading products...
-          </div>
+          <div style={{ textAlign: "center", padding: "48px", color: "#9c9488" }}>Loading products...</div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <table className="w-full">
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-3">
-                    Product
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-3">
-                    Category
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-3">
-                    Price
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-3">
-                    Status
-                  </th>
-                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-3">
-                    Actions
-                  </th>
+                <tr style={{ borderBottom: "1px solid #e7e3dc" }}>
+                  {["Product", "Category", "Price", "Status", "Actions"].map((h) => (
+                    <th key={h} style={{ textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", padding: "12px 16px" }}>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
-                  <tr
-                    key={product.id}
-                    className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          style={{
-                            position: "relative",
-                            width: "40px",
-                            height: "40px",
-                          }}
-                          className="bg-emerald-50 rounded-lg overflow-hidden flex-shrink-0"
-                        >
+                  <tr key={product.id} style={{ borderBottom: "1px solid #f5f2ed" }}>
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{ position: "relative", width: "38px", height: "38px", background: "#f5f2ed", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
                           {product.imageUrl ? (
-                            <Image
-                              src={product.imageUrl}
-                              alt={product.name}
-                              fill
-                              style={{ objectFit: "cover" }}
-                            />
+                            <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-emerald-300 text-xs">
-                              No img
-                            </div>
+                            <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", color: "#c5bfb5" }}>No img</div>
                           )}
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {product.name}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {product.brand}
-                          </div>
+                          <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24" }}>{product.name}</div>
+                          <div style={{ fontSize: "11px", color: "#9c9488" }}>{product.brand}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-3">
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                        {product.category}
+                    <td style={{ padding: "12px 16px" }}>
+                      <span style={{ fontSize: "11px", background: "#f5f2ed", color: "#6b6560", padding: "3px 9px", borderRadius: "99px", textTransform: "capitalize" }}>
+                        {product.category.replace(/-/g, " ")}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm font-medium text-gray-900">
+                    <td style={{ padding: "12px 16px", fontSize: "13px", fontWeight: "600", color: "#2d2a24" }}>
                       ${product.price.toFixed(2)}
                     </td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          product.inStock
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-red-50 text-red-600"
-                        }`}
-                      >
+                    <td style={{ padding: "12px 16px" }}>
+                      <span style={{ fontSize: "11px", background: product.inStock ? "#eef5f0" : "#fdf0ee", color: product.inStock ? "#3d6b4f" : "#c0392b", padding: "3px 9px", borderRadius: "99px", fontWeight: "500" }}>
                         {product.inStock ? "In stock" : "Out of stock"}
                       </span>
                     </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <Link
-                          href={`/admin/products/edit/${product.id}`}
-                          className="text-xs text-emerald-600 hover:text-emerald-700"
-                        >
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", gap: "12px" }}>
+                        <Link href={`/admin/products/edit/${product.id}`} style={{ fontSize: "12px", color: "#3d6b4f", textDecoration: "none", fontWeight: "500" }}>
                           Edit
                         </Link>
                         <button
-                          onClick={() =>
-                            deleteProduct(product.id, product.name)
-                          }
-                          className="text-xs text-red-500 hover:text-red-600"
+                          onClick={() => deleteProduct(product.id, product.name)}
+                          style={{ fontSize: "12px", color: "#c0392b", background: "none", border: "none", cursor: "pointer", fontWeight: "500", padding: 0 }}
                         >
                           Delete
                         </button>
