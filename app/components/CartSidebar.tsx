@@ -29,16 +29,13 @@ export default function CartSidebar() {
     });
 
     const data = await res.json();
-    console.log("Checkout response:", data);
 
     if (data.url) {
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } else {
-      console.error("No URL in response:", data);
       alert(`Checkout error: ${data.error || data.details || "Unknown error"}`);
     }
   } catch (err) {
-    console.error("Checkout fetch error:", err);
     alert(`Network error: ${String(err)}`);
   }
 };
