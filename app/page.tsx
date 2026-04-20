@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
-import AddToCartButton from "./components/AddToCartButton";
 import AddToCartSmall from "./components/AddToCartSmall";
 import CategoryFilter from "./components/CategoryFilter";
 import Navbar from "./components/Navbar";
@@ -150,11 +149,11 @@ export default async function Home({ searchParams }: Props) {
               </Link>
             </div>
           ) : (
-            <div className="product-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+            <div className="product-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", alignItems: "stretch" }}>
               {products.map((product: Product) => (
-                <Link href={`/products/${product.slug}`} key={product.id} style={{ textDecoration: "none" }}>
-                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden" }}>
-                    <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed" }}>
+                <Link href={`/products/${product.slug}`} key={product.id} style={{ textDecoration: "none", height: "100%" }}>
+                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
+                    <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed", flexShrink: 0 }}>
                       {product.imageUrl ? (
                         <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
                       ) : (
@@ -170,13 +169,13 @@ export default async function Home({ searchParams }: Props) {
                         ))}
                       </div>
                     </div>
-                    <div style={{ padding: "14px" }}>
+                    <div style={{ padding: "14px", display: "flex", flexDirection: "column", flex: 1 }}>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "3px" }}>{product.brand}</div>
                       <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px", lineHeight: "1.3" }}>{product.name}</div>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px", lineHeight: "1.5", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                         {product.description}
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginTop: "auto" }}>
                         <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                           ${product.price.toFixed(2)}
                         </span>
