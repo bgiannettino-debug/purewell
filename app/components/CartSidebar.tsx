@@ -21,16 +21,25 @@ export default function CartSidebar() {
   useEffect(() => setMounted(true), []);
 
   const handleCheckout = async () => {
-  const res = await fetch("/api/checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ items }),
-  });
-  const data = await res.json();
-  if (data.url) {
-    window.location.href = data.url;
-  } else {
-    alert("Something went wrong. Please try again.");
+  try {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    });
+
+    const data = await res.json();
+    console.log("Checkout response:", data);
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      console.error("No URL in response:", data);
+      alert(`Checkout error: ${data.error || data.details || "Unknown error"}`);
+    }
+  } catch (err) {
+    console.error("Checkout fetch error:", err);
+    alert(`Network error: ${String(err)}`);
   }
 };
 
