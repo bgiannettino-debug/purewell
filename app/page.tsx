@@ -70,6 +70,7 @@ export default async function Home({ searchParams }: Props) {
           <div>
             <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "16px" }}>
               🌿 AI-powered natural wellness
+              Impact-Site-Verification: 17896cc8-c02f-4fc3-a086-a339dd571f80
             </div>
             <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#2d2a24", lineHeight: "1.25", marginBottom: "14px" }}>
               Your natural health<br />
