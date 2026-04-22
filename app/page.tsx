@@ -73,7 +73,7 @@ export default async function Home({ searchParams }: Props) {
               </Link>
             </div>
             <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
-              {[["26+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
+              {[["24+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
                   <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>
