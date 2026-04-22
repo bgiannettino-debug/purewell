@@ -33,7 +33,7 @@ export default function Navbar() {
     <header style={{ background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
       {/* Announcement bar */}
       <div style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", textAlign: "center", padding: "8px 16px" }}>
-        🌿 Free shipping on orders over $35 · All natural · Third-party tested
+        🌿 All natural · Third-party tested · AI-powered wellness recommendations
       </div>
 
       {/* Main nav */}

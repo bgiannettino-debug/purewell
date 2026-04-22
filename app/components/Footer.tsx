@@ -21,10 +21,10 @@ export default function Footer() {
 
   const companyLinks = [
   { label: "About PureWell", href: "/about" },
-  { label: "Our standards", href: "/about#standards" },
+  { label: "Our standards", href: "/about" },
   { label: "Contact us", href: "#" },
-  { label: "Shipping policy", href: "#" },
-  { label: "Return policy", href: "#" },
+  { label: "Affiliate disclosure", href: "#" },
+  { label: "Privacy policy", href: "#" },
   { label: "FAQ", href: "#" },
   ];
 
@@ -111,7 +111,7 @@ export default function Footer() {
             </div>
           </div>
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#9c9488", maxWidth: "260px", marginBottom: "20px" }}>
-            Curated all-natural supplements, homemade wellness recipes, and AI-powered health protocols.
+            Curated all-natural supplements, homemade wellness recipes, and AI-powered health protocols. We earn commissions through trusted affiliate partners.
           </p>
           <div style={{ display: "flex", gap: "8px" }}>
             {socialLinks.map((s) => (
@@ -173,7 +173,7 @@ export default function Footer() {
               Join the PureWell community
             </div>
             <div style={{ fontSize: "12px", color: "#9c9488" }}>
-              Weekly wellness tips, new recipes, and exclusive discounts.
+              Weekly wellness tips, new recipes, and curated product recommendations.
             </div>
           </div>
           <div className="newsletter-input-row" style={{ display: "flex", gap: "8px" }}>
@@ -194,8 +194,8 @@ export default function Footer() {
         <div style={{ fontSize: "12px", color: "#6b6560" }}>
           2026 PureWell. All rights reserved.
         </div>
-        <div style={{ fontSize: "11px", color: "#6b6560", maxWidth: "500px", textAlign: "right", lineHeight: "1.5" }}>
-          These statements have not been evaluated by the FDA. Products are not intended to diagnose, treat, cure, or prevent any disease.
+          <div style={{ fontSize: "11px", color: "#6b6560", maxWidth: "600px", textAlign: "right", lineHeight: "1.5" }}>
+            PureWell participates in affiliate programs. We may earn a commission when you purchase through our links at no extra cost to you. These statements have not been evaluated by the FDA.
         </div>
       </div>
 
