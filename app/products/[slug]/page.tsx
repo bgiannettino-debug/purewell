@@ -2,18 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
-import AddToCartButton from "../../components/AddToCartButton";
-import AddToCartSmall from "../../components/AddToCartSmall";
+import BuyNowButton from "../../components/BuyNowButton";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await db.product.findUnique({ where: { slug } });
-
   if (!product) return { title: "Product not found" };
-
   return {
     title: `${product.name} — ${product.brand}`,
     description: `${product.description} Certifications: ${product.certifications.join(", ")}. Shop natural health products at PureWell.`,
@@ -24,12 +27,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
-
-export const dynamic = "force-dynamic";
-
-type Props = {
-  params: Promise<{ slug: string }>;
-};
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
@@ -66,17 +63,17 @@ export default async function ProductPage({ params }: Props) {
       </div>
 
       {/* Back button */}
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px 0" }}>
-      <Link
-        href="/"
-        style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none" }}
-      >
-            ← Back to products
-      </Link>
-    </div>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px 0" }}>
+        <Link
+          href="/"
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none" }}
+        >
+          ← Back to products
+        </Link>
+      </div>
 
       {/* Main product */}
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px 24px 32px" }}>
         <div className="product-detail-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "start" }}>
 
           {/* Image */}
@@ -111,17 +108,18 @@ export default async function ProductPage({ params }: Props) {
             <div style={{ fontSize: "28px", fontWeight: "700", color: "#2d2a24", marginBottom: "20px" }}>
               ${product.price.toFixed(2)}
             </div>
-            <div style={{ marginBottom: "16px" }}>
-              <AddToCartButton
-                id={product.id}
-                name={product.name}
-                brand={product.brand}
-                price={product.price}
-                imageUrl={product.imageUrl}
-                slug={product.slug}
-                fullWidth={true}
-              />
+
+            {/* Buy now button */}
+            <div style={{ marginBottom: "8px" }}>
+              <BuyNowButton affiliateUrl={product.affiliateUrl} fullWidth={true} />
             </div>
+            {product.affiliateUrl && (
+              <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "16px", textAlign: "center" }}>
+                You'll be redirected to our trusted retail partner. PureWell may earn a small commission at no extra cost to you.
+              </div>
+            )}
+
+            {/* Trust badges */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "20px" }}>
               {[["🌿", "All natural"], ["✓", "Third-party tested"], ["↩", "30-day returns"]].map((badge) => (
                 <div key={badge[1]} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "10px", textAlign: "center" }}>
@@ -130,6 +128,8 @@ export default async function ProductPage({ params }: Props) {
                 </div>
               ))}
             </div>
+
+            {/* AI insight */}
             <div style={{ background: "#eef5f0", border: "1px solid #c8ddd0", borderRadius: "14px", padding: "16px" }}>
               <div style={{ fontSize: "11px", fontWeight: "600", color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "6px" }}>
                 Why this product
@@ -153,7 +153,7 @@ export default async function ProductPage({ params }: Props) {
             <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
               {relatedProducts.map((related) => (
                 <Link href={`/products/${related.slug}`} key={related.id} style={{ textDecoration: "none" }}>
-                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden" }}>
+                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
                     <div style={{ position: "relative", width: "100%", height: "140px", background: "#f5f2ed" }}>
                       {related.imageUrl ? (
                         <Image src={related.imageUrl} alt={related.name} fill style={{ objectFit: "cover" }} />
@@ -163,19 +163,12 @@ export default async function ProductPage({ params }: Props) {
                         </div>
                       )}
                     </div>
-                    <div style={{ padding: "12px" }}>
+                    <div style={{ padding: "12px", display: "flex", flexDirection: "column", flex: 1 }}>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "2px" }}>{related.brand}</div>
-                      <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "8px", lineHeight: "1.3" }}>{related.name}</div>
+                      <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "8px", lineHeight: "1.3", flex: 1 }}>{related.name}</div>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
                         <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>${related.price.toFixed(2)}</span>
-                        <AddToCartSmall
-                          id={related.id}
-                          name={related.name}
-                          brand={related.brand}
-                          price={related.price}
-                          imageUrl={related.imageUrl}
-                          slug={related.slug}
-                        />
+                        <BuyNowButton affiliateUrl={related.affiliateUrl} />
                       </div>
                     </div>
                   </div>
