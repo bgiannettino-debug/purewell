@@ -58,16 +58,16 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} style={{ fontSize: "13px", color: "#5c5650", textDecoration: "none", fontWeight: "500" }}>
-              {link.label}
+          <Link key={link.href} href={link.href} style={{ fontSize: "12px", color: "#5c5650", textDecoration: "none", fontWeight: "500", whiteSpace: "nowrap" }}>
+            {link.label}
             </Link>
           ))}
         </div>
 
         {/* Desktop search */}
-        <form className="nav-search" onSubmit={handleSearch} style={{ flex: 1, display: "flex", minWidth: "180px", maxWidth: "260px" }}>
+        <form className="nav-search" onSubmit={handleSearch} style={{ flex: 1, display: "flex", minWidth: "140px", maxWidth: "200px" }}>
           <div style={{ position: "relative", width: "100%" }}>
             <svg style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9c9488" }} width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="5.5" cy="5.5" r="4" />
@@ -127,13 +127,6 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <Link
-            href="/quiz"
-            onClick={() => setMenuOpen(false)}
-            style={{ display: "block", background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "12px", borderRadius: "12px", textDecoration: "none", textAlign: "center", marginTop: "16px" }}
-          >
-            Take the wellness quiz →
-          </Link>
         </div>
       )}
 
