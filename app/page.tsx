@@ -68,6 +68,9 @@ export default async function Home({ searchParams }: Props) {
               <Link href="/quiz" style={{ background: "#3d6b4f", color: "#fff", fontWeight: "600", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
                 Take the wellness quiz →
               </Link>
+              <Link href="/analyze" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
+                Analyze a label
+              </Link>
               <Link href="/recipes" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
                 Browse recipes
               </Link>
