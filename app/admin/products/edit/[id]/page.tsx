@@ -19,9 +19,9 @@ export default function EditProduct() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    id: "", name: "", slug: "", brand: "", description: "", price: "",
-    category: "supplements", imageUrl: "", certifications: [] as string[], inStock: true,
-  });
+  id: "", name: "", slug: "", brand: "", description: "", price: "",
+  category: "supplements", imageUrl: "", affiliateUrl: "", certifications: [] as string[], inStock: true,
+});
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -34,9 +34,11 @@ export default function EditProduct() {
         id: product.id, name: product.name, slug: product.slug,
         brand: product.brand, description: product.description,
         price: product.price.toString(), category: product.category,
-        imageUrl: product.imageUrl || "", certifications: product.certifications || [],
+        imageUrl: product.imageUrl || "",
+        affiliateUrl: product.affiliateUrl || "",
+        certifications: product.certifications || [],
         inStock: product.inStock,
-      });
+    });
       setLoading(false);
     };
     fetchProduct();
@@ -134,6 +136,13 @@ export default function EditProduct() {
             <div>
               <label style={labelStyle}>Image URL</label>
               <input style={inputStyle} type="url" value={form.imageUrl} onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="https://images.unsplash.com/..." />
+            </div>
+            <div>
+              <label style={labelStyle}>Affiliate URL</label>
+              <input style={inputStyle} type="url" value={form.affiliateUrl} onChange={(e) => setForm((p) => ({ ...p, affiliateUrl: e.target.value }))} placeholder="https://amzn.to/... or https://iherb.com/..." />
+                <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>
+                  Paste your Amazon Associates or iHerb affiliate link here
+                </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <input type="checkbox" id="inStock" checked={form.inStock} onChange={(e) => setForm((p) => ({ ...p, inStock: e.target.checked }))} style={{ width: "16px", height: "16px", accentColor: "#3d6b4f" }} />

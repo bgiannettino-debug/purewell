@@ -75,8 +75,8 @@ export async function PUT(req: NextRequest) {
         imageUrl: body.imageUrl || null,
         affiliateUrl: body.affiliateUrl || null,
         inStock: body.inStock,
-    },
-  });
+      },
+    });
 
     revalidatePath("/");
     revalidatePath(`/products/${body.slug}`);
