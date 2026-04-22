@@ -152,8 +152,8 @@ export default async function ProductPage({ params }: Props) {
             </h2>
             <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
               {relatedProducts.map((related) => (
-                <Link href={`/products/${related.slug}`} key={related.id} style={{ textDecoration: "none" }}>
-                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
+                <div key={related.id} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                  <Link href={`/products/${related.slug}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", flex: 1 }}>
                     <div style={{ position: "relative", width: "100%", height: "140px", background: "#f5f2ed" }}>
                       {related.imageUrl ? (
                         <Image src={related.imageUrl} alt={related.name} fill style={{ objectFit: "cover" }} />
@@ -163,16 +163,16 @@ export default async function ProductPage({ params }: Props) {
                         </div>
                       )}
                     </div>
-                    <div style={{ padding: "12px", display: "flex", flexDirection: "column", flex: 1 }}>
+                    <div style={{ padding: "12px 12px 0 12px" }}>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "2px" }}>{related.brand}</div>
-                      <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "8px", lineHeight: "1.3", flex: 1 }}>{related.name}</div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
-                        <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>${related.price.toFixed(2)}</span>
-                        <BuyNowButton affiliateUrl={related.affiliateUrl} />
-                      </div>
+                      <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "8px", lineHeight: "1.3" }}>{related.name}</div>
                     </div>
+                  </Link>
+                  <div style={{ padding: "0 12px 12px 12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                    <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>${related.price.toFixed(2)}</span>
+                    <BuyNowButton affiliateUrl={related.affiliateUrl} />
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>
