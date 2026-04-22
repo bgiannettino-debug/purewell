@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Natural Health Products & Wellness Supplements",
-  description: "Browse 26+ curated all-natural supplements, essential oils, herbal teas, and wellness products. Non-GMO, organic, and third-party tested.",
+  description: "Browse 73+ curated all-natural supplements, essential oils, herbal teas, and wellness products. Non-GMO, organic, and third-party tested.",
 };
 
 export const dynamic = "force-dynamic";
@@ -76,7 +76,7 @@ export default async function Home({ searchParams }: Props) {
               </Link>
             </div>
             <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
-              {[["44+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
+              {[["73+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
                   <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>
@@ -140,8 +140,8 @@ export default async function Home({ searchParams }: Props) {
           ) : (
             <div className="product-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", alignItems: "stretch" }}>
               {products.map((product) => (
-                <Link href={`/products/${product.slug}`} key={product.id} style={{ textDecoration: "none", height: "100%" }}>
-                  <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
+                <div key={product.id} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                  <Link href={`/products/${product.slug}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", flex: 1 }}>
                     <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed", flexShrink: 0 }}>
                       {product.imageUrl ? (
                         <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
@@ -158,21 +158,21 @@ export default async function Home({ searchParams }: Props) {
                         ))}
                       </div>
                     </div>
-                    <div style={{ padding: "14px", display: "flex", flexDirection: "column", flex: 1 }}>
+                    <div style={{ padding: "14px 14px 0 14px", flex: 1 }}>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "3px" }}>{product.brand}</div>
                       <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px", lineHeight: "1.3" }}>{product.name}</div>
-                      <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px", lineHeight: "1.5", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px", lineHeight: "1.5", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                         {product.description}
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginTop: "auto" }}>
-                        <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
-                          ${product.price.toFixed(2)}
-                        </span>
-                        <BuyNowButton affiliateUrl={product.affiliateUrl} />
-                      </div>
                     </div>
+                  </Link>
+                  <div style={{ padding: "0 14px 14px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginTop: "auto" }}>
+                    <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
+                      ${product.price.toFixed(2)}
+                    </span>
+                    <BuyNowButton affiliateUrl={product.affiliateUrl} />
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}
