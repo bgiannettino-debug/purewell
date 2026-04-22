@@ -23,7 +23,7 @@ export default function Footer() {
   { label: "About PureWell", href: "/about" },
   { label: "Our standards", href: "/about" },
   { label: "Contact us", href: "#" },
-  { label: "Affiliate disclosure", href: "#" },
+  { label: "Affiliate disclosure", href: "/disclosure" },
   { label: "Privacy policy", href: "#" },
   { label: "FAQ", href: "#" },
   ];
