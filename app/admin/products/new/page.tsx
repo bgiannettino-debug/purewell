@@ -15,8 +15,15 @@ export default function NewProduct() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    name: "", slug: "", brand: "", description: "", price: "",
-    category: "supplements", imageUrl: "", certifications: [] as string[],
+    name: "",
+    slug: "",
+    brand: "",
+    description: "",
+    price: "",
+    category: "supplements",
+    imageUrl: "",
+    affiliateUrl: "",
+    certifications: [] as string[],
   });
 
   const handleNameChange = (name: string) => {
@@ -107,7 +114,12 @@ export default function NewProduct() {
               <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>Right-click an Unsplash photo → Copy Image Address</div>
             </div>
           </div>
-
+          <div>
+            <label style={labelStyle}>Affiliate URL</label>
+            <input style={inputStyle} type="url" value={form.affiliateUrl} onChange={(e) => setForm((p) => ({ ...p, affiliateUrl: e.target.value }))} placeholder="https://amzn.to/... or https://iherb.com/..." />
+            <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>Paste your Amazon Associates or iHerb affiliate link here
+          </div>
+          </div>
           <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px" }}>
             <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "12px" }}>Certifications</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>

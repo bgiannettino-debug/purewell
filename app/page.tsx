@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
-import AddToCartSmall from "./components/AddToCartSmall";
+import BuyNowButton from "./components/BuyNowButton";
 import CategoryFilter from "./components/CategoryFilter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -13,20 +13,6 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
-
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  brand: string;
-  description: string;
-  price: number;
-  imageUrl: string | null;
-  certifications: string[];
-  category: string;
-  inStock: boolean;
-  createdAt: Date;
-};
 
 type Props = {
   searchParams: Promise<{ category?: string; search?: string }>;
@@ -70,7 +56,6 @@ export default async function Home({ searchParams }: Props) {
           <div>
             <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "16px" }}>
               🌿 AI-powered natural wellness
-              Impact-Site-Verification: 17896cc8-c02f-4fc3-a086-a339dd571f80
             </div>
             <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#2d2a24", lineHeight: "1.25", marginBottom: "14px" }}>
               Your natural health<br />
@@ -151,7 +136,7 @@ export default async function Home({ searchParams }: Props) {
             </div>
           ) : (
             <div className="product-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", alignItems: "stretch" }}>
-              {products.map((product: Product) => (
+              {products.map((product) => (
                 <Link href={`/products/${product.slug}`} key={product.id} style={{ textDecoration: "none", height: "100%" }}>
                   <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
                     <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed", flexShrink: 0 }}>
@@ -180,14 +165,7 @@ export default async function Home({ searchParams }: Props) {
                         <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                           ${product.price.toFixed(2)}
                         </span>
-                        <AddToCartSmall
-                          id={product.id}
-                          name={product.name}
-                          brand={product.brand}
-                          price={product.price}
-                          imageUrl={product.imageUrl}
-                          slug={product.slug}
-                        />
+                        <BuyNowButton affiliateUrl={product.affiliateUrl} />
                       </div>
                     </div>
                   </div>

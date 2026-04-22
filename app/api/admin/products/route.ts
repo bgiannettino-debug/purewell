@@ -27,18 +27,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const product = await db.product.create({
-      data: {
-        name: body.name,
-        slug: body.slug,
-        brand: body.brand,
-        description: body.description,
-        price: parseFloat(body.price),
-        category: body.category,
-        certifications: body.certifications,
-        imageUrl: body.imageUrl || null,
-        inStock: true,
-      },
-    });
+    data: {
+      name: body.name,
+      slug: body.slug,
+      brand: body.brand,
+      description: body.description,
+      price: parseFloat(body.price),
+      category: body.category,
+      certifications: body.certifications,
+      imageUrl: body.imageUrl || null,
+      affiliateUrl: body.affiliateUrl || null,
+      inStock: true,
+    },
+  });
 
     revalidatePath("/");
     revalidatePath("/products");
@@ -72,9 +73,10 @@ export async function PUT(req: NextRequest) {
         category: body.category,
         certifications: body.certifications,
         imageUrl: body.imageUrl || null,
+        affiliateUrl: body.affiliateUrl || null,
         inStock: body.inStock,
-      },
-    });
+    },
+  });
 
     revalidatePath("/");
     revalidatePath(`/products/${body.slug}`);
