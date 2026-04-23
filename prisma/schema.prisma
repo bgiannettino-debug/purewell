@@ -26,6 +26,8 @@ model Product {
   certifications String[]
   imageUrl       String?
   affiliateUrl   String?
+  supplier       String?
+  asin           String?
   inStock        Boolean     @default(true)
   createdAt      DateTime    @default(now())
   orderItems     OrderItem[]

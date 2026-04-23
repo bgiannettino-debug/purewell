@@ -37,6 +37,8 @@ export async function POST(req: NextRequest) {
       certifications: body.certifications,
       imageUrl: body.imageUrl || null,
       affiliateUrl: body.affiliateUrl || null,
+      supplier: body.supplier || "amazon",
+      asin: body.asin || null,
       inStock: true,
     },
   });

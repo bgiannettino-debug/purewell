@@ -9,6 +9,9 @@ type CartItem = {
   imageUrl: string | null;
   slug: string;
   qty: number;
+  affiliateUrl: string | null;
+  supplier: string;
+  asin: string | null;
 };
 
 type CartStore = {

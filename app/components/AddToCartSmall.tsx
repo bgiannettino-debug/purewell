@@ -9,6 +9,9 @@ type Props = {
   price: number;
   imageUrl: string | null;
   slug: string;
+  affiliateUrl?: string | null;
+  supplier?: string;
+  asin?: string | null;
 };
 
 export default function AddToCartSmall(props: Props) {
@@ -18,7 +21,17 @@ export default function AddToCartSmall(props: Props) {
     <button
       onClick={(e) => {
         e.preventDefault();
-        addItem(props);
+        addItem({
+          id: props.id,
+          name: props.name,
+          brand: props.brand,
+          price: props.price,
+          imageUrl: props.imageUrl,
+          slug: props.slug,
+          affiliateUrl: props.affiliateUrl || null,
+          supplier: props.supplier || "amazon",
+          asin: props.asin || null,
+        });
       }}
       style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", fontWeight: "500", padding: "6px 12px", borderRadius: "8px", border: "none", cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap" }}
     >

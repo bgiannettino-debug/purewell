@@ -111,7 +111,17 @@ export default async function ProductPage({ params }: Props) {
 
             {/* Buy now button */}
             <div style={{ marginBottom: "8px" }}>
-              <BuyNowButton affiliateUrl={product.affiliateUrl} fullWidth={true} />
+              <BuyNowButton
+                id={product.id}
+                name={product.name}
+                brand={product.brand}
+                price={product.price}
+                imageUrl={product.imageUrl}
+                slug={product.slug}
+                affiliateUrl={product.affiliateUrl}
+                supplier={product.supplier || "amazon"}
+                asin={product.asin}
+              />
             </div>
             {product.affiliateUrl && (
               <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "16px", textAlign: "center" }}>
@@ -170,7 +180,17 @@ export default async function ProductPage({ params }: Props) {
                   </Link>
                   <div style={{ padding: "0 12px 12px 12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
                     <span style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>${related.price.toFixed(2)}</span>
-                    <BuyNowButton affiliateUrl={related.affiliateUrl} />
+                    <BuyNowButton
+                      id={product.id}
+                      name={product.name}
+                      brand={product.brand}
+                      price={product.price}
+                      imageUrl={product.imageUrl}
+                      slug={product.slug}
+                      affiliateUrl={product.affiliateUrl}
+                      supplier={product.supplier || "amazon"}
+                      asin={product.asin}
+                    />
                   </div>
                 </div>
               ))}

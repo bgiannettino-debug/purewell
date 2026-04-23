@@ -41,14 +41,14 @@ export default function Navbar() {
       <nav style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* Logo */}
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-          <div style={{ width: "32px", height: "32px", background: "#3d6b4f", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+          <div style={{ width: "38px", height: "38px", background: "#3d6b4f", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
               <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white" />
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: "16px", fontWeight: "600", color: "#2d2a24", lineHeight: "1" }}>
+            <div style={{ fontSize: "20px", fontWeight: "600", color: "#2d2a24", lineHeight: "1" }}>
               pure<span style={{ color: "#3d6b4f" }}>well</span>
             </div>
             <div style={{ fontSize: "11px", color: "#9c9488", lineHeight: "1", marginTop: "2px" }}>

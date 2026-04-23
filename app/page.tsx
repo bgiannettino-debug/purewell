@@ -170,7 +170,17 @@ export default async function Home({ searchParams }: Props) {
                     <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                       ${product.price.toFixed(2)}
                     </span>
-                    <BuyNowButton affiliateUrl={product.affiliateUrl} />
+                    <BuyNowButton
+                      id={product.id}
+                      name={product.name}
+                      brand={product.brand}
+                      price={product.price}
+                      imageUrl={product.imageUrl}
+                      slug={product.slug}
+                      affiliateUrl={product.affiliateUrl}
+                      supplier={product.supplier || "amazon"}
+                      asin={product.asin}
+                    />
                   </div>
                 </div>
               ))}

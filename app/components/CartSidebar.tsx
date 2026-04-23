@@ -4,41 +4,79 @@ import { useCart } from "../../lib/cartStore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+const AMAZON_TAG = "YOUR-AMAZON-TAG"; // Replace with your Amazon Associates tag
+
+type SupplierGroup = {
+  supplier: string;
+  label: string;
+  items: ReturnType<typeof useCart.getState>["items"];
+};
+
+function buildAmazonCartUrl(items: SupplierGroup["items"], tag: string) {
+  const params = new URLSearchParams();
+  params.set("AssociateTag", tag);
+  let index = 1;
+  for (const item of items) {
+    if (item.asin) {
+      params.set(`ASIN.${index}`, item.asin);
+      params.set(`Quantity.${index}`, item.qty.toString());
+      index++;
+    }
+  }
+  if (index === 1) return null; // No ASINs available
+  return `https://www.amazon.com/gp/aws/cart/add.html?${params.toString()}`;
+}
+
+const supplierLabels: Record<string, string> = {
+  amazon: "Amazon",
+  iherb: "iHerb",
+  other: "Retailer",
+};
+
+const supplierColors: Record<string, { bg: string; color: string; border: string }> = {
+  amazon: { bg: "#FF9900", color: "#fff", border: "#FF9900" },
+  iherb: { bg: "#7ab648", color: "#fff", border: "#7ab648" },
+  other: { bg: "#3d6b4f", color: "#fff", border: "#3d6b4f" },
+};
+
 export default function CartSidebar() {
   const {
-    items,
-    removeItem,
-    updateQty,
-    total,
-    count,
-    isOpen,
-    openCart,
-    closeCart,
-    clearCart,
+    items, removeItem, updateQty, total, count,
+    isOpen, openCart, closeCart,
   } = useCart();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const handleCheckout = async () => {
-  try {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
-    });
+  const groupedItems = mounted
+    ? Object.values(
+        items.reduce((groups, item) => {
+          const key = item.supplier || "other";
+          if (!groups[key]) groups[key] = { supplier: key, label: supplierLabels[key] || key, items: [] };
+          groups[key].items.push(item);
+          return groups;
+        }, {} as Record<string, SupplierGroup>)
+      )
+    : [];
 
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.assign(data.url);
+  const handleSupplierCheckout = (group: SupplierGroup) => {
+    if (group.supplier === "amazon") {
+      const cartUrl = buildAmazonCartUrl(group.items, AMAZON_TAG);
+      if (cartUrl) {
+        window.open(cartUrl, "_blank");
+        return;
+      }
+      // Fallback: open each item individually
+      group.items.forEach((item) => {
+        if (item.affiliateUrl) window.open(item.affiliateUrl, "_blank");
+      });
     } else {
-      alert(`Checkout error: ${data.error || data.details || "Unknown error"}`);
+      // iHerb and others: open each item in a new tab
+      group.items.forEach((item) => {
+        if (item.affiliateUrl) window.open(item.affiliateUrl, "_blank");
+      });
     }
-  } catch (err) {
-    alert(`Network error: ${String(err)}`);
-  }
-};
+  };
 
   return (
     <>
@@ -62,25 +100,16 @@ export default function CartSidebar() {
 
       {/* Overlay */}
       {mounted && isOpen && (
-        <div
-          onClick={closeCart}
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40 }}
-        />
+        <div onClick={closeCart} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40 }} />
       )}
 
       {/* Sidebar */}
       <div style={{
-        position: "fixed",
-        top: 0,
-        right: 0,
-        height: "100%",
-        width: "400px",
-        background: "#fff",
-        zIndex: 50,
+        position: "fixed", top: 0, right: 0, height: "100%", width: "420px",
+        background: "#fff", zIndex: 50,
         transform: mounted && isOpen ? "translateX(0)" : "translateX(100%)",
         transition: "transform 0.3s ease",
-        display: "flex",
-        flexDirection: "column",
+        display: "flex", flexDirection: "column",
         borderLeft: "1px solid #e7e3dc",
       }}>
         {/* Header */}
@@ -88,10 +117,7 @@ export default function CartSidebar() {
           <div style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
             Your cart {mounted && count() > 0 && `(${count()} items)`}
           </div>
-          <button
-            onClick={closeCart}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#9c9488", fontSize: "18px", lineHeight: 1 }}
-          >
+          <button onClick={closeCart} style={{ background: "none", border: "none", cursor: "pointer", color: "#9c9488", fontSize: "18px" }}>
             ✕
           </button>
         </div>
@@ -110,52 +136,86 @@ export default function CartSidebar() {
           </div>
         ) : (
           <>
-            {/* Items */}
+            {/* Grouped items */}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
-              {items.map((item) => (
-                <div key={item.id} style={{ display: "flex", gap: "12px", marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0ece6" }}>
-                  <div style={{ position: "relative", width: "64px", height: "64px", background: "#f5f2ed", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
-                    {item.imageUrl && (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
-                    )}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "2px" }}>
-                      {item.name}
-                    </div>
-                    <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px" }}>
-                      {item.brand}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", border: "1px solid #e7e3dc", borderRadius: "8px", overflow: "hidden" }}>
-                        <button
-                          onClick={() => item.qty === 1 ? removeItem(item.id) : updateQty(item.id, item.qty - 1)}
-                          style={{ width: "28px", height: "28px", background: "#faf8f5", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "14px" }}
-                        >
-                          −
-                        </button>
-                        <span style={{ width: "32px", textAlign: "center", fontSize: "13px", fontWeight: "500", color: "#2d2a24" }}>
-                          {item.qty}
+              {groupedItems.map((group) => {
+                const colors = supplierColors[group.supplier] || supplierColors.other;
+                return (
+                  <div key={group.supplier} style={{ marginBottom: "20px" }}>
+                    {/* Supplier header */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: colors.bg }} />
+                        <span style={{ fontSize: "12px", fontWeight: "600", color: "#2d2a24" }}>
+                          {group.label}
                         </span>
-                        <button
-                          onClick={() => updateQty(item.id, item.qty + 1)}
-                          style={{ width: "28px", height: "28px", background: "#faf8f5", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "14px" }}
-                        >
-                          +
-                        </button>
-                      </div>
-                      <div style={{ fontSize: "14px", fontWeight: "700", color: "#2d2a24" }}>
-                        ${(item.price * item.qty).toFixed(2)}
+                        <span style={{ fontSize: "11px", color: "#9c9488" }}>
+                          ({group.items.length} item{group.items.length > 1 ? "s" : ""})
+                        </span>
                       </div>
                     </div>
+
+                    {/* Items in this group */}
+                    <div style={{ background: "#faf8f5", borderRadius: "12px", padding: "12px", marginBottom: "10px" }}>
+                      {group.items.map((item) => (
+                        <div key={item.id} style={{ display: "flex", gap: "10px", marginBottom: "10px", paddingBottom: "10px", borderBottom: "1px solid #f0ece6" }}>
+                          <div style={{ position: "relative", width: "52px", height: "52px", background: "#fff", borderRadius: "8px", overflow: "hidden", flexShrink: 0, border: "1px solid #e7e3dc" }}>
+                            {item.imageUrl && (
+                              <Image src={item.imageUrl} alt={item.name} fill style={{ objectFit: "cover" }} />
+                            )}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: "12px", fontWeight: "600", color: "#2d2a24", marginBottom: "2px", lineHeight: "1.3" }}>
+                              {item.name}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "6px" }}>{item.brand}</div>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                              <div style={{ display: "flex", alignItems: "center", border: "1px solid #e7e3dc", borderRadius: "6px", overflow: "hidden", background: "#fff" }}>
+                                <button
+                                  onClick={() => item.qty === 1 ? removeItem(item.id) : updateQty(item.id, item.qty - 1)}
+                                  style={{ width: "24px", height: "24px", background: "none", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "13px" }}
+                                >
+                                  −
+                                </button>
+                                <span style={{ width: "24px", textAlign: "center", fontSize: "12px", fontWeight: "500", color: "#2d2a24" }}>
+                                  {item.qty}
+                                </span>
+                                <button
+                                  onClick={() => updateQty(item.id, item.qty + 1)}
+                                  style={{ width: "24px", height: "24px", background: "none", border: "none", cursor: "pointer", color: "#6b6560", fontSize: "13px" }}
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <div style={{ fontSize: "13px", fontWeight: "700", color: "#2d2a24" }}>
+                                ${(item.price * item.qty).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            style={{ background: "none", border: "none", cursor: "pointer", color: "#c5bfb5", fontSize: "14px", alignSelf: "flex-start", padding: "0" }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Checkout button for this supplier */}
+                    <button
+                      onClick={() => handleSupplierCheckout(group)}
+                      style={{
+                        width: "100%", background: colors.bg, color: colors.color,
+                        fontSize: "13px", fontWeight: "600", padding: "11px",
+                        borderRadius: "10px", border: "none", cursor: "pointer",
+                      }}
+                    >
+                      Buy {group.items.length} item{group.items.length > 1 ? "s" : ""} on {group.label} →
+                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Footer */}
@@ -178,17 +238,16 @@ export default function CartSidebar() {
               )}
 
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                <span style={{ fontSize: "14px", color: "#6b6560" }}>Subtotal</span>
+                <span style={{ fontSize: "14px", color: "#6b6560" }}>Estimated total</span>
                 <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                   ${total().toFixed(2)}
                 </span>
               </div>
-              <button
-                onClick={handleCheckout}
-                style={{ width: "100%", background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", border: "none", cursor: "pointer", marginBottom: "8px" }}
-              >
-                Checkout →
-              </button>
+
+              <div style={{ fontSize: "11px", color: "#9c9488", textAlign: "center", marginBottom: "12px", lineHeight: "1.5" }}>
+                Final price confirmed at checkout. PureWell earns a small commission at no extra cost to you.
+              </div>
+
               <button
                 onClick={closeCart}
                 style={{ width: "100%", background: "#fff", color: "#6b6560", fontSize: "13px", fontWeight: "500", padding: "11px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer" }}
