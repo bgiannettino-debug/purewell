@@ -9,6 +9,9 @@ type Props = {
   price: number;
   imageUrl: string | null;
   slug: string;
+  affiliateUrl?: string | null;
+  supplier?: string;
+  asin?: string | null;
   fullWidth?: boolean;
 };
 
@@ -19,7 +22,17 @@ export default function AddToCartButton(props: Props) {
     <button
       onClick={(e) => {
         e.preventDefault();
-        addItem(props);
+        addItem({
+          id: props.id,
+          name: props.name,
+          brand: props.brand,
+          price: props.price,
+          imageUrl: props.imageUrl,
+          slug: props.slug,
+          affiliateUrl: props.affiliateUrl || null,
+          supplier: props.supplier || "amazon",
+          asin: props.asin || null,
+        });
       }}
       style={{
         background: "#3d6b4f",
@@ -31,6 +44,7 @@ export default function AddToCartButton(props: Props) {
         border: "none",
         cursor: "pointer",
         width: props.fullWidth ? "100%" : "auto",
+        whiteSpace: "nowrap" as const,
       }}
     >
       {props.fullWidth ? "Add to cart" : "Add"}
