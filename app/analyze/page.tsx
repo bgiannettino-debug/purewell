@@ -66,6 +66,7 @@ export default function AnalyzePage() {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d");
+      if (!ctx) return;
       ctx.drawImage(img, 0, 0, width, height);
       const compressed = canvas.toDataURL("image/jpeg", 0.85);
       setImage(compressed);
