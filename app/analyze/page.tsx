@@ -38,7 +38,7 @@ export default function AnalyzePage() {
   const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
   if (!file) return;
   if (!file.type.startsWith("image/")) { setError("Please upload an image file."); return; }
