@@ -20,7 +20,8 @@ export default function EditProduct() {
   const [error, setError] = useState("");
   const [form, setForm] = useState({
   id: "", name: "", slug: "", brand: "", description: "", price: "",
-  category: "supplements", imageUrl: "", affiliateUrl: "", certifications: [] as string[], inStock: true,
+  category: "supplements", imageUrl: "", affiliateUrl: "",
+  supplier: "amazon", asin: "", certifications: [] as string[], inStock: true,
 });
 
   useEffect(() => {
@@ -36,6 +37,8 @@ export default function EditProduct() {
         price: product.price.toString(), category: product.category,
         imageUrl: product.imageUrl || "",
         affiliateUrl: product.affiliateUrl || "",
+        supplier: product.supplier || "amazon",
+        asin: product.asin || "",
         certifications: product.certifications || [],
         inStock: product.inStock,
     });
@@ -144,6 +147,32 @@ export default function EditProduct() {
                   Paste your Amazon Associates or iHerb affiliate link here
                 </div>
             </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+  <div>
+    <label style={labelStyle}>Supplier</label>
+    <select
+      style={inputStyle}
+      value={form.supplier}
+      onChange={(e) => setForm((p) => ({ ...p, supplier: e.target.value }))}
+    >
+      <option value="amazon">Amazon</option>
+      <option value="iherb">iHerb</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+  <div>
+    <label style={labelStyle}>ASIN (Amazon only)</label>
+    <input
+      style={inputStyle}
+      value={form.asin}
+      onChange={(e) => setForm((p) => ({ ...p, asin: e.target.value }))}
+      placeholder="e.g. B0009EYIQ4"
+    />
+    <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>
+      Found in Amazon URL after /dp/
+    </div>
+  </div>
+</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <input type="checkbox" id="inStock" checked={form.inStock} onChange={(e) => setForm((p) => ({ ...p, inStock: e.target.checked }))} style={{ width: "16px", height: "16px", accentColor: "#3d6b4f" }} />
               <label htmlFor="inStock" style={{ fontSize: "13px", color: "#6b6560", cursor: "pointer" }}>In stock</label>
