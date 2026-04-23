@@ -121,18 +121,19 @@ export default function NewProduct() {
             <input style={inputStyle} type="url" value={form.affiliateUrl} onChange={(e) => setForm((p) => ({ ...p, affiliateUrl: e.target.value }))} placeholder="https://amzn.to/... or https://iherb.com/..." />
             <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>Paste your Amazon Associates or iHerb affiliate link here
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <div>
-            <label style={labelStyle}>Supplier</label>
-            <select
-              style={inputStyle}
-              value={form.supplier}
-              onChange={(e) => setForm((p) => ({ ...p, supplier: e.target.value }))}
-            >
-              <option value="amazon">Amazon</option>
-              <option value="iherb">iHerb</option>
-              <option value="other">Other</option>
-            </select>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div>
+                <label style={labelStyle}>Supplier</label>
+                <select
+                  style={inputStyle}
+                  value={form.supplier}
+                  onChange={(e) => setForm((p) => ({ ...p, supplier: e.target.value }))}
+                >
+                  <option value="amazon">Amazon</option>
+                  <option value="iherb">iHerb</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
             </div>
           <div>
             <label style={labelStyle}>ASIN (Amazon only)</label>
