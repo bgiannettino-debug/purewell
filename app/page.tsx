@@ -106,11 +106,23 @@ export default async function Home({ searchParams }: Props) {
 
       {/* Category + retailer filters */}
       <div style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
-          <div style={{ overflowX: "auto" }}>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+          }}
+        >
+          <div style={{ flex: "1 1 auto", minWidth: 0, overflowX: "auto" }}>
             <CategoryFilter categories={categories} activeCategory={category || "all"} />
           </div>
-          <RetailerFilter activeRetailers={activeRetailers} />
+          <div style={{ flexShrink: 0 }}>
+            <RetailerFilter activeRetailers={activeRetailers} />
+          </div>
         </div>
       </div>
 
