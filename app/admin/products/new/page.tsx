@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import SupplierMismatchWarning from "../../../components/SupplierMismatchWarning";
 
 const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
@@ -147,6 +148,11 @@ export default function NewProduct() {
               Find in Amazon URL after /dp/
             </div>
           </div>
+          <SupplierMismatchWarning
+            affiliateUrl={form.affiliateUrl}
+            supplier={form.supplier}
+            onFix={(s) => setForm((p) => ({ ...p, supplier: s }))}
+          />
           </div>
           <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px" }}>
             <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "12px" }}>Certifications</div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import SupplierMismatchWarning from "../../../../components/SupplierMismatchWarning";
 
 const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
@@ -173,6 +174,11 @@ export default function EditProduct() {
     </div>
   </div>
 </div>
+<SupplierMismatchWarning
+  affiliateUrl={form.affiliateUrl}
+  supplier={form.supplier}
+  onFix={(s) => setForm((p) => ({ ...p, supplier: s }))}
+/>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <input type="checkbox" id="inStock" checked={form.inStock} onChange={(e) => setForm((p) => ({ ...p, inStock: e.target.checked }))} style={{ width: "16px", height: "16px", accentColor: "#3d6b4f" }} />
               <label htmlFor="inStock" style={{ fontSize: "13px", color: "#6b6560", cursor: "pointer" }}>In stock</label>
