@@ -14,14 +14,30 @@ type Ingredient = {
 
 type Analysis = {
   productName: string;
+  brand: string | null;
+  category: string;
+  productType: string;
   overallRating: number;
   overallVerdict: string;
   summary: string;
   ingredients: Ingredient[];
+  concerns: string[];
   redFlags: string[];
   positives: string[];
   recommendation: string;
   betterAlternative: string | null;
+};
+
+type Recommendation = {
+  product: {
+    id: string;
+    slug: string;
+    name: string;
+    brand: string;
+    imageUrl: string | null;
+    certifications: string[];
+  };
+  reason: string | null;
 };
 
 const qualityColors = {
@@ -35,6 +51,8 @@ export default function AnalyzePage() {
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
+  const [recommendationLoading, setRecommendationLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -81,6 +99,7 @@ export default function AnalyzePage() {
     if (!image) return;
     setLoading(true);
     setError("");
+    setRecommendation(null);
 
     try {
       const res = await fetch("/api/analyze", {
@@ -97,11 +116,39 @@ export default function AnalyzePage() {
       }
 
       setAnalysis(data.analysis);
+      // Fire-and-forget: catalog match runs after the main analysis renders so
+      // the user isn't blocked on it. The card just appears when ready.
+      fetchRecommendation(data.analysis);
     } catch (err) {
       setError("Something went wrong. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRecommendation = async (a: Analysis) => {
+    setRecommendationLoading(true);
+    try {
+      const res = await fetch("/api/analyze/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: a.category,
+          productType: a.productType,
+          concerns: a.concerns,
+          scannedBrand: a.brand,
+          scannedProductName: a.productName,
+          scannedRating: a.overallRating,
+        }),
+      });
+      const data = await res.json();
+      if (data.product) setRecommendation(data);
+    } catch (err) {
+      // Silent — recommendation is a nice-to-have, not required for the page to work.
+      console.warn("Recommendation lookup failed", err);
+    } finally {
+      setRecommendationLoading(false);
     }
   };
 
@@ -178,6 +225,7 @@ export default function AnalyzePage() {
                     setImage(null);
                     setFileName("");
                     setAnalysis(null);
+                    setRecommendation(null);
                     setError("");
                     if (fileInputRef.current) fileInputRef.current.value = "";
                     if (cameraInputRef.current) cameraInputRef.current.value = "";
@@ -386,16 +434,74 @@ export default function AnalyzePage() {
               )}
             </div>
 
+            {/* Catalog-matched recommendation */}
+            {recommendationLoading && !recommendation && (
+              <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "20px", height: "20px", border: "2px solid #eef5f0", borderTopColor: "#3d6b4f", borderRadius: "50%", animation: "spin 0.8s linear infinite", flexShrink: 0 }} />
+                <div style={{ fontSize: "13px", color: "#6b6560" }}>
+                  Checking the PureWell catalog for a cleaner alternative...
+                </div>
+              </div>
+            )}
+
+            {recommendation && (
+              <div style={{ background: "#fff", border: "2px solid #3d6b4f", borderRadius: "16px", padding: "20px", boxShadow: "0 4px 16px rgba(61, 107, 79, 0.08)" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "11px", fontWeight: "600", padding: "4px 10px", borderRadius: "99px", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  ✨ Cleaner pick from our catalog
+                </div>
+                <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                  {recommendation.product.imageUrl && (
+                    <div style={{ flexShrink: 0, width: "84px", height: "84px", borderRadius: "10px", overflow: "hidden", background: "#faf8f5", border: "1px solid #e7e3dc", position: "relative" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={recommendation.product.imageUrl}
+                        alt={recommendation.product.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "11px", fontWeight: "500", color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "2px" }}>
+                      {recommendation.product.brand}
+                    </div>
+                    <div style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24", lineHeight: "1.3", marginBottom: "8px" }}>
+                      {recommendation.product.name}
+                    </div>
+                    {recommendation.reason && (
+                      <div style={{ fontSize: "13px", color: "#3d6b4f", lineHeight: "1.5", marginBottom: "10px" }}>
+                        {recommendation.reason}
+                      </div>
+                    )}
+                    {recommendation.product.certifications.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                        {recommendation.product.certifications.slice(0, 4).map((cert) => (
+                          <span key={cert} style={{ fontSize: "10px", fontWeight: "500", color: "#3d6b4f", background: "#eef5f0", border: "1px solid #c8ddd0", padding: "2px 8px", borderRadius: "99px" }}>
+                            {cert}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <Link
+                  href={`/products/${recommendation.product.slug}`}
+                  style={{ display: "block", textAlign: "center", marginTop: "14px", background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "600", padding: "11px", borderRadius: "10px", textDecoration: "none" }}
+                >
+                  View this product →
+                </Link>
+              </div>
+            )}
+
             {/* CTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <Link
                 href="/"
-                style={{ background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", textDecoration: "none", display: "block", textAlign: "center" }}
+                style={{ background: recommendation ? "#fff" : "#3d6b4f", color: recommendation ? "#3d6b4f" : "#fff", fontSize: "14px", fontWeight: "600", padding: "13px", borderRadius: "12px", textDecoration: "none", display: "block", textAlign: "center", border: recommendation ? "1px solid #c8ddd0" : "none" }}
               >
-                Shop better alternatives →
+                {recommendation ? "Browse all products →" : "Shop better alternatives →"}
               </Link>
               <button
-                onClick={() => { setAnalysis(null); setImage(null); setFileName(""); }}
+                onClick={() => { setAnalysis(null); setRecommendation(null); setImage(null); setFileName(""); }}
                 style={{ background: "#fff", color: "#6b6560", fontSize: "13px", fontWeight: "500", padding: "11px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer" }}
               >
                 Analyze another supplement

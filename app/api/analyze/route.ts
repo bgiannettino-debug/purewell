@@ -28,17 +28,21 @@ export async function POST(req: NextRequest) {
 
 {
   "productName": "string",
+  "brand": "string or null",
+  "category": "one of: supplements, essential-oils, herbal-teas, skincare, nutrition, fitness",
+  "productType": "string short canonical type, e.g. 'magnesium glycinate', 'vitamin d3', 'lavender essential oil', 'whey protein'. Lowercase, no brand names.",
   "overallRating": number 1-10,
   "overallVerdict": "string one sentence",
   "summary": "string 2-3 sentences",
   "ingredients": [{"name": "string", "purpose": "string", "quality": "good or neutral or warning", "note": "string"}],
+  "concerns": ["short tags for things wrong with the product, e.g. 'artificial sweeteners', 'fillers', 'low dose', 'magnesium oxide form'. Empty array if none."],
   "redFlags": ["string"],
   "positives": ["string"],
   "recommendation": "string 2-3 sentences",
   "betterAlternative": "string or null"
 }
 
-Be direct and evidence-based. Never make disease treatment claims.`,
+Be direct and evidence-based. Never make disease treatment claims. The 'category' must be exactly one of the listed options. The 'productType' is used to match this product against a catalog of cleaner alternatives, so keep it canonical and brand-free.`,
           },
         ],
       }],
