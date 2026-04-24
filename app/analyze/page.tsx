@@ -37,6 +37,7 @@ export default function AnalyzePage() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
@@ -140,14 +141,12 @@ export default function AnalyzePage() {
 
         {/* Upload area */}
         <div
-          onClick={() => fileInputRef.current?.click()}
           style={{
             background: "#fff",
             border: `2px dashed ${image ? "#3d6b4f" : "#e7e3dc"}`,
             borderRadius: "16px",
             padding: "40px 24px",
             textAlign: "center",
-            cursor: "pointer",
             marginBottom: "16px",
             transition: "border-color 0.2s",
           }}
@@ -159,40 +158,63 @@ export default function AnalyzePage() {
                 alt="Uploaded label"
                 style={{ maxHeight: "200px", maxWidth: "100%", borderRadius: "8px", marginBottom: "12px", objectFit: "contain" }}
               />
-              <div style={{ fontSize: "13px", color: "#3d6b4f", fontWeight: "500", marginBottom: "8px" }}>{fileName}</div>
-                <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+              <div style={{ fontSize: "13px", color: "#3d6b4f", fontWeight: "500", marginBottom: "10px" }}>{fileName}</div>
+              <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
                 <button
-                    onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                    style={{ fontSize: "12px", color: "#3d6b4f", background: "#eef5f0", border: "1px solid #c8ddd0", padding: "5px 12px", borderRadius: "8px", cursor: "pointer" }}
-                    >
-                      Change
+                  className="analyze-camera-btn"
+                  onClick={() => cameraInputRef.current?.click()}
+                  style={{ fontSize: "12px", color: "#3d6b4f", background: "#eef5f0", border: "1px solid #c8ddd0", padding: "6px 14px", borderRadius: "8px", cursor: "pointer", display: "none" }}
+                >
+                  📷 Retake photo
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{ fontSize: "12px", color: "#3d6b4f", background: "#eef5f0", border: "1px solid #c8ddd0", padding: "6px 14px", borderRadius: "8px", cursor: "pointer" }}
+                >
+                  Choose different
+                </button>
+                <button
+                  onClick={() => {
                     setImage(null);
                     setFileName("");
                     setAnalysis(null);
                     setError("");
                     if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-                  style={{ fontSize: "12px", color: "#c0392b", background: "#fdf0ee", border: "1px solid #f5c6c0", padding: "5px 12px", borderRadius: "8px", cursor: "pointer" }}
-                    >
-                        Remove
-                    </button>
-                </div>
-           </div>
+                    if (cameraInputRef.current) cameraInputRef.current.value = "";
+                  }}
+                  style={{ fontSize: "12px", color: "#c0392b", background: "#fdf0ee", border: "1px solid #f5c6c0", padding: "6px 14px", borderRadius: "8px", cursor: "pointer" }}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
           ) : (
             <div>
               <div style={{ fontSize: "40px", marginBottom: "12px" }}>📷</div>
-              <div style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24", marginBottom: "6px" }}>
-                Upload supplement label
+              <div style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>
+                Scan or upload a supplement label
               </div>
-              <div style={{ fontSize: "13px", color: "#9c9488" }}>
-                Click to upload or drag and drop · JPG, PNG, WEBP · Max 5MB
+              <div style={{ fontSize: "13px", color: "#9c9488", marginBottom: "18px" }}>
+                JPG, PNG, WEBP · Max 20MB
+              </div>
+              <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                <button
+                  className="analyze-camera-btn"
+                  onClick={() => cameraInputRef.current?.click()}
+                  style={{ fontSize: "14px", fontWeight: "600", color: "#fff", background: "#3d6b4f", border: "none", padding: "11px 22px", borderRadius: "10px", cursor: "pointer", display: "none" }}
+                >
+                  📷 Take a photo
+                </button>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{ fontSize: "14px", fontWeight: "600", color: "#2d2a24", background: "#fff", border: "1px solid #e7e3dc", padding: "11px 22px", borderRadius: "10px", cursor: "pointer" }}
+                >
+                  📁 Choose file
+                </button>
               </div>
             </div>
           )}
+          {/* Gallery / desktop file picker */}
           <input
             ref={fileInputRef}
             type="file"
@@ -200,6 +222,21 @@ export default function AnalyzePage() {
             onChange={handleFileChange}
             style={{ display: "none" }}
           />
+          {/* Mobile camera — capture="environment" opens the rear camera directly on mobile */}
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+          />
+          {/* Show camera button only on mobile (desktop browsers treat `capture` inconsistently) */}
+          <style>{`
+            @media (max-width: 768px) {
+              .analyze-camera-btn { display: inline-flex !important; align-items: center; gap: 6px; }
+            }
+          `}</style>
         </div>
 
         {error && (
