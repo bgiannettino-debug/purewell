@@ -21,6 +21,7 @@ export default function Navbar() {
   };
 
   const navLinks = [
+  { href: "/", label: "Products" },
   { href: "/recipes", label: "Recipes" },
   { href: "/analyze", label: "Label analyzer" },
   { href: "/quiz", label: "Wellness quiz" },
