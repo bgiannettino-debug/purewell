@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Natural Health Products & Wellness Supplements",
-  description: "Browse 73+ curated all-natural supplements, essential oils, herbal teas, and wellness products. Non-GMO, organic, and third-party tested.",
+  description: "Curated all-natural supplements, essential oils, herbal teas, and wellness products. Non-GMO, organic, and third-party tested.",
 };
 
 export const dynamic = "force-dynamic";
@@ -20,6 +20,8 @@ type Props = {
 
 export default async function Home({ searchParams }: Props) {
   const { category, search } = await searchParams;
+
+  const totalProductCount = await db.product.count();
 
   const products = await db.product.findMany({
     where: {
@@ -76,7 +78,7 @@ export default async function Home({ searchParams }: Props) {
               </Link>
             </div>
             <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
-              {[["73+", "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
+              {[[`${totalProductCount}+`, "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
                   <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>
