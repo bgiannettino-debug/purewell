@@ -39,6 +39,15 @@ const supplierColors: Record<string, { bg: string; color: string; border: string
   other: { bg: "#3d6b4f", color: "#fff", border: "#3d6b4f" },
 };
 
+// Static per-retailer shipping hints. PureWell is affiliate-only — actual
+// shipping is determined by whichever retailer fulfills the order, so we show
+// their rules rather than pretending we can offer free shipping ourselves.
+const supplierShippingHints: Record<string, string> = {
+  amazon: "Free shipping on eligible orders $35+ · Free with Prime",
+  iherb: "Free US shipping on most orders $20+",
+  other: "Shipping calculated by retailer at checkout",
+};
+
 export default function CartSidebar() {
   const {
     items, removeItem, updateQty, total, count,
@@ -202,6 +211,13 @@ export default function CartSidebar() {
                       ))}
                     </div>
 
+                    {/* Shipping hint for this supplier */}
+                    {supplierShippingHints[group.supplier] && (
+                      <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px", lineHeight: "1.5" }}>
+                        {supplierShippingHints[group.supplier]}
+                      </div>
+                    )}
+
                     {/* Checkout button for this supplier */}
                     <button
                       onClick={() => handleSupplierCheckout(group)}
@@ -220,32 +236,18 @@ export default function CartSidebar() {
 
             {/* Footer */}
             <div style={{ padding: "16px 20px", borderTop: "1px solid #e7e3dc", background: "#faf8f5" }}>
-              {/* Free shipping progress */}
-              {total() < 35 && (
-                <div style={{ marginBottom: "12px" }}>
-                  <div style={{ fontSize: "12px", color: "#6b6560", marginBottom: "6px" }}>
-                    Add <strong style={{ color: "#3d6b4f" }}>${(35 - total()).toFixed(2)}</strong> more for free shipping
-                  </div>
-                  <div style={{ height: "4px", background: "#e7e3dc", borderRadius: "2px", overflow: "hidden" }}>
-                    <div style={{ height: "100%", background: "#3d6b4f", borderRadius: "2px", width: `${Math.min((total() / 35) * 100, 100)}%`, transition: "width 0.3s" }} />
-                  </div>
-                </div>
-              )}
-              {total() >= 35 && (
-                <div style={{ fontSize: "12px", color: "#3d6b4f", fontWeight: "500", marginBottom: "12px", textAlign: "center" }}>
-                  🎉 You qualify for free shipping!
-                </div>
-              )}
-
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                <span style={{ fontSize: "14px", color: "#6b6560" }}>Estimated total</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "4px" }}>
+                <span style={{ fontSize: "14px", color: "#6b6560" }}>Subtotal across retailers</span>
                 <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                   ${total().toFixed(2)}
                 </span>
               </div>
+              <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px", lineHeight: "1.5" }}>
+                You&apos;ll check out with each retailer separately. Final price and shipping confirmed by the retailer.
+              </div>
 
               <div style={{ fontSize: "11px", color: "#9c9488", textAlign: "center", marginBottom: "12px", lineHeight: "1.5" }}>
-                Final price confirmed at checkout. PureWell earns a small commission at no extra cost to you.
+                PureWell earns a small commission at no extra cost to you.
               </div>
 
               <button
