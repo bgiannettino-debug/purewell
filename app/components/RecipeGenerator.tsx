@@ -315,10 +315,11 @@ export default function RecipeGenerator() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+        <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
           <button
             onClick={handleReset}
             style={{
+              flex: "1 1 200px",
               background: "#fff",
               color: "#2d2a24",
               border: "1px solid #e7e3dc",
@@ -335,6 +336,7 @@ export default function RecipeGenerator() {
             onClick={handleGenerate}
             disabled={loading}
             style={{
+              flex: "1 1 200px",
               background: "#3d6b4f",
               color: "#fff",
               border: "none",
@@ -534,6 +536,7 @@ export default function RecipeGenerator() {
               placeholder="Add your own (e.g. matcha, cardamom)"
               style={{
                 flex: 1,
+                minWidth: 0,
                 fontSize: "13px",
                 padding: "10px 14px",
                 background: "#faf8f5",
