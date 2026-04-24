@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Ingredient = { name: string; amount: string };
 type GeneratedRecipe = {
@@ -57,10 +57,24 @@ const PANTRY_SUGGESTIONS = [
 export default function RecipeGenerator() {
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState<string[]>([]);
+  // Debounced mirror of `ingredients` used ONLY to decide which pantry chips
+  // are still visible in the suggestions grid. Delaying this by ~1.2s of idle
+  // lets the user tap several suggestions in a row without the tiles shifting
+  // under their finger between each tap.
+  const [stableIngredients, setStableIngredients] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recipe, setRecipe] = useState<GeneratedRecipe | null>(null);
+
+  // Debounce: snapshot `ingredients` into `stableIngredients` after 1200ms of
+  // no further changes. Each selection resets the timer via the cleanup.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStableIngredients(ingredients);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [ingredients]);
 
   const toggleGoal = (goal: string) => {
     setSelectedGoals((prev) =>
@@ -122,9 +136,14 @@ export default function RecipeGenerator() {
     setError(null);
   };
 
-  const unselectedSuggestions = PANTRY_SUGGESTIONS.filter(
-    (p) => !ingredients.some((i) => i.toLowerCase() === p.toLowerCase())
+  // Grid visibility is driven by the debounced list; actual selection state
+  // (what's in `ingredients`) is used to paint the chip as picked in the
+  // meantime so the tap gives immediate feedback.
+  const visibleSuggestions = PANTRY_SUGGESTIONS.filter(
+    (p) => !stableIngredients.some((i) => i.toLowerCase() === p.toLowerCase())
   );
+  const isPicked = (name: string) =>
+    ingredients.some((i) => i.toLowerCase() === name.toLowerCase());
 
   // ---------- RESULT VIEW ----------
   if (recipe) {
@@ -545,7 +564,7 @@ export default function RecipeGenerator() {
           </div>
 
           {/* Suggestions */}
-          {unselectedSuggestions.length > 0 && (
+          {visibleSuggestions.length > 0 && (
             <>
               <div
                 style={{
@@ -560,25 +579,33 @@ export default function RecipeGenerator() {
                 Common pantry items
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                {unselectedSuggestions.map((ing) => (
-                  <button
-                    key={ing}
-                    type="button"
-                    onClick={() => toggleIngredient(ing)}
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      padding: "6px 12px",
-                      borderRadius: "99px",
-                      border: "1px solid #e7e3dc",
-                      background: "#fff",
-                      color: "#5c5650",
-                      cursor: "pointer",
-                    }}
-                  >
-                    + {ing}
-                  </button>
-                ))}
+                {visibleSuggestions.map((ing) => {
+                  const picked = isPicked(ing);
+                  return (
+                    <button
+                      key={ing}
+                      type="button"
+                      onClick={() => toggleIngredient(ing)}
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        padding: "6px 12px",
+                        borderRadius: "99px",
+                        border: picked
+                          ? "1px solid #3d6b4f"
+                          : "1px solid #e7e3dc",
+                        background: picked ? "#eef5f0" : "#fff",
+                        color: picked ? "#3d6b4f" : "#5c5650",
+                        cursor: "pointer",
+                        transition:
+                          "background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+                      }}
+                    >
+                      {picked ? "✓ " : "+ "}
+                      {ing}
+                    </button>
+                  );
+                })}
               </div>
             </>
           )}
