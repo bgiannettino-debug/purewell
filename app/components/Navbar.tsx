@@ -21,9 +21,6 @@ export default function Navbar() {
   };
 
   const navLinks = [
-  { href: "/?category=supplements", label: "Supplements" },
-  { href: "/?category=essential-oils", label: "Essential oils" },
-  { href: "/?category=herbal-teas", label: "Herbal teas" },
   { href: "/recipes", label: "Recipes" },
   { href: "/analyze", label: "Label analyzer" },
   { href: "/quiz", label: "Wellness quiz" },
