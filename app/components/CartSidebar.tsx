@@ -4,7 +4,7 @@ import { useCart } from "../../lib/cartStore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const AMAZON_TAG = "YOUR-AMAZON-TAG"; // Replace with your Amazon Associates tag
+const AMAZON_TAG = "purewell0d-20"; // Replace with your Amazon Associates tag
 
 type SupplierGroup = {
   supplier: string;
