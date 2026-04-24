@@ -2,11 +2,12 @@
 // Used by the admin product form to warn when the supplier select drifts
 // from the URL the merchandiser pasted in.
 
-export type SupplierId = "amazon" | "iherb" | "other";
+export type SupplierId = "amazon" | "iherb" | "thrive" | "other";
 
 export const supplierLabels: Record<SupplierId, string> = {
   amazon: "Amazon",
   iherb: "iHerb",
+  thrive: "Thrive Market",
   other: "Other",
 };
 
@@ -40,6 +41,12 @@ export function detectSupplierFromUrl(url: string): SupplierId | null {
   // iHerb: iherb.com plus country domains.
   if (/(^|\.)iherb\.[a-z.]+$/.test(host)) {
     return "iherb";
+  }
+
+  // Thrive Market: thrivemarket.com plus its tracking subdomain. Their affiliate
+  // links sometimes route through trk.thrivemarket.com before the redirect.
+  if (host === "thrivemarket.com" || host.endsWith(".thrivemarket.com")) {
+    return "thrive";
   }
 
   return "other";

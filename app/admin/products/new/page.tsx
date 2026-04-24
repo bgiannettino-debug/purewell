@@ -132,6 +132,7 @@ export default function NewProduct() {
                 >
                   <option value="amazon">Amazon</option>
                   <option value="iherb">iHerb</option>
+                  <option value="thrive">Thrive Market</option>
                   <option value="other">Other</option>
                 </select>
               </div>

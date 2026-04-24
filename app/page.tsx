@@ -19,7 +19,7 @@ type Props = {
   searchParams: Promise<{ category?: string; search?: string; retailers?: string }>;
 };
 
-const VALID_RETAILERS = ["amazon", "iherb", "other"];
+const VALID_RETAILERS = ["amazon", "iherb", "thrive", "other"];
 
 export default async function Home({ searchParams }: Props) {
   const { category, search, retailers } = await searchParams;

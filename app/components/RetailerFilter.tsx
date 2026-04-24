@@ -8,6 +8,7 @@ const STORAGE_KEY = "purewell-retailers";
 const RETAILERS = [
   { id: "amazon", label: "Amazon" },
   { id: "iherb", label: "iHerb" },
+  { id: "thrive", label: "Thrive Market" },
   { id: "other", label: "Other retailers" },
 ];
 

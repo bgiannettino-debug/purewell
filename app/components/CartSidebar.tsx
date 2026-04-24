@@ -30,12 +30,14 @@ function buildAmazonCartUrl(items: SupplierGroup["items"], tag: string) {
 const supplierLabels: Record<string, string> = {
   amazon: "Amazon",
   iherb: "iHerb",
+  thrive: "Thrive Market",
   other: "Retailer",
 };
 
 const supplierColors: Record<string, { bg: string; color: string; border: string }> = {
   amazon: { bg: "#FF9900", color: "#fff", border: "#FF9900" },
   iherb: { bg: "#7ab648", color: "#fff", border: "#7ab648" },
+  thrive: { bg: "#c85d3e", color: "#fff", border: "#c85d3e" },
   other: { bg: "#3d6b4f", color: "#fff", border: "#3d6b4f" },
 };
 
@@ -45,6 +47,7 @@ const supplierColors: Record<string, { bg: string; color: string; border: string
 const supplierShippingHints: Record<string, string> = {
   amazon: "Free shipping on eligible orders $35+ · Free with Prime",
   iherb: "Free US shipping on most orders $20+",
+  thrive: "Membership required · Free shipping on orders $49+",
   other: "Shipping calculated by retailer at checkout",
 };
 

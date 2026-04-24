@@ -26,7 +26,7 @@ export default function DisclosurePage() {
               Our affiliate relationships
             </h2>
             <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: "1.8" }}>
-              PureWell participates in affiliate marketing programs, including Amazon Associates and the iHerb Affiliate Program. This means that when you click on certain product links on our site and make a purchase, we may earn a small commission at no additional cost to you.
+              PureWell participates in affiliate marketing programs, including Amazon Associates, the iHerb Affiliate Program, and the Thrive Market Affiliate Program. This means that when you click on certain product links on our site and make a purchase, we may earn a small commission at no additional cost to you.
             </p>
           </div>
 
@@ -54,6 +54,15 @@ export default function DisclosurePage() {
             </h2>
             <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: "1.8" }}>
               PureWell participates in the iHerb Affiliate Program. When you purchase products through our iHerb links we may earn a commission. iHerb maintains full control over pricing and product availability.
+            </p>
+          </div>
+
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "24px" }}>
+            <h2 style={{ fontSize: "16px", fontWeight: "600", color: "#2d2a24", marginBottom: "10px" }}>
+              Thrive Market affiliate disclosure
+            </h2>
+            <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: "1.8" }}>
+              PureWell participates in the Thrive Market Affiliate Program. When you sign up for a Thrive Market membership or purchase products through our Thrive Market links we may earn a commission. Thrive Market is a paid membership marketplace, and membership and product pricing are set entirely by Thrive Market.
             </p>
           </div>
 
