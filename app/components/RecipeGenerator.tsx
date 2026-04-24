@@ -1,0 +1,626 @@
+"use client";
+
+import { useState } from "react";
+
+type Ingredient = { name: string; amount: string };
+type GeneratedRecipe = {
+  recipeName: string;
+  whyItWorks: string;
+  prepTime: string;
+  servings: number;
+  ingredients: Ingredient[];
+  steps: string[];
+  tip?: string;
+};
+
+const GOALS = [
+  "Immune boost",
+  "Calm / sleep",
+  "Energy",
+  "Digestion / gut",
+  "Skin glow",
+  "Detox",
+  "Sore throat",
+  "Headache",
+  "Workout recovery",
+];
+
+const PANTRY_SUGGESTIONS = [
+  "Honey",
+  "Ginger",
+  "Lemon",
+  "Garlic",
+  "Turmeric",
+  "Apple cider vinegar",
+  "Cinnamon",
+  "Cayenne",
+  "Black pepper",
+  "Mint",
+  "Green tea",
+  "Chamomile tea",
+  "Coconut oil",
+  "Olive oil",
+  "Oats",
+  "Chia seeds",
+  "Flax seeds",
+  "Banana",
+  "Avocado",
+  "Berries",
+  "Spinach",
+  "Yogurt",
+  "Almond milk",
+  "Almonds",
+  "Walnuts",
+  "Eggs",
+];
+
+export default function RecipeGenerator() {
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [customInput, setCustomInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [recipe, setRecipe] = useState<GeneratedRecipe | null>(null);
+
+  const toggleGoal = (goal: string) => {
+    setSelectedGoals((prev) =>
+      prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal]
+    );
+  };
+
+  const toggleIngredient = (ingredient: string) => {
+    setIngredients((prev) =>
+      prev.includes(ingredient)
+        ? prev.filter((i) => i !== ingredient)
+        : [...prev, ingredient]
+    );
+  };
+
+  const addCustomIngredient = () => {
+    const trimmed = customInput.trim();
+    if (!trimmed) return;
+    if (!ingredients.some((i) => i.toLowerCase() === trimmed.toLowerCase())) {
+      setIngredients((prev) => [...prev, trimmed]);
+    }
+    setCustomInput("");
+  };
+
+  const handleGenerate = async () => {
+    setError(null);
+    setRecipe(null);
+    if (selectedGoals.length === 0) {
+      setError("Pick at least one health goal.");
+      return;
+    }
+    if (ingredients.length === 0) {
+      setError("Add at least one ingredient you have at home.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/recipe-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ goals: selectedGoals, ingredients }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+      } else {
+        setRecipe(data.recipe);
+      }
+    } catch (e) {
+      setError("Network error. Please try again.");
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setRecipe(null);
+    setError(null);
+  };
+
+  const unselectedSuggestions = PANTRY_SUGGESTIONS.filter(
+    (p) => !ingredients.some((i) => i.toLowerCase() === p.toLowerCase())
+  );
+
+  // ---------- RESULT VIEW ----------
+  if (recipe) {
+    return (
+      <div style={{ maxWidth: "720px", margin: "0 auto" }}>
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #e7e3dc",
+            borderRadius: "16px",
+            padding: "28px",
+            marginBottom: "16px",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              background: "#eef5f0",
+              border: "1px solid #c8ddd0",
+              color: "#3d6b4f",
+              fontSize: "11px",
+              fontWeight: "500",
+              padding: "4px 10px",
+              borderRadius: "99px",
+              marginBottom: "12px",
+            }}
+          >
+            🌿 AI-generated for you
+          </div>
+          <h2
+            style={{
+              fontSize: "24px",
+              fontWeight: "700",
+              color: "#2d2a24",
+              marginBottom: "10px",
+              lineHeight: "1.3",
+            }}
+          >
+            {recipe.recipeName}
+          </h2>
+          <p
+            style={{
+              fontSize: "14px",
+              color: "#6b6560",
+              lineHeight: "1.7",
+              marginBottom: "18px",
+            }}
+          >
+            {recipe.whyItWorks}
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              fontSize: "12px",
+              color: "#9c9488",
+              marginBottom: "20px",
+              paddingBottom: "18px",
+              borderBottom: "1px solid #f0ece6",
+            }}
+          >
+            <span>⏱ {recipe.prepTime}</span>
+            <span>
+              🍽 {recipe.servings} serving{recipe.servings > 1 ? "s" : ""}
+            </span>
+          </div>
+
+          <h3
+            style={{
+              fontSize: "13px",
+              fontWeight: "600",
+              color: "#2d2a24",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              marginBottom: "10px",
+            }}
+          >
+            Ingredients
+          </h3>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: "0 0 22px 0",
+            }}
+          >
+            {recipe.ingredients.map((ing, i) => (
+              <li
+                key={i}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "12px",
+                  padding: "8px 0",
+                  borderBottom:
+                    i < recipe.ingredients.length - 1
+                      ? "1px solid #f5f2ed"
+                      : "none",
+                  fontSize: "14px",
+                  color: "#2d2a24",
+                }}
+              >
+                <span>{ing.name}</span>
+                <span style={{ color: "#6b6560", fontWeight: "500" }}>
+                  {ing.amount}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <h3
+            style={{
+              fontSize: "13px",
+              fontWeight: "600",
+              color: "#2d2a24",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              marginBottom: "10px",
+            }}
+          >
+            Steps
+          </h3>
+          <ol style={{ paddingLeft: "20px", margin: "0 0 20px 0" }}>
+            {recipe.steps.map((step, i) => (
+              <li
+                key={i}
+                style={{
+                  fontSize: "14px",
+                  color: "#2d2a24",
+                  lineHeight: "1.7",
+                  marginBottom: "8px",
+                }}
+              >
+                {step}
+              </li>
+            ))}
+          </ol>
+
+          {recipe.tip && recipe.tip.trim() !== "" && (
+            <div
+              style={{
+                background: "#faf8f5",
+                border: "1px solid #e7e3dc",
+                borderRadius: "10px",
+                padding: "12px 14px",
+                fontSize: "13px",
+                color: "#6b6560",
+                lineHeight: "1.6",
+              }}
+            >
+              💡 <strong style={{ color: "#2d2a24" }}>Tip:</strong> {recipe.tip}
+            </div>
+          )}
+
+          <p
+            style={{
+              fontSize: "11px",
+              color: "#9c9488",
+              lineHeight: "1.6",
+              marginTop: "18px",
+            }}
+          >
+            AI-generated. Not medical advice. Check for allergies before
+            trying. If you have a health condition or take medication, consult a
+            healthcare provider.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+          <button
+            onClick={handleReset}
+            style={{
+              background: "#fff",
+              color: "#2d2a24",
+              border: "1px solid #e7e3dc",
+              fontSize: "13px",
+              fontWeight: "500",
+              padding: "10px 20px",
+              borderRadius: "10px",
+              cursor: "pointer",
+            }}
+          >
+            ← Generate another
+          </button>
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            style={{
+              background: "#3d6b4f",
+              color: "#fff",
+              border: "none",
+              fontSize: "13px",
+              fontWeight: "600",
+              padding: "10px 20px",
+              borderRadius: "10px",
+              cursor: loading ? "wait" : "pointer",
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? "Generating…" : "Try a different recipe"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------- FORM VIEW ----------
+  return (
+    <div style={{ maxWidth: "720px", margin: "0 auto" }}>
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid #e7e3dc",
+          borderRadius: "16px",
+          padding: "28px",
+          marginBottom: "16px",
+        }}
+      >
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            background: "#eef5f0",
+            border: "1px solid #c8ddd0",
+            color: "#3d6b4f",
+            fontSize: "11px",
+            fontWeight: "500",
+            padding: "4px 10px",
+            borderRadius: "99px",
+            marginBottom: "12px",
+          }}
+        >
+          🌿 AI recipe generator
+        </div>
+        <h2
+          style={{
+            fontSize: "22px",
+            fontWeight: "700",
+            color: "#2d2a24",
+            marginBottom: "8px",
+          }}
+        >
+          Make a DIY recipe from what you have
+        </h2>
+        <p
+          style={{
+            fontSize: "14px",
+            color: "#6b6560",
+            lineHeight: "1.6",
+            marginBottom: "24px",
+          }}
+        >
+          Pick your health goals and what&apos;s in your pantry — our AI will
+          design a simple, natural recipe for you.
+        </p>
+
+        {/* Goals */}
+        <div style={{ marginBottom: "24px" }}>
+          <label
+            style={{
+              display: "block",
+              fontSize: "13px",
+              fontWeight: "600",
+              color: "#2d2a24",
+              marginBottom: "10px",
+            }}
+          >
+            1. What do you want to support?{" "}
+            <span style={{ color: "#9c9488", fontWeight: "400" }}>
+              (pick one or more)
+            </span>
+          </label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {GOALS.map((goal) => {
+              const selected = selectedGoals.includes(goal);
+              return (
+                <button
+                  key={goal}
+                  type="button"
+                  onClick={() => toggleGoal(goal)}
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    padding: "8px 14px",
+                    borderRadius: "99px",
+                    border: selected
+                      ? "1px solid #3d6b4f"
+                      : "1px solid #e7e3dc",
+                    background: selected ? "#eef5f0" : "#fff",
+                    color: selected ? "#3d6b4f" : "#5c5650",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {selected && "✓ "}
+                  {goal}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Ingredients */}
+        <div style={{ marginBottom: "24px" }}>
+          <label
+            style={{
+              display: "block",
+              fontSize: "13px",
+              fontWeight: "600",
+              color: "#2d2a24",
+              marginBottom: "10px",
+            }}
+          >
+            2. What&apos;s in your pantry?{" "}
+            <span style={{ color: "#9c9488", fontWeight: "400" }}>
+              (tap to add, or type your own)
+            </span>
+          </label>
+
+          {/* Selected ingredients */}
+          {ingredients.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                marginBottom: "12px",
+                padding: "10px",
+                background: "#faf8f5",
+                border: "1px solid #e7e3dc",
+                borderRadius: "10px",
+              }}
+            >
+              {ingredients.map((ing) => (
+                <span
+                  key={ing}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    padding: "6px 12px",
+                    borderRadius: "99px",
+                    background: "#3d6b4f",
+                    color: "#fff",
+                  }}
+                >
+                  {ing}
+                  <button
+                    type="button"
+                    onClick={() => toggleIngredient(ing)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#fff",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                      padding: 0,
+                      lineHeight: 1,
+                      opacity: 0.85,
+                    }}
+                    aria-label={`Remove ${ing}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Custom input */}
+          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+            <input
+              type="text"
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addCustomIngredient();
+                }
+              }}
+              placeholder="Add your own (e.g. matcha, cardamom)"
+              style={{
+                flex: 1,
+                fontSize: "13px",
+                padding: "10px 14px",
+                background: "#faf8f5",
+                border: "1px solid #e7e3dc",
+                borderRadius: "10px",
+                outline: "none",
+                color: "#2d2a24",
+              }}
+            />
+            <button
+              type="button"
+              onClick={addCustomIngredient}
+              disabled={!customInput.trim()}
+              style={{
+                background: "#2d2a24",
+                color: "#fff",
+                border: "none",
+                fontSize: "13px",
+                fontWeight: "500",
+                padding: "10px 16px",
+                borderRadius: "10px",
+                cursor: customInput.trim() ? "pointer" : "not-allowed",
+                opacity: customInput.trim() ? 1 : 0.5,
+              }}
+            >
+              Add
+            </button>
+          </div>
+
+          {/* Suggestions */}
+          {unselectedSuggestions.length > 0 && (
+            <>
+              <div
+                style={{
+                  fontSize: "11px",
+                  color: "#9c9488",
+                  marginBottom: "8px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  fontWeight: "500",
+                }}
+              >
+                Common pantry items
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {unselectedSuggestions.map((ing) => (
+                  <button
+                    key={ing}
+                    type="button"
+                    onClick={() => toggleIngredient(ing)}
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      padding: "6px 12px",
+                      borderRadius: "99px",
+                      border: "1px solid #e7e3dc",
+                      background: "#fff",
+                      color: "#5c5650",
+                      cursor: "pointer",
+                    }}
+                  >
+                    + {ing}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div
+            style={{
+              background: "#fdf0ee",
+              border: "1px solid #f0c5b8",
+              color: "#8a3020",
+              fontSize: "13px",
+              padding: "10px 14px",
+              borderRadius: "10px",
+              marginBottom: "14px",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Generate */}
+        <button
+          onClick={handleGenerate}
+          disabled={loading}
+          style={{
+            width: "100%",
+            background: "#3d6b4f",
+            color: "#fff",
+            border: "none",
+            fontSize: "14px",
+            fontWeight: "600",
+            padding: "13px",
+            borderRadius: "12px",
+            cursor: loading ? "wait" : "pointer",
+            opacity: loading ? 0.7 : 1,
+          }}
+        >
+          {loading ? "Cooking up your recipe…" : "Generate my recipe →"}
+        </button>
+      </div>
+    </div>
+  );
+}
