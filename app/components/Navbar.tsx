@@ -55,12 +55,19 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          {navLinks.map((link) => (
-          <Link key={link.href} href={link.href} style={{ fontSize: "12px", color: "#5c5650", textDecoration: "none", fontWeight: "500", whiteSpace: "nowrap" }}>
-            {link.label}
-            </Link>
-          ))}
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "14px", marginLeft: "24px" }}>
+          {navLinks.flatMap((link, idx) => [
+            idx > 0 ? (
+              <div
+                key={`sep-${link.href}`}
+                aria-hidden
+                style={{ width: "1px", height: "14px", background: "#e7e3dc" }}
+              />
+            ) : null,
+            <Link key={link.href} href={link.href} style={{ fontSize: "12px", color: "#5c5650", textDecoration: "none", fontWeight: "500", whiteSpace: "nowrap" }}>
+              {link.label}
+            </Link>,
+          ])}
         </div>
 
         <div style={{ flex: 1 }} />
