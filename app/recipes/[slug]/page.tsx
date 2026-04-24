@@ -161,7 +161,7 @@ export default async function RecipePage({ params }: Props) {
         {/* Shop CTA */}
         <div style={{ background: "#eef5f0", border: "1px solid #c8ddd0", borderRadius: "16px", padding: "20px", marginBottom: "16px" }}>
           <div style={{ fontSize: "14px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>
-            Shop the ingredients
+            Shop for ingredients
           </div>
           <p style={{ fontSize: "13px", color: "#6b6560", marginBottom: "12px" }}>
             Find natural products used in this recipe in our store.
