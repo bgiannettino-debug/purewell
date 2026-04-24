@@ -3,6 +3,7 @@ import Image from "next/image";
 import { db } from "../lib/db";
 import BuyNowButton from "./components/BuyNowButton";
 import CategoryFilter from "./components/CategoryFilter";
+import RetailerFilter from "./components/RetailerFilter";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import type { Metadata } from "next";
@@ -15,17 +16,24 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 type Props = {
-  searchParams: Promise<{ category?: string; search?: string }>;
+  searchParams: Promise<{ category?: string; search?: string; retailers?: string }>;
 };
 
+const VALID_RETAILERS = ["amazon", "iherb", "other"];
+
 export default async function Home({ searchParams }: Props) {
-  const { category, search } = await searchParams;
+  const { category, search, retailers } = await searchParams;
+
+  const activeRetailers = retailers
+    ? retailers.split(",").map((r) => r.trim()).filter((r) => VALID_RETAILERS.includes(r))
+    : [];
 
   const totalProductCount = await db.product.count();
 
   const products = await db.product.findMany({
     where: {
       ...(category && category !== "all" ? { category } : {}),
+      ...(activeRetailers.length > 0 ? { supplier: { in: activeRetailers } } : {}),
       ...(search
         ? {
             OR: [
@@ -96,10 +104,13 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Category filter */}
-      <div style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", overflowX: "auto" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <CategoryFilter categories={categories} activeCategory={category || "all"} />
+      {/* Category + retailer filters */}
+      <div style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ overflowX: "auto" }}>
+            <CategoryFilter categories={categories} activeCategory={category || "all"} />
+          </div>
+          <RetailerFilter activeRetailers={activeRetailers} />
         </div>
       </div>
 
@@ -118,6 +129,9 @@ export default async function Home({ searchParams }: Props) {
             <form method="GET" action="/" style={{ display: "flex", gap: "8px" }}>
               {category && category !== "all" && (
                 <input type="hidden" name="category" value={category} />
+              )}
+              {activeRetailers.length > 0 && (
+                <input type="hidden" name="retailers" value={activeRetailers.join(",")} />
               )}
               <input
                 name="search"
