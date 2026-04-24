@@ -78,44 +78,20 @@ export default function RetailerFilter({ activeRetailers }: Props) {
   };
 
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          marginBottom: "6px",
-          minHeight: "16px",
+          fontSize: "11px",
+          fontWeight: 500,
+          color: "#9c9488",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+          whiteSpace: "nowrap",
         }}
       >
-        <div
-          style={{
-            fontSize: "11px",
-            fontWeight: 500,
-            color: "#9c9488",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Shop from
-        </div>
-        {savedHint && (
-          <div
-            style={{
-              fontSize: "11px",
-              color: "#3d6b4f",
-              background: "#eef5f0",
-              border: "1px solid #c8ddd0",
-              padding: "1px 8px",
-              borderRadius: "99px",
-              fontWeight: 500,
-            }}
-          >
-            ✓ Saved as your preference
-          </div>
-        )}
+        Shop from
       </div>
-      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
         {RETAILERS.map((r) => {
           const selected = activeRetailers.includes(r.id);
           return (
@@ -163,6 +139,22 @@ export default function RetailerFilter({ activeRetailers }: Props) {
           >
             Clear preference
           </button>
+        )}
+        {savedHint && (
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#3d6b4f",
+              background: "#eef5f0",
+              border: "1px solid #c8ddd0",
+              padding: "1px 8px",
+              borderRadius: "99px",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+            }}
+          >
+            ✓ Saved as your preference
+          </span>
         )}
       </div>
     </div>
