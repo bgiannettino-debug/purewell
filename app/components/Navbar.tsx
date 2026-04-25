@@ -38,6 +38,20 @@ export default function Navbar() {
       {/* Main nav */}
       <nav style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", maxWidth: "1200px", margin: "0 auto" }}>
 
+        {/* Mobile hamburger — sits to the LEFT of the logo on mobile so it
+            doesn't get pushed off the right edge by the cart button. Hidden
+            on desktop (CSS at the bottom of this file flips it on at ≤768px). */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Open menu"
+          style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: "4px", flexDirection: "column", gap: "5px", flexShrink: 0 }}
+          className="mobile-menu-btn"
+        >
+          <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
+          <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
+          <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
+        </button>
+
         {/* Logo */}
         <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ width: "38px", height: "38px", background: "#3d6b4f", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -94,17 +108,6 @@ export default function Navbar() {
             Take the quiz
           </Link>
           <CartSidebar />
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: "4px", flexDirection: "column", gap: "5px" }}
-            className="mobile-menu-btn"
-          >
-            <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
-            <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
-            <div style={{ width: "22px", height: "2px", background: "#2d2a24", borderRadius: "1px" }} />
-          </button>
         </div>
       </nav>
 
