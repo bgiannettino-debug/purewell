@@ -35,8 +35,10 @@ export default function Navbar() {
         🌿 All natural · Third-party tested · AI-powered wellness recommendations
       </div>
 
-      {/* Main nav */}
-      <nav style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", maxWidth: "1200px", margin: "0 auto" }}>
+      {/* Main nav. Padding is reduced on mobile via the .main-nav class
+          below — 20px each side ate ~10% of an iPhone SE's width, which
+          made the cart button look glued to the right edge. */}
+      <nav className="main-nav" style={{ padding: "12px 20px", display: "flex", alignItems: "center", gap: "12px", maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* Mobile hamburger — sits to the LEFT of the logo on mobile so it
             doesn't get pushed off the right edge by the cart button. Hidden
@@ -143,6 +145,7 @@ export default function Navbar() {
           .nav-links { display: none !important; }
           .nav-search { display: none !important; }
           .mobile-menu-btn { display: flex !important; }
+          .main-nav { padding: 10px 12px !important; gap: 8px !important; }
         }
       `}</style>
     </header>

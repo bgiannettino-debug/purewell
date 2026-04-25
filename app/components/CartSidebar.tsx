@@ -92,9 +92,14 @@ export default function CartSidebar() {
 
   return (
     <>
-      {/* Cart button */}
+      {/* Cart button — full pill on desktop, compact icon-only square on
+          mobile so it doesn't crowd the right edge of the navbar on narrow
+          screens. The "Cart" label and excess padding are stripped at
+          ≤768px via the styles at the bottom of this file. */}
       <button
         onClick={openCart}
+        aria-label="Open cart"
+        className="cart-btn"
         style={{ display: "flex", alignItems: "center", gap: "8px", background: "#2d2a24", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", border: "none", cursor: "pointer" }}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -102,13 +107,23 @@ export default function CartSidebar() {
           <circle cx="5.5" cy="12" r="1"/>
           <circle cx="10" cy="12" r="1"/>
         </svg>
-        Cart
+        <span className="cart-btn-label">Cart</span>
         {mounted && count() > 0 && (
           <span style={{ background: "#3d6b4f", color: "#fff", fontSize: "11px", fontWeight: "700", width: "18px", height: "18px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
             {count()}
           </span>
         )}
       </button>
+
+      {/* Mobile cart-button compaction. Hides the "Cart" label, trims the
+          padding, and tightens the gap so the icon+count fits in a square
+          tap target instead of a pill that pushes against the screen edge. */}
+      <style>{`
+        @media (max-width: 768px) {
+          .cart-btn-label { display: none !important; }
+          .cart-btn { padding: 8px 10px !important; gap: 4px !important; }
+        }
+      `}</style>
 
       {/* Overlay */}
       {mounted && isOpen && (
