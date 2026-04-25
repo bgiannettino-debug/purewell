@@ -26,31 +26,45 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    const price = parseFloat(body.price);
+    if (Number.isNaN(price)) {
+      return NextResponse.json({ error: "Price is not a valid number" }, { status: 400 });
+    }
+
     const product = await db.product.create({
-    data: {
-      name: body.name,
-      slug: body.slug,
-      brand: body.brand,
-      description: body.description,
-      price: parseFloat(body.price),
-      category: body.category,
-      certifications: body.certifications,
-      imageUrl: body.imageUrl || null,
-      affiliateUrl: body.affiliateUrl || null,
-      supplier: body.supplier || "amazon",
-      asin: body.asin || null,
-      inStock: true,
-    },
-  });
+      data: {
+        name: body.name,
+        slug: body.slug,
+        brand: body.brand,
+        description: body.description,
+        price,
+        category: body.category,
+        certifications: body.certifications,
+        imageUrl: body.imageUrl || null,
+        affiliateUrl: body.affiliateUrl || null,
+        supplier: body.supplier || "amazon",
+        asin: body.asin || null,
+        inStock: true,
+      },
+    });
 
     revalidatePath("/");
     revalidatePath("/products");
 
     return NextResponse.json({ product });
   } catch (error) {
-    console.error("Create product error:", error);
+    const err = error as { code?: string; message?: string };
+    console.error("Create product error:", err);
+
+    if (err.code === "P2002") {
+      return NextResponse.json(
+        { error: "Another product already uses this slug. Pick a unique URL slug." },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: err.message || "Failed to create product" },
       { status: 500 }
     );
   }
@@ -64,6 +78,15 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
+    if (!body.id) {
+      return NextResponse.json({ error: "Missing product id" }, { status: 400 });
+    }
+
+    const price = parseFloat(body.price);
+    if (Number.isNaN(price)) {
+      return NextResponse.json({ error: "Price is not a valid number" }, { status: 400 });
+    }
+
     const product = await db.product.update({
       where: { id: body.id },
       data: {
@@ -71,7 +94,7 @@ export async function PUT(req: NextRequest) {
         slug: body.slug,
         brand: body.brand,
         description: body.description,
-        price: parseFloat(body.price),
+        price,
         category: body.category,
         certifications: body.certifications,
         imageUrl: body.imageUrl || null,
@@ -87,9 +110,22 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ product });
   } catch (error) {
-    console.error("Update product error:", error);
+    // Surface the actual Prisma error to the client so the admin can see what
+    // failed (unique slug collision, missing field, etc.) instead of a vague
+    // "Failed to update product".
+    const err = error as { code?: string; message?: string; meta?: unknown };
+    console.error("Update product error:", err);
+
+    // P2002 = unique constraint violation. Most commonly slug.
+    if (err.code === "P2002") {
+      return NextResponse.json(
+        { error: "Another product already uses this slug. Pick a unique URL slug." },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to update product" },
+      { error: err.message || "Failed to update product" },
       { status: 500 }
     );
   }
