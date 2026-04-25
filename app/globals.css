@@ -85,3 +85,70 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ── Mobile filter row ─────────────────────────────────────────────────
+   On desktop the category chips and "Shop from" chips sit side by side.
+   On mobile that pushes the retailer cluster off the right edge, so we
+   stack them vertically and let each row use the full width. */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .filter-row > .scroll-fade,
+  .filter-row > .retailer-filter-wrap {
+    width: 100%;
+    flex: 0 0 auto !important;
+  }
+  /* Allow the retailer chip cluster to use the full row instead of
+     hugging its content; helps "Shop from" wrap rather than overflow. */
+  .retailer-filter-wrap > div {
+    flex-wrap: wrap !important;
+  }
+  /* Make the retailer cluster behave like a single-row that wraps onto
+     two lines if needed: label on top, chips below. Prevents the
+     "Saved as your preference" hint and "Clear preference" link from
+     getting wedged into a narrow column. */
+  .retailer-filter {
+    width: 100%;
+  }
+  .retailer-filter > div:nth-child(2) {
+    width: 100%;
+  }
+}
+
+/* Right-edge fade gradient on horizontally-scrolling chip rows so users
+   can tell there's more content off-screen. The mask only kicks in on
+   mobile because the desktop row always fits. */
+.scroll-fade {
+  scrollbar-width: thin;
+}
+@media (max-width: 768px) {
+  .scroll-fade {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+            mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+  }
+  /* iOS hides the scrollbar by default; force a thin one so the slide
+     affordance is visible. */
+  .scroll-fade::-webkit-scrollbar {
+    height: 3px;
+  }
+  .scroll-fade::-webkit-scrollbar-thumb {
+    background: #c5bfb5;
+    border-radius: 99px;
+  }
+}
+
+/* ── Mobile hero CTA row ───────────────────────────────────────────────
+   Three CTA pills wrap awkwardly (one then two, or two then one). Stack
+   them full-width on narrow phones so each is a clear tappable target. */
+@media (max-width: 480px) {
+  .hero-cta-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .hero-cta {
+    width: 100%;
+  }
+}

@@ -79,8 +79,9 @@ export default function RetailerFilter({ activeRetailers }: Props) {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+    <div className="retailer-filter" style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
       <div
+        className="retailer-filter-label"
         style={{
           fontSize: "11px",
           fontWeight: 500,

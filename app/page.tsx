@@ -74,14 +74,14 @@ export default async function Home({ searchParams }: Props) {
             <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: "1.7", marginBottom: "24px", maxWidth: "400px" }}>
               Curated all-natural supplements, homemade wellness recipes, and AI-powered health protocols — all in one place.
             </p>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <Link href="/quiz" style={{ background: "#3d6b4f", color: "#fff", fontWeight: "600", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
+            <div className="hero-cta-row" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <Link href="/quiz" className="hero-cta" style={{ background: "#3d6b4f", color: "#fff", fontWeight: "600", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
                 Take the wellness quiz →
               </Link>
-              <Link href="/analyze" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
+              <Link href="/analyze" className="hero-cta" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
                 Analyze a label
               </Link>
-              <Link href="/recipes" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px" }}>
+              <Link href="/recipes" className="hero-cta" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
                 Browse recipes
               </Link>
             </div>
@@ -104,9 +104,13 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Category + retailer filters */}
+      {/* Category + retailer filters. On desktop these sit side by side; on
+          mobile the .filter-row class stacks them vertically (CSS rule lives
+          in app/globals.css) so the retailer chips have full width to wrap
+          and the category row gets its own dedicated scroll lane. */}
       <div style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
         <div
+          className="filter-row"
           style={{
             maxWidth: "1200px",
             margin: "0 auto",
@@ -117,10 +121,13 @@ export default async function Home({ searchParams }: Props) {
             gap: "16px",
           }}
         >
-          <div style={{ flex: "1 1 auto", minWidth: 0, overflowX: "auto" }}>
+          {/* scroll-fade adds a right-edge gradient + slim scrollbar on
+              mobile so users can tell the chip row is horizontally
+              scrollable, plus a tiny chevron hint as a final cue. */}
+          <div className="scroll-fade" style={{ flex: "1 1 auto", minWidth: 0, overflowX: "auto", position: "relative" }}>
             <CategoryFilter categories={categories} activeCategory={category || "all"} />
           </div>
-          <div style={{ flexShrink: 0 }}>
+          <div className="retailer-filter-wrap" style={{ flexShrink: 0 }}>
             <RetailerFilter activeRetailers={activeRetailers} />
           </div>
         </div>
