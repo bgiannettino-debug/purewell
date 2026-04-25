@@ -1,5 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+// Explicit viewport export — without this, mobile browsers can render at
+// desktop width and the page becomes a horizontally-scrolling mess. Pinning
+// initial-scale to 1 also prevents iOS Safari from auto-zooming on form
+// inputs with font-size < 16px (we use 13px in a few places).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: {
