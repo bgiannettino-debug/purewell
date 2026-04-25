@@ -66,12 +66,20 @@ export default function AdminProducts() {
             <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "2px" }}>Products</h1>
             <p style={{ fontSize: "13px", color: "#9c9488" }}>{products.length} products in your catalog</p>
           </div>
-          <Link
-            href="/admin/products/new"
-            style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "600", padding: "10px 18px", borderRadius: "10px", textDecoration: "none" }}
-          >
-            + Add product
-          </Link>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <Link
+              href="/admin/products/import"
+              style={{ background: "#fff", color: "#3d6b4f", fontSize: "13px", fontWeight: "600", padding: "10px 18px", borderRadius: "10px", textDecoration: "none", border: "1px solid #c8ddd0" }}
+            >
+              Import from Amazon
+            </Link>
+            <Link
+              href="/admin/products/new"
+              style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "600", padding: "10px 18px", borderRadius: "10px", textDecoration: "none" }}
+            >
+              + Add product
+            </Link>
+          </div>
         </div>
 
         {loading ? (
