@@ -1,4 +1,13 @@
-import "dotenv/config";
+// Mirror Next.js's dotenv loading order so prisma CLI commands see the
+// same env values the dev server does: .env.local wins over .env. The
+// stock `dotenv/config` import only loads .env, which silently uses
+// stale values if .env.local has the canonical ones (the situation
+// that just bit us — DATABASE_URL was set 3x in .env with an old
+// password, while .env.local had the freshly-rotated value).
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" }); // first wins; doesn't override
+dotenv.config({ path: ".env" });
+
 import path from "node:path";
 import { defineConfig } from "prisma/config";
 
