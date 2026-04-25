@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://purewell-five.vercel.app",
+    url: "https://purewellnatural.com",
     siteName: "PureWell",
     title: "PureWell — Natural Health & Wellness",
     description: "Shop curated all-natural supplements, discover homemade wellness recipes, and get AI-powered health protocols.",
