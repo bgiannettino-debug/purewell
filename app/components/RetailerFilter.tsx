@@ -38,7 +38,7 @@ export default function RetailerFilter({ activeRetailers }: Props) {
       if (!Array.isArray(arr) || arr.length === 0) return;
       const params = new URLSearchParams(searchParams.toString());
       params.set("retailers", arr.join(","));
-      router.replace(`${pathname}?${params.toString()}`);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     } catch (e) {
       console.warn("Could not read saved retailer preference", e);
     }
@@ -68,6 +68,8 @@ export default function RetailerFilter({ activeRetailers }: Props) {
     }
 
     // Drive the URL so the server re-renders the filtered grid.
+    // scroll: false keeps the viewport in place — without it Next.js
+    // jumps to the top, which is jarring when toggling chips mid-page.
     const params = new URLSearchParams(searchParams.toString());
     if (next.length === 0) {
       params.delete("retailers");
@@ -75,7 +77,7 @@ export default function RetailerFilter({ activeRetailers }: Props) {
       params.set("retailers", next.join(","));
     }
     const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
 
   return (
@@ -127,7 +129,7 @@ export default function RetailerFilter({ activeRetailers }: Props) {
               const params = new URLSearchParams(searchParams.toString());
               params.delete("retailers");
               const qs = params.toString();
-              router.push(qs ? `${pathname}?${qs}` : pathname);
+              router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
             }}
             style={{
               padding: "5px 10px",

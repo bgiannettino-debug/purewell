@@ -21,7 +21,11 @@ export default function CategoryFilter({ categories, activeCategory }: Props) {
         <button
           key={cat.id}
           onClick={() =>
-            router.push(cat.id === "all" ? "/" : `/?category=${cat.id}`)
+            // scroll: false keeps the user where they are when filtering;
+            // default Next.js behavior would jump them back to the top.
+            router.push(cat.id === "all" ? "/" : `/?category=${cat.id}`, {
+              scroll: false,
+            })
           }
           style={{
             padding: "5px 12px",
