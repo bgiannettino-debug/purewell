@@ -22,11 +22,31 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(true);
 
   const fetchProducts = async () => {
-    const res = await fetch("/api/admin/products");
-    if (res.status === 401) { router.push("/admin"); return; }
-    const data = await res.json();
-    setProducts(data.products);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin/products");
+      // Any auth failure (cookie missing, expired, or rejected after a
+      // password change) — bounce to the login page rather than trying
+      // to parse a non-JSON body.
+      if (res.status === 401 || res.status === 403) {
+        router.push("/admin");
+        return;
+      }
+      // Any other non-OK status is a real server error. Don't blow up
+      // on res.json() (the body is usually an HTML error page); show
+      // a helpful message instead.
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Failed to load admin products:", res.status, text);
+        setLoading(false);
+        return;
+      }
+      const data = await res.json();
+      setProducts(data.products);
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch admin products:", err);
+      setLoading(false);
+    }
   };
 
   const deleteProduct = async (id: string, name: string) => {
