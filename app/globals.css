@@ -9,10 +9,14 @@
 /* Belt-and-suspenders mobile overflow guard. Some inline-styled grids and
    wide cards can push past the viewport on narrow phones; clipping at the
    html/body level prevents the whole page from shifting horizontally while
-   we keep finding individual culprits. */
+   we keep finding individual culprits.
+   NOTE: must be `clip`, not `hidden` — `overflow: hidden` on html/body
+   silently breaks `position: sticky` on every descendant, which is what
+   was killing the sticky header. `clip` enforces the same boundary
+   without establishing a containing block. */
 html, body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
