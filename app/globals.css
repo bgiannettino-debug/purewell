@@ -139,13 +139,13 @@ body {
     border-radius: 99px;
   }
   .scroll-fade::-webkit-scrollbar-thumb {
-    background: #6b6560;
+    background: #9c9488;
     border-radius: 99px;
   }
   /* Firefox equivalent — the thin width comes from scrollbar-width above
      in the base .scroll-fade rule; just need to color the thumb. */
   .scroll-fade {
-    scrollbar-color: #6b6560 #f0ece6;
+    scrollbar-color: #9c9488 #f0ece6;
   }
 }
 
