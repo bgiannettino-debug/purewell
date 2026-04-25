@@ -6,21 +6,14 @@ import "./globals.css";
 // initial-scale to 1 also prevents iOS Safari from auto-zooming on form
 // inputs with font-size < 16px (we use 13px in a few places).
 //
-// themeColor pins the iOS Safari + Android Chrome URL bar tint to the
-// announcement-bar green. Without this, Safari color-samples the topmost
-// content and the URL bar changes shade as the user scrolls — particularly
-// jarring with a sticky header where the topmost color stops shifting.
-//
-// Scoped to mobile viewports via the media query so desktop Safari/Chrome
-// don't tint their toolbars green too. Above 768px the meta tag doesn't
-// match and browsers fall back to their native (system / dark mode) chrome.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: [
-    { media: "(max-width: 768px)", color: "#3d6b4f" },
-  ],
+  // No themeColor: desktop Safari was tinting its toolbar green and
+  // ignoring the (max-width: 768px) media query that should have
+  // scoped it to mobile only. Letting browsers use their default
+  // behavior is better than a half-broken tint on desktop.
 };
 
 export const metadata: Metadata = {
