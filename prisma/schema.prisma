@@ -42,6 +42,11 @@ model Recipe {
   servings       Int
   costPerServing Float
   difficulty     String
+  // type: what kind of preparation this is — tea, tonic, syrup, paste,
+  // smoothie, balm, tincture, oil-blend, bath-soak. Drives the type filter
+  // chips on /recipes. Default "tea" so existing rows backfill cleanly when
+  // the migration runs before seedRecipes is re-run.
+  type           String   @default("tea")
   goals          String[]
   steps          Json
   ingredients    Json

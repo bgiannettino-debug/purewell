@@ -22,6 +22,7 @@ export default async function RecipesPage() {
     slug: r.slug,
     name: r.name,
     description: r.description,
+    type: r.type,
     goals: r.goals as string[],
     prepTime: r.prepTime,
     servings: r.servings,

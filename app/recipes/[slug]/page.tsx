@@ -45,6 +45,24 @@ const goalColors: Record<string, { bg: string; color: string }> = {
   joints:  { bg: "#fef0ee", color: "#8a3020" },
   hormones:{ bg: "#fdf0f5", color: "#8a3060" },
   skin:    { bg: "#fdf2f5", color: "#8a3050" },
+  // ── new ──
+  mood:    { bg: "#f4eef8", color: "#7a4f9c" },
+  focus:   { bg: "#eaf2f5", color: "#3d7088" },
+  detox:   { bg: "#eef5ee", color: "#4a7050" },
+  kids:    { bg: "#fdf5e9", color: "#a06030" },
+  beauty:  { bg: "#fdf0f3", color: "#a04060" },
+};
+
+const typeMeta: Record<string, { label: string; emoji: string }> = {
+  tea: { label: "Tea", emoji: "🍵" },
+  tonic: { label: "Tonic", emoji: "💧" },
+  syrup: { label: "Syrup", emoji: "🍯" },
+  paste: { label: "Paste", emoji: "🥄" },
+  smoothie: { label: "Smoothie", emoji: "🥤" },
+  balm: { label: "Balm", emoji: "🧴" },
+  tincture: { label: "Tincture", emoji: "💉" },
+  "oil-blend": { label: "Oil blend", emoji: "🌿" },
+  "bath-soak": { label: "Bath soak", emoji: "🛁" },
 };
 
 type Props = {
@@ -78,8 +96,18 @@ export default async function RecipePage({ params }: Props) {
           ← Back to recipes
         </Link>
 
-        {/* Goal tags */}
+        {/* Type + goal tags */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
+          {recipe.type && (
+            <span
+              style={{ fontSize: "11px", background: "#f5f2ed", color: "#6b6560", padding: "4px 10px", borderRadius: "99px", fontWeight: "500", display: "inline-flex", alignItems: "center", gap: "4px" }}
+            >
+              {typeMeta[recipe.type]?.emoji && (
+                <span>{typeMeta[recipe.type].emoji}</span>
+              )}
+              {typeMeta[recipe.type]?.label ?? recipe.type}
+            </span>
+          )}
           {goals.map((goal) => {
             const colors = goalColors[goal] || { bg: "#f0f0f0", color: "#666" };
             return (
