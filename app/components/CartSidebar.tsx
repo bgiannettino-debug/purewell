@@ -2,9 +2,21 @@
 
 import { useCart } from "../../lib/cartStore";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AMAZON_TAG = "purewell0d-20"; // Replace with your Amazon Associates tag
+
+// How long the "items moved to <retailer> — Undo" toast stays up.
+// Long enough for a user to come back from the new tab and notice if
+// they didn't actually complete the purchase, short enough that stale
+// toasts don't linger.
+const UNDO_TIMEOUT_MS = 7000;
+
+type RecentClear = {
+  items: ReturnType<typeof useCart.getState>["items"];
+  supplier: string;
+  label: string;
+};
 
 type SupplierGroup = {
   supplier: string;
@@ -55,10 +67,28 @@ export default function CartSidebar() {
   const {
     items, removeItem, updateQty, total, count,
     isOpen, openCart, closeCart,
+    clearCart, clearGroup, restoreItems,
   } = useCart();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Tracks the most recent supplier checkout so we can offer Undo. We
+  // only keep one at a time — clicking a second supplier replaces the
+  // toast (and forfeits the previous undo, which is the right call:
+  // the previous tab is now several clicks ago, the user has clearly
+  // moved on).
+  const [recentClear, setRecentClear] = useState<RecentClear | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Always clean up the timer on unmount so React doesn't fire a state
+  // update on an unmounted component if the user closes the tab while
+  // the toast is still counting down.
+  useEffect(() => {
+    return () => {
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    };
+  }, []);
 
   const groupedItems = mounted
     ? Object.values(
@@ -72,21 +102,61 @@ export default function CartSidebar() {
     : [];
 
   const handleSupplierCheckout = (group: SupplierGroup) => {
+    // Open the retailer's cart / product pages first so the user is
+    // already looking at Amazon (or whoever) by the time we clear.
     if (group.supplier === "amazon") {
       const cartUrl = buildAmazonCartUrl(group.items, AMAZON_TAG);
       if (cartUrl) {
         window.open(cartUrl, "_blank");
-        return;
+      } else {
+        // Fallback: open each item individually
+        group.items.forEach((item) => {
+          if (item.affiliateUrl) window.open(item.affiliateUrl, "_blank");
+        });
       }
-      // Fallback: open each item individually
-      group.items.forEach((item) => {
-        if (item.affiliateUrl) window.open(item.affiliateUrl, "_blank");
-      });
     } else {
-      // iHerb and others: open each item in a new tab
+      // iHerb / Thrive / other: open each item in a new tab
       group.items.forEach((item) => {
         if (item.affiliateUrl) window.open(item.affiliateUrl, "_blank");
       });
+    }
+
+    // Optimistic clear: assume the user is going to complete the
+    // purchase on the retailer's site. Pull these items out of the
+    // PureWell cart and stash them so we can offer Undo.
+    const removed = clearGroup(group.supplier);
+    if (removed.length > 0) {
+      // Replace any in-flight undo timer with a fresh one keyed to
+      // this checkout — only one undo at a time.
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+      setRecentClear({ items: removed, supplier: group.supplier, label: group.label });
+      undoTimerRef.current = setTimeout(() => {
+        setRecentClear(null);
+        undoTimerRef.current = null;
+      }, UNDO_TIMEOUT_MS);
+    }
+  };
+
+  const handleUndo = () => {
+    if (!recentClear) return;
+    restoreItems(recentClear.items);
+    setRecentClear(null);
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = null;
+    }
+  };
+
+  const handleClearCart = () => {
+    if (items.length === 0) return;
+    if (!confirm("Clear your entire cart? This can't be undone.")) return;
+    clearCart();
+    // Don't bother with undo for a manual clear — the user explicitly
+    // confirmed it.
+    setRecentClear(null);
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = null;
     }
   };
 
@@ -272,14 +342,71 @@ export default function CartSidebar() {
                 PureWell earns a small commission at no extra cost to you.
               </div>
 
-              <button
-                onClick={closeCart}
-                style={{ width: "100%", background: "#fff", color: "#6b6560", fontSize: "13px", fontWeight: "500", padding: "11px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer" }}
-              >
-                Continue shopping
-              </button>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  onClick={closeCart}
+                  style={{ flex: 1, background: "#fff", color: "#6b6560", fontSize: "13px", fontWeight: "500", padding: "11px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer" }}
+                >
+                  Continue shopping
+                </button>
+                {/* Manual escape hatch — confirmed because clicking is
+                    one click but rebuilding the cart is many. */}
+                <button
+                  onClick={handleClearCart}
+                  style={{ background: "#fff", color: "#9c9488", fontSize: "12px", fontWeight: "500", padding: "11px 14px", borderRadius: "12px", border: "1px solid #e7e3dc", cursor: "pointer", whiteSpace: "nowrap" }}
+                >
+                  Clear cart
+                </button>
+              </div>
             </div>
           </>
+        )}
+
+        {/* Undo toast — slides up from the bottom of the sidebar after
+            an optimistic supplier-checkout clear. Stays inside the
+            sidebar so it travels with the cart UI; if the user closes
+            the sidebar, the next open will still show it (until the
+            timer expires). */}
+        {mounted && recentClear && (
+          <div
+            style={{
+              position: "absolute",
+              left: "16px",
+              right: "16px",
+              bottom: "16px",
+              background: "#2d2a24",
+              color: "#fff",
+              borderRadius: "12px",
+              padding: "12px 14px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+              zIndex: 60,
+            }}
+            role="status"
+            aria-live="polite"
+          >
+            <span style={{ fontSize: "13px", lineHeight: 1.4 }}>
+              {recentClear.items.length} item{recentClear.items.length > 1 ? "s" : ""} sent to {recentClear.label}
+            </span>
+            <button
+              onClick={handleUndo}
+              style={{
+                background: "transparent",
+                color: "#9bd0a8",
+                border: "none",
+                fontSize: "13px",
+                fontWeight: 600,
+                cursor: "pointer",
+                padding: "4px 8px",
+                textDecoration: "underline",
+              }}
+            >
+              Undo
+            </button>
+          </div>
         )}
       </div>
     </>
