@@ -115,14 +115,18 @@ export default function CartSidebar() {
         <div onClick={closeCart} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40 }} />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — clamps to the viewport on mobile (was 420px hardcoded,
+          which overflowed sub-420px screens like iPhone SE/12 mini). On
+          desktop it stays at the original 420px. */}
       <div style={{
-        position: "fixed", top: 0, right: 0, height: "100%", width: "420px",
+        position: "fixed", top: 0, right: 0, height: "100%",
+        width: "min(420px, 100vw)", maxWidth: "100vw",
         background: "#fff", zIndex: 50,
         transform: mounted && isOpen ? "translateX(0)" : "translateX(100%)",
         transition: "transform 0.3s ease",
         display: "flex", flexDirection: "column",
         borderLeft: "1px solid #e7e3dc",
+        boxSizing: "border-box",
       }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderBottom: "1px solid #e7e3dc" }}>
