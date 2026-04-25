@@ -29,7 +29,12 @@ export default function Navbar() {
   ];
 
   return (
-    <header style={{ background: "#fff", borderBottom: "1px solid #e7e3dc" }}>
+    // Sticky so the cart, nav links, and search stay reachable as the
+    // page scrolls. z-index 30 sits below the cart sidebar (z:50) and
+    // its overlay (z:40) so opening the cart still covers the header,
+    // but above default page content. Background is solid white so
+    // scrolling content doesn't bleed through.
+    <header style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", top: 0, zIndex: 30 }}>
       {/* Announcement bar */}
       <div style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", textAlign: "center", padding: "8px 16px" }}>
         🌿 All natural · Third-party tested · AI-powered wellness recommendations
