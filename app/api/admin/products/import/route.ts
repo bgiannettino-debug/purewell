@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
+import { db } from "../../../../../lib/db";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -59,6 +60,38 @@ function toSlug(name: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+/**
+ * Find an unused slug. If `base` is already taken, append `-2`, `-3`, etc.
+ * until we hit one that isn't. Returns the resolved slug and a flag the
+ * import page uses to show a heads-up on the review screen.
+ *
+ * Without this the admin only finds out about collisions when they hit Save
+ * and Prisma throws P2002, which is a confusing dead-end given the slug was
+ * auto-generated for them in the first place.
+ */
+async function resolveUniqueSlug(
+  base: string,
+): Promise<{ slug: string; adjusted: boolean }> {
+  if (!base) return { slug: base, adjusted: false };
+
+  const existing = await db.product.findMany({
+    where: { slug: { startsWith: base } },
+    select: { slug: true },
+  });
+  const taken = new Set(existing.map((p) => p.slug));
+
+  if (!taken.has(base)) return { slug: base, adjusted: false };
+
+  // Walk -2, -3, … until we find a free one. The startsWith query above
+  // means we only paid for one DB roundtrip even with many collisions.
+  for (let i = 2; i < 1000; i++) {
+    const candidate = `${base}-${i}`;
+    if (!taken.has(candidate)) return { slug: candidate, adjusted: true };
+  }
+  // Fallback — extraordinarily unlikely, but better than an infinite loop.
+  return { slug: `${base}-${Date.now()}`, adjusted: true };
 }
 
 /**
@@ -177,11 +210,13 @@ ${trimmedText}
     );
 
     const name = (extracted.name || "").trim();
+    const baseSlug = name ? toSlug(name) : "";
+    const { slug, adjusted: slugAdjusted } = await resolveUniqueSlug(baseSlug);
 
     return NextResponse.json({
       draft: {
         name,
-        slug: name ? toSlug(name) : "",
+        slug,
         brand: (extracted.brand || "").trim(),
         description: (extracted.description || "").trim(),
         price: typeof extracted.price === "number" ? extracted.price.toString() : "",
@@ -194,6 +229,8 @@ ${trimmedText}
       },
       confidence: extracted.confidence || "medium",
       asinDetected: !!asin,
+      slugAdjusted,
+      originalSlug: slugAdjusted ? baseSlug : null,
     });
   } catch (error) {
     const err = error as Error;

@@ -53,6 +53,8 @@ export default function ImportProductPage() {
   const [error, setError] = useState("");
   const [confidence, setConfidence] = useState<string>("");
   const [asinDetected, setAsinDetected] = useState(false);
+  const [slugAdjusted, setSlugAdjusted] = useState(false);
+  const [originalSlug, setOriginalSlug] = useState<string | null>(null);
 
   // Paste-phase inputs.
   const [affiliateUrl, setAffiliateUrl] = useState("");
@@ -77,6 +79,8 @@ export default function ImportProductPage() {
       setForm(data.draft);
       setConfidence(data.confidence);
       setAsinDetected(data.asinDetected);
+      setSlugAdjusted(!!data.slugAdjusted);
+      setOriginalSlug(data.originalSlug || null);
       setPhase("review");
     } catch (err) {
       setError(String(err instanceof Error ? err.message : err));
@@ -124,6 +128,8 @@ export default function ImportProductPage() {
     setForm(emptyForm);
     setConfidence("");
     setAsinDetected(false);
+    setSlugAdjusted(false);
+    setOriginalSlug(null);
     setError("");
   };
 
@@ -256,6 +262,40 @@ export default function ImportProductPage() {
                       Heads up: no ASIN was detected in the URL. The cart&apos;s Amazon checkout flow needs an ASIN to bundle this with other Amazon items — paste it manually below if you have it.
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Slug-collision heads-up — the import route auto-bumped the slug
+                because another product already used the original. The admin
+                can still tweak it in the URL slug field if they want
+                something different. */}
+            {slugAdjusted && originalSlug && (
+              <div
+                style={{
+                  background: "#fef6e7",
+                  border: "1px solid #f0d4a0",
+                  borderRadius: "10px",
+                  padding: "10px 14px",
+                  fontSize: "12px",
+                  color: "#8a6020",
+                  marginBottom: "12px",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                }}
+              >
+                <span style={{ fontSize: "14px", lineHeight: 1, flexShrink: 0 }}>↺</span>
+                <div>
+                  Another product is already using the slug{" "}
+                  <code style={{ background: "#fdecca", padding: "1px 5px", borderRadius: "4px", fontSize: "11px" }}>
+                    {originalSlug}
+                  </code>
+                  , so we bumped this one to{" "}
+                  <code style={{ background: "#fdecca", padding: "1px 5px", borderRadius: "4px", fontSize: "11px" }}>
+                    {form.slug}
+                  </code>
+                  . You can change it in the URL slug field below.
                 </div>
               </div>
             )}
