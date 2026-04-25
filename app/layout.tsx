@@ -10,11 +10,17 @@ import "./globals.css";
 // announcement-bar green. Without this, Safari color-samples the topmost
 // content and the URL bar changes shade as the user scrolls — particularly
 // jarring with a sticky header where the topmost color stops shifting.
+//
+// Scoped to mobile viewports via the media query so desktop Safari/Chrome
+// don't tint their toolbars green too. Above 768px the meta tag doesn't
+// match and browsers fall back to their native (system / dark mode) chrome.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#3d6b4f",
+  themeColor: [
+    { media: "(max-width: 768px)", color: "#3d6b4f" },
+  ],
 };
 
 export const metadata: Metadata = {
