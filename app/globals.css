@@ -129,14 +129,23 @@ body {
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
             mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
   }
-  /* iOS hides the scrollbar by default; force a thin one so the slide
-     affordance is visible. */
+  /* iOS hides the scrollbar by default; force a visible one with a
+     darker thumb so the slide affordance actually reads on mobile. */
   .scroll-fade::-webkit-scrollbar {
-    height: 3px;
+    height: 5px;
+  }
+  .scroll-fade::-webkit-scrollbar-track {
+    background: #f0ece6;
+    border-radius: 99px;
   }
   .scroll-fade::-webkit-scrollbar-thumb {
-    background: #c5bfb5;
+    background: #6b6560;
     border-radius: 99px;
+  }
+  /* Firefox equivalent — the thin width comes from scrollbar-width above
+     in the base .scroll-fade rule; just need to color the thumb. */
+  .scroll-fade {
+    scrollbar-color: #6b6560 #f0ece6;
   }
 }
 
