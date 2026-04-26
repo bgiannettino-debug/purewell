@@ -51,6 +51,38 @@ function extractAsin(url: string): string | null {
 }
 
 /**
+ * Detect which retailer a product URL belongs to so the import flow can
+ * tag the supplier correctly without the admin manually picking it. We
+ * normalise to the same supplier ids the cart and seed scripts use:
+ * "amazon" | "iherb" | "thrive" | "other".
+ *
+ * Falls back to "other" for any URL we don't recognise — the admin can
+ * still adjust on the review screen if needed.
+ */
+function detectSupplier(url: string): "amazon" | "iherb" | "thrive" | "other" {
+  if (!url) return "other";
+  let host = "";
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    // Malformed URL — fall through to substring sniffing on the raw
+    // string so things like 'amzn.to' shortlinks still register.
+    host = url.toLowerCase();
+  }
+  if (host.includes("amazon.") || host.includes("amzn.")) return "amazon";
+  if (host.includes("iherb.")) return "iherb";
+  if (host.includes("thrivemarket.")) return "thrive";
+  return "other";
+}
+
+const SUPPLIER_LABELS: Record<string, string> = {
+  amazon: "Amazon",
+  iherb: "iHerb",
+  thrive: "Thrive Market",
+  other: "the retailer",
+};
+
+/**
  * Slugify a product name the same way the new-product form does so the
  * pre-filled draft round-trips through the existing PUT/POST flow without the
  * admin needing to retype it.
@@ -119,16 +151,22 @@ export async function POST(req: NextRequest) {
     }
     if (!pageText || typeof pageText !== "string" || pageText.trim().length < 50) {
       return NextResponse.json(
-        { error: "pageText is required (paste the Amazon product page contents)" },
+        { error: "pageText is required (paste the product page contents)" },
         { status: 400 },
       );
     }
 
-    const asin = extractAsin(affiliateUrl);
+    const supplier = detectSupplier(affiliateUrl);
+    const supplierLabel = SUPPLIER_LABELS[supplier];
+    // ASIN only makes sense for Amazon — the cart's bulk-checkout URL
+    // builder needs it. Other retailers don't have an analogous id we
+    // can extract from the URL.
+    const asin = supplier === "amazon" ? extractAsin(affiliateUrl) : null;
 
-    // Trim aggressively — the typical Amazon product page Cmd+A grab is huge
-    // and most of it is footer/recommendations noise. The first ~12k chars
-    // reliably contain title, brand, bullets, and description.
+    // Trim aggressively — a typical Cmd+A page grab is huge and most of
+    // it is footer/recommendations noise. First ~12k chars reliably
+    // contain title, brand, bullets, and description on every retailer
+    // we support.
     const trimmedText = pageText.slice(0, 12000);
 
     const message = await anthropic.messages.create({
@@ -137,14 +175,14 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `You are extracting product data from raw text copied off an Amazon product page. Respond with ONLY valid JSON starting with { — no markdown, no backticks.
+          content: `You are extracting product data from raw text copied off a product page on ${supplierLabel} (a natural / wellness retailer). Respond with ONLY valid JSON starting with { — no markdown, no backticks.
 
 Schema:
 {
   "name": "string — the product name as it appears on the page, brand removed if it duplicates the brand field",
   "brand": "string — the manufacturer / brand",
   "description": "string — 2–4 sentences synthesised from the bullet points and product description. Plain prose, no marketing fluff, no all-caps.",
-  "price": number — the current numeric price in USD, no currency symbol. Use the main listed price, not subscribe-and-save or used,
+  "price": number — the current numeric price in USD, no currency symbol. Use the main listed price (not 'subscribe and save', 'member price', or strikethrough originals),
   "category": "one of: ${VALID_CATEGORIES.join(", ")}",
   "certifications": ["zero or more from this exact list: ${VALID_CERTIFICATIONS.join(", ")}"],
   "confidence": "high or medium or low — how confident you are the extraction is correct"
@@ -154,7 +192,7 @@ Rules:
 - category MUST be exactly one of the listed values. Pick the closest fit.
 - certifications MUST come from the listed values verbatim. Only include ones explicitly claimed on the page; never infer. Empty array if none.
 - If the page text doesn't include a price, set price to 0 and confidence to "low".
-- If the text is clearly not an Amazon product page, return {"error": "Page text doesn't look like an Amazon product page"}.
+- If the text is clearly not a product page (e.g. it's a category landing page, search results, or a homepage), return {"error": "Page text doesn't look like a product page"}.
 
 Page text:
 """
@@ -224,11 +262,16 @@ ${trimmedText}
         certifications,
         imageUrl: imageUrl?.trim() || "",
         affiliateUrl: affiliateUrl.trim(),
-        supplier: "amazon",
+        supplier,
         asin: asin || "",
       },
       confidence: extracted.confidence || "medium",
-      asinDetected: !!asin,
+      // Only flag the asin-missing warning for Amazon imports — for
+      // iHerb / Thrive / other we don't expect or need an ASIN, so
+      // surfacing it would be noise.
+      asinDetected: supplier === "amazon" ? !!asin : true,
+      detectedSupplier: supplier,
+      detectedSupplierLabel: supplierLabel,
       slugAdjusted,
       originalSlug: slugAdjusted ? baseSlug : null,
     });

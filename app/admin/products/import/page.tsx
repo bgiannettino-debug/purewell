@@ -55,6 +55,11 @@ export default function ImportProductPage() {
   const [asinDetected, setAsinDetected] = useState(false);
   const [slugAdjusted, setSlugAdjusted] = useState(false);
   const [originalSlug, setOriginalSlug] = useState<string | null>(null);
+  // Retailer the API detected from the URL hostname. Used to label the
+  // confidence banner and to gate the ASIN warning (only relevant when
+  // the import was an Amazon link).
+  const [detectedSupplier, setDetectedSupplier] = useState<string>("");
+  const [detectedSupplierLabel, setDetectedSupplierLabel] = useState<string>("");
 
   // Paste-phase inputs.
   const [affiliateUrl, setAffiliateUrl] = useState("");
@@ -81,6 +86,8 @@ export default function ImportProductPage() {
       setAsinDetected(data.asinDetected);
       setSlugAdjusted(!!data.slugAdjusted);
       setOriginalSlug(data.originalSlug || null);
+      setDetectedSupplier(data.detectedSupplier || "");
+      setDetectedSupplierLabel(data.detectedSupplierLabel || "");
       setPhase("review");
     } catch (err) {
       setError(String(err instanceof Error ? err.message : err));
@@ -130,6 +137,8 @@ export default function ImportProductPage() {
     setAsinDetected(false);
     setSlugAdjusted(false);
     setOriginalSlug(null);
+    setDetectedSupplier("");
+    setDetectedSupplierLabel("");
     setError("");
   };
 
@@ -152,11 +161,11 @@ export default function ImportProductPage() {
 
       <div style={{ maxWidth: "640px", margin: "0 auto", padding: "28px 24px" }}>
         <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "4px" }}>
-          {phase === "paste" ? "Import from Amazon" : "Review and save"}
+          {phase === "paste" ? "Import a product" : "Review and save"}
         </h1>
         <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "20px" }}>
           {phase === "paste"
-            ? "Paste an Amazon product link plus the page text. We'll extract the fields for you to review."
+            ? "Paste a product link from Amazon, iHerb, or Thrive Market plus the page text. We'll detect the retailer and extract the fields for you to review."
             : "Double-check the extracted fields, then save."}
         </p>
 
@@ -164,17 +173,17 @@ export default function ImportProductPage() {
           <form onSubmit={handleExtract}>
             <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px", display: "flex", flexDirection: "column", gap: "14px" }}>
               <div>
-                <label style={labelStyle}>Amazon product URL</label>
+                <label style={labelStyle}>Product URL</label>
                 <input
                   style={inputStyle}
                   type="url"
                   value={affiliateUrl}
                   onChange={(e) => setAffiliateUrl(e.target.value)}
-                  placeholder="https://amzn.to/... or https://www.amazon.com/dp/..."
+                  placeholder="amazon.com / amzn.to / iherb.com / thrivemarket.com"
                   required
                 />
                 <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>
-                  Use your Amazon Associates affiliate link if you have it. We&apos;ll detect the ASIN automatically.
+                  Use your affiliate link if you have one. The retailer is detected from the URL — Amazon also gets its ASIN extracted automatically.
                 </div>
               </div>
 
@@ -185,10 +194,10 @@ export default function ImportProductPage() {
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://m.media-amazon.com/images/I/..."
+                  placeholder="https://..."
                 />
                 <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>
-                  Right-click the main product photo on Amazon → Copy Image Address.
+                  Right-click the main product photo → Copy Image Address.
                 </div>
               </div>
 
@@ -198,11 +207,11 @@ export default function ImportProductPage() {
                   style={{ ...inputStyle, resize: "vertical", minHeight: "180px", fontFamily: "monospace", fontSize: "12px" }}
                   value={pageText}
                   onChange={(e) => setPageText(e.target.value)}
-                  placeholder="On the Amazon product page: Cmd+A to select all, Cmd+C to copy, then paste here. Don't worry about cleaning it up — we trim it for you."
+                  placeholder="On the product page: Cmd+A to select all, Cmd+C to copy, then paste here. Works for Amazon, iHerb, or Thrive Market — don't worry about cleaning it up, we trim it for you."
                   required
                 />
                 <div style={{ fontSize: "11px", color: "#9c9488", marginTop: "4px" }}>
-                  We use this to extract the title, brand, price, description, and certifications. Only the first ~12 KB is used.
+                  We use this to extract the title, brand, price, description, and certifications. Only the first ~12 KB is used. For Thrive Market, copy from your logged-in browser session — we can't fetch member-only pages server-side.
                 </div>
               </div>
             </div>
@@ -254,10 +263,23 @@ export default function ImportProductPage() {
                   {confidence === "high" ? "✓" : "⚠️"}
                 </span>
                 <div>
+                  {detectedSupplierLabel && detectedSupplier !== "other" && (
+                    <div style={{ fontWeight: 600, marginBottom: "2px" }}>
+                      Detected as {detectedSupplierLabel}.
+                    </div>
+                  )}
+                  {detectedSupplier === "other" && (
+                    <div style={{ fontWeight: 600, marginBottom: "2px" }}>
+                      Couldn&apos;t recognize the retailer from the URL — set Supplier manually below.
+                    </div>
+                  )}
                   {confidence === "high"
                     ? "High-confidence extraction. Review and save."
                     : `${confidence === "low" ? "Low" : "Medium"}-confidence extraction — double-check the price, name, and certifications below before saving.`}
-                  {!asinDetected && (
+                  {/* ASIN warning is Amazon-specific; the cart's bulk
+                      checkout URL needs it to bundle items, but other
+                      retailers don't use ASINs at all. */}
+                  {detectedSupplier === "amazon" && !asinDetected && (
                     <div style={{ marginTop: "4px" }}>
                       Heads up: no ASIN was detected in the URL. The cart&apos;s Amazon checkout flow needs an ASIN to bundle this with other Amazon items — paste it manually below if you have it.
                     </div>
@@ -337,7 +359,10 @@ export default function ImportProductPage() {
                 <label style={labelStyle}>Affiliate URL</label>
                 <input style={inputStyle} type="url" value={form.affiliateUrl} onChange={(e) => setForm((p) => ({ ...p, affiliateUrl: e.target.value }))} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              {/* Side-by-side on Amazon (Supplier + ASIN); Supplier alone
+                  for everyone else, since ASIN is meaningless off Amazon
+                  and showing an empty field is just noise. */}
+              <div style={{ display: "grid", gridTemplateColumns: form.supplier === "amazon" ? "1fr 1fr" : "1fr", gap: "12px" }}>
                 <div>
                   <label style={labelStyle}>Supplier</label>
                   <select
@@ -351,15 +376,17 @@ export default function ImportProductPage() {
                     <option value="other">Other</option>
                   </select>
                 </div>
-                <div>
-                  <label style={labelStyle}>ASIN (Amazon only)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.asin}
-                    onChange={(e) => setForm((p) => ({ ...p, asin: e.target.value }))}
-                    placeholder="e.g. B0009EYIQ4"
-                  />
-                </div>
+                {form.supplier === "amazon" && (
+                  <div>
+                    <label style={labelStyle}>ASIN</label>
+                    <input
+                      style={inputStyle}
+                      value={form.asin}
+                      onChange={(e) => setForm((p) => ({ ...p, asin: e.target.value }))}
+                      placeholder="e.g. B0009EYIQ4"
+                    />
+                  </div>
+                )}
               </div>
               <SupplierMismatchWarning
                 affiliateUrl={form.affiliateUrl}

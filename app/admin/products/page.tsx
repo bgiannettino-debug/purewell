@@ -146,7 +146,7 @@ export default function AdminProducts() {
               href="/admin/products/import"
               style={{ background: "#fff", color: "#3d6b4f", fontSize: "13px", fontWeight: "600", padding: "10px 18px", borderRadius: "10px", textDecoration: "none", border: "1px solid #c8ddd0" }}
             >
-              Import from Amazon
+              Import product
             </Link>
             <Link
               href="/admin/products/new"
