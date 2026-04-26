@@ -137,7 +137,7 @@ export default function ResultsPage() {
                   {/* Product image */}
                   <Link href={`/products/${p.slug}?from=quiz`} style={{ flexShrink: 0, position: "relative", width: "72px", height: "72px", borderRadius: "10px", overflow: "hidden", background: "#f5f2ed", border: "1px solid #e7e3dc" }}>
                     {p.imageUrl && (
-                      <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: "cover" }} />
+                      <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: "contain" }} />
                     )}
                   </Link>
 

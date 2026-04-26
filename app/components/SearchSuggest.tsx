@@ -269,7 +269,7 @@ export default function SearchSuggest({
                 >
                   <div style={{ position: "relative", width: "36px", height: "36px", background: "#f5f2ed", borderRadius: "8px", overflow: "hidden", flexShrink: 0, border: "1px solid #e7e3dc" }}>
                     {s.imageUrl && (
-                      <Image src={s.imageUrl} alt={s.name} fill style={{ objectFit: "cover" }} />
+                      <Image src={s.imageUrl} alt={s.name} fill style={{ objectFit: "contain" }} />
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>

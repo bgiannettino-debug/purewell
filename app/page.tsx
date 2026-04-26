@@ -169,7 +169,7 @@ export default async function Home({ searchParams }: Props) {
                   <Link href={`/products/${product.slug}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", flex: 1 }}>
                     <div style={{ position: "relative", width: "100%", height: "160px", background: "#f5f2ed", flexShrink: 0 }}>
                       {product.imageUrl ? (
-                        <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
+                        <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "contain" }} />
                       ) : (
                         <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5bfb5", fontSize: "13px" }}>
                           No image

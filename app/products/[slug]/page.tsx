@@ -86,7 +86,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
           {/* Image */}
           <div style={{ position: "relative", width: "100%", height: "420px", background: "#f5f2ed", borderRadius: "20px", overflow: "hidden", border: "1px solid #e7e3dc" }}>
             {product.imageUrl ? (
-              <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
+              <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "contain" }} />
             ) : (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5bfb5", fontSize: "14px" }}>
                 No image
@@ -173,7 +173,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   <Link href={`/products/${related.slug}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", flex: 1 }}>
                     <div style={{ position: "relative", width: "100%", height: "140px", background: "#f5f2ed" }}>
                       {related.imageUrl ? (
-                        <Image src={related.imageUrl} alt={related.name} fill style={{ objectFit: "cover" }} />
+                        <Image src={related.imageUrl} alt={related.name} fill style={{ objectFit: "contain" }} />
                       ) : (
                         <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#c5bfb5", fontSize: "12px" }}>
                           No image

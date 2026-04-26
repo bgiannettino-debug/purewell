@@ -245,7 +245,7 @@ export default function AdminProducts() {
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <div style={{ position: "relative", width: "38px", height: "38px", background: "#f5f2ed", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
                           {product.imageUrl ? (
-                            <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "cover" }} />
+                            <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: "contain" }} />
                           ) : (
                             <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", color: "#c5bfb5" }}>No img</div>
                           )}

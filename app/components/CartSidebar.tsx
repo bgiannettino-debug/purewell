@@ -262,7 +262,7 @@ export default function CartSidebar() {
                         <div key={item.id} style={{ display: "flex", gap: "10px", marginBottom: "10px", paddingBottom: "10px", borderBottom: "1px solid #f0ece6" }}>
                           <div style={{ position: "relative", width: "52px", height: "52px", background: "#fff", borderRadius: "8px", overflow: "hidden", flexShrink: 0, border: "1px solid #e7e3dc" }}>
                             {item.imageUrl && (
-                              <Image src={item.imageUrl} alt={item.name} fill style={{ objectFit: "cover" }} />
+                              <Image src={item.imageUrl} alt={item.name} fill style={{ objectFit: "contain" }} />
                             )}
                           </div>
                           <div style={{ flex: 1 }}>
