@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import SupplierMismatchWarning from "../../../components/SupplierMismatchWarning";
+import AdminNav from "../../../components/AdminNav";
 
 const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
@@ -144,20 +145,7 @@ export default function ImportProductPage() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
-      {/* Header bar — matches the rest of the admin section */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "14px 24px", display: "flex", alignItems: "center", gap: "12px" }}>
-        <div style={{ width: "28px", height: "28px", background: "#3d6b4f", borderRadius: "7px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
-          </svg>
-        </div>
-        <span style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
-          pure<span style={{ color: "#3d6b4f" }}>well</span>
-          <span style={{ fontSize: "12px", color: "#9c9488", fontWeight: "400", marginLeft: "6px" }}>Admin</span>
-        </span>
-        <div style={{ flex: 1 }} />
-        <Link href="/admin/products" style={{ fontSize: "13px", color: "#6b6560", textDecoration: "none" }}>← Back</Link>
-      </div>
+      <AdminNav back={{ href: "/admin/products", label: "← Back" }} />
 
       <div style={{ maxWidth: "640px", margin: "0 auto", padding: "28px 24px" }}>
         <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "4px" }}>
