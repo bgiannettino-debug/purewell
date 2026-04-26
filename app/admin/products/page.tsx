@@ -14,7 +14,29 @@ type Product = {
   imageUrl: string | null;
   inStock: boolean;
   certifications: string[];
+  updatedAt: string; // ISO timestamp from the API
 };
+
+// Formats an ISO timestamp as a compact relative time (e.g. "2h ago",
+// "5d ago"). Falls back to a date string for anything older than 30
+// days. Used in the "Last edited" column so admins can see at a
+// glance what's been touched recently.
+function relativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  const seconds = Math.floor((Date.now() - then) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 // Mirrors the public site's category list (app/page.tsx) so admins
 // see the same buckets shoppers do. The "all" entry is added at the
@@ -195,9 +217,23 @@ export default function AdminProducts() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #e7e3dc" }}>
-                  {["Product", "Category", "Price", "Status", "Actions"].map((h) => (
-                    <th key={h} style={{ textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", padding: "12px 16px" }}>
-                      {h}
+                  {[
+                    { label: "Product" },
+                    { label: "Category" },
+                    { label: "Price" },
+                    { label: "Status" },
+                    // Last-edited column hidden on mobile (table gets
+                    // too wide otherwise). admin-hide-mobile rule lives
+                    // in app/globals.css.
+                    { label: "Last edited", className: "admin-hide-mobile" },
+                    { label: "Actions" },
+                  ].map((h) => (
+                    <th
+                      key={h.label}
+                      className={h.className}
+                      style={{ textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", padding: "12px 16px" }}
+                    >
+                      {h.label}
                     </th>
                   ))}
                 </tr>
@@ -231,6 +267,17 @@ export default function AdminProducts() {
                     <td style={{ padding: "12px 16px" }}>
                       <span style={{ fontSize: "11px", background: product.inStock ? "#eef5f0" : "#fdf0ee", color: product.inStock ? "#3d6b4f" : "#c0392b", padding: "3px 9px", borderRadius: "99px", fontWeight: "500" }}>
                         {product.inStock ? "In stock" : "Out of stock"}
+                      </span>
+                    </td>
+                    <td className="admin-hide-mobile" style={{ padding: "12px 16px" }}>
+                      {/* Full timestamp on hover — relative time is
+                          quick to scan but admins occasionally want
+                          the precise moment something was edited. */}
+                      <span
+                        title={new Date(product.updatedAt).toLocaleString()}
+                        style={{ fontSize: "12px", color: "#6b6560" }}
+                      >
+                        {relativeTime(product.updatedAt)}
                       </span>
                     </td>
                     <td style={{ padding: "12px 16px" }}>

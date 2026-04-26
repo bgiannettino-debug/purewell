@@ -30,6 +30,13 @@ model Product {
   asin           String?
   inStock        Boolean     @default(true)
   createdAt      DateTime    @default(now())
+  // updatedAt: Prisma's @updatedAt directive sets this to NOW() on
+  // every db.product.update() call, with no code changes required at
+  // each call site. The @default(now()) is here so existing rows get
+  // backfilled with the current timestamp the moment the column is
+  // added (otherwise the column would be NULL on rows that have never
+  // been edited since the migration).
+  updatedAt      DateTime    @updatedAt @default(now())
   orderItems     OrderItem[]
 }
 

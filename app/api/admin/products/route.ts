@@ -12,8 +12,11 @@ export async function GET() {
   if (!await isAuthenticated()) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  // Sort by most-recently-edited so what you just touched bubbles to
+  // the top of the admin list. updatedAt is set on every write via
+  // Prisma's @updatedAt directive in schema.prisma.
   const products = await db.product.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
   });
   return NextResponse.json({ products });
 }
