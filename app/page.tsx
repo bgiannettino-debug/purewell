@@ -4,6 +4,7 @@ import { db } from "../lib/db";
 import BuyNowButton from "./components/BuyNowButton";
 import CategoryFilter from "./components/CategoryFilter";
 import RetailerFilter from "./components/RetailerFilter";
+import SearchSuggest from "./components/SearchSuggest";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import type { Metadata } from "next";
@@ -145,23 +146,12 @@ export default async function Home({ searchParams }: Props) {
                 ({products.length} items)
               </span>
             </h2>
-            <form method="GET" action="/" style={{ display: "flex", gap: "8px" }}>
-              {category && category !== "all" && (
-                <input type="hidden" name="category" value={category} />
-              )}
-              {activeRetailers.length > 0 && (
-                <input type="hidden" name="retailers" value={activeRetailers.join(",")} />
-              )}
-              <input
-                name="search"
-                defaultValue={search || ""}
-                placeholder="Search..."
-                style={{ border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 12px", fontSize: "13px", width: "160px", background: "#fff", color: "#2d2a24", outline: "none" }}
-              />
-              <button type="submit" style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", border: "none", cursor: "pointer" }}>
-                Search
-              </button>
-            </form>
+            {/* Typeahead search — same component used in the navbar.
+                Replaces the old GET form that didn't support live
+                product suggestions. */}
+            <div style={{ width: "240px", maxWidth: "100%" }}>
+              <SearchSuggest variant="navbar" placeholder="Search products..." />
+            </div>
           </div>
 
           {products.length === 0 ? (
