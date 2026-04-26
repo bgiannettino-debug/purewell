@@ -135,7 +135,7 @@ export default function ResultsPage() {
               return (
                 <div key={i} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "14px", padding: "16px", display: "flex", gap: "14px" }}>
                   {/* Product image */}
-                  <Link href={`/products/${p.slug}`} style={{ flexShrink: 0, position: "relative", width: "72px", height: "72px", borderRadius: "10px", overflow: "hidden", background: "#f5f2ed", border: "1px solid #e7e3dc" }}>
+                  <Link href={`/products/${p.slug}?from=quiz`} style={{ flexShrink: 0, position: "relative", width: "72px", height: "72px", borderRadius: "10px", overflow: "hidden", background: "#f5f2ed", border: "1px solid #e7e3dc" }}>
                     {p.imageUrl && (
                       <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: "cover" }} />
                     )}
@@ -144,7 +144,7 @@ export default function ResultsPage() {
                   {/* Body */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "2px" }}>{p.brand}</div>
-                    <Link href={`/products/${p.slug}`} style={{ textDecoration: "none" }}>
+                    <Link href={`/products/${p.slug}?from=quiz`} style={{ textDecoration: "none" }}>
                       <div style={{ fontSize: "14px", fontWeight: "600", color: "#2d2a24", marginBottom: "6px", lineHeight: 1.3 }}>
                         {p.name}
                       </div>
@@ -187,13 +187,13 @@ export default function ResultsPage() {
             return (
               <div key={i} style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "14px", padding: "16px", display: "flex", gap: "14px" }}>
                 {/* Type emoji tile */}
-                <Link href={`/recipes/${r.slug}`} style={{ flexShrink: 0, width: "72px", height: "72px", borderRadius: "10px", background: "#eef5f0", border: "1px solid #c8ddd0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", textDecoration: "none" }}>
+                <Link href={`/recipes/${r.slug}?from=quiz`} style={{ flexShrink: 0, width: "72px", height: "72px", borderRadius: "10px", background: "#eef5f0", border: "1px solid #c8ddd0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px", textDecoration: "none" }}>
                   {emoji}
                 </Link>
 
                 {/* Body */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <Link href={`/recipes/${r.slug}`} style={{ textDecoration: "none" }}>
+                  <Link href={`/recipes/${r.slug}?from=quiz`} style={{ textDecoration: "none" }}>
                     <div style={{ fontSize: "14px", fontWeight: "600", color: "#2d2a24", marginBottom: "6px", lineHeight: 1.3, textTransform: "capitalize" }}>
                       {r.name}
                     </div>
@@ -214,7 +214,7 @@ export default function ResultsPage() {
                       {r.prepTime} min · ${r.costPerServing.toFixed(2)}/serving
                     </span>
                     <Link
-                      href={`/recipes/${r.slug}`}
+                      href={`/recipes/${r.slug}?from=quiz`}
                       style={{ background: "#fff", color: "#3d6b4f", fontSize: "12px", fontWeight: "600", padding: "6px 12px", borderRadius: "8px", border: "1px solid #c8ddd0", textDecoration: "none", whiteSpace: "nowrap" }}
                     >
                       View recipe →

@@ -11,6 +11,10 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  // When the user lands here from the quiz protocol, the URL carries
+  // ?from=quiz so we can offer a "Back to recommendations" affordance
+  // instead of dropping them on the full product browser.
+  searchParams: Promise<{ from?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -28,8 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { from } = await searchParams;
+  const fromQuiz = from === "quiz";
 
   const product = await db.product.findUnique({
     where: { slug },
@@ -62,13 +68,14 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Back button */}
+      {/* Back button — context-aware. Quiz visitors get sent back to
+          their recommendations instead of the full product browser. */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px 24px 0" }}>
         <Link
-          href="/"
+          href={fromQuiz ? "/quiz/results" : "/"}
           style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none" }}
         >
-          ← Back to products
+          ← {fromQuiz ? "Back to recommendations" : "Back to products"}
         </Link>
       </div>
 

@@ -67,10 +67,17 @@ const typeMeta: Record<string, { label: string; emoji: string }> = {
 
 type Props = {
   params: Promise<{ slug: string }>;
+  // searchParams lets us detect referral context without document.referrer
+  // (which is unreliable across redirects and direct shares). The quiz
+  // results page appends ?from=quiz so we can offer "Back to
+  // recommendations" instead of the default "Back to recipes".
+  searchParams: Promise<{ from?: string }>;
 };
 
-export default async function RecipePage({ params }: Props) {
+export default async function RecipePage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { from } = await searchParams;
+  const fromQuiz = from === "quiz";
 
   const recipe = await db.recipe.findUnique({
     where: { slug },
@@ -88,12 +95,14 @@ export default async function RecipePage({ params }: Props) {
 
       <div style={{ maxWidth: "680px", margin: "0 auto", padding: "32px 24px" }}>
 
-        {/* Back link */}
+        {/* Back link — context-aware. Coming from the quiz protocol
+            takes the user back to their recommendations rather than
+            dropping them in the full recipe browser. */}
         <Link
-          href="/recipes"
+          href={fromQuiz ? "/quiz/results" : "/recipes"}
           style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", fontWeight: "500", color: "#6b6560", textDecoration: "none", marginBottom: "24px" }}
         >
-          ← Back to recipes
+          ← {fromQuiz ? "Back to recommendations" : "Back to recipes"}
         </Link>
 
         {/* Type + goal tags */}
