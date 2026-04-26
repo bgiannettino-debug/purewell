@@ -19,6 +19,20 @@ html, body {
   overflow-x: clip;
 }
 
+/* Stop iOS Safari from auto-zooming the page on input focus. iOS triggers
+   the zoom whenever a form input has font-size < 16px, and many of our
+   inputs use 13–14px to fit compact mobile layouts. Setting a 16px
+   minimum on mobile keeps the page at its native scale (and prevents the
+   "didn't zoom back out" trap users hit afterward) without bloating
+   inputs on desktop, where this media query doesn't match. */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
   background: #faf8f5;
