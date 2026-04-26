@@ -1,24 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CartSidebar from "./CartSidebar";
+import SearchSuggest from "./SearchSuggest";
 
 export default function Navbar() {
-  const router = useRouter();
-  const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      router.push(`/?search=${encodeURIComponent(search.trim())}`);
-    } else {
-      router.push("/");
-    }
-    setMenuOpen(false);
-  };
 
   const navLinks = [
   { href: "/", label: "Products" },
@@ -96,21 +84,10 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-          {/* Desktop search */}
-          <form className="nav-search" onSubmit={handleSearch} style={{ display: "flex", width: "200px" }}>
-            <div style={{ position: "relative", width: "100%" }}>
-              <svg style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9c9488" }} width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="5.5" cy="5.5" r="4" />
-                <line x1="9" y1="9" x2="13" y2="13" />
-              </svg>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search products..."
-                style={{ width: "100%", paddingLeft: "30px", paddingRight: "12px", paddingTop: "8px", paddingBottom: "8px", fontSize: "13px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", outline: "none", color: "#2d2a24" }}
-              />
-            </div>
-          </form>
+          {/* Desktop search — typeahead with product suggestions */}
+          <div className="nav-search" style={{ width: "220px" }}>
+            <SearchSuggest variant="navbar" />
+          </div>
           <Link href="/quiz" className="nav-links" style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", textDecoration: "none" }}>
             Take the quiz
           </Link>
@@ -121,14 +98,9 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div style={{ background: "#fff", borderTop: "1px solid #e7e3dc", padding: "16px 24px" }}>
-          <form onSubmit={handleSearch} style={{ marginBottom: "16px" }}>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
-              style={{ width: "100%", padding: "10px 14px", fontSize: "14px", background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "10px", outline: "none", color: "#2d2a24" }}
-            />
-          </form>
+          <div style={{ marginBottom: "16px" }}>
+            <SearchSuggest variant="page" onSubmit={() => setMenuOpen(false)} />
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
             {navLinks.map((link) => (
               <Link
