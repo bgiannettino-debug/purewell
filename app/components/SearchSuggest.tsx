@@ -163,13 +163,19 @@ export default function SearchSuggest({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             autoComplete="off"
+            // 16px font is the magic threshold that prevents iOS Safari
+            // from auto-zooming the page on input focus. Anything below
+            // 16px triggers the zoom and the page often won't snap back
+            // to its original scale, which also hides the suggestion
+            // dropdown behind the keyboard. Keep this at >= 16px even
+            // if it looks slightly larger than nearby UI on desktop.
             style={{
               width: "100%",
               paddingLeft: "30px",
               paddingRight: "12px",
               paddingTop: isNavbar ? "8px" : "10px",
               paddingBottom: isNavbar ? "8px" : "10px",
-              fontSize: isNavbar ? "13px" : "14px",
+              fontSize: "16px",
               background: "#faf8f5",
               border: "1px solid #e7e3dc",
               borderRadius: "10px",
