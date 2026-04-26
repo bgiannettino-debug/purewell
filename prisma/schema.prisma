@@ -91,3 +91,30 @@ model OrderItem {
   qty       Int
   price     Float
 }
+
+// Subscriber rows are created every time someone opts into having a
+// quiz protocol or recipe emailed to them. We deliberately allow
+// duplicate (email, source) rows so each opt-in is its own audit
+// record — useful for "you signed up for plan X on date Y" history.
+//
+// marketingOptIn is a separate consent flag from the transactional
+// send: ticking it lets us include them in future broadcasts. The
+// transactional email itself goes out regardless.
+//
+// unsubscribed propagates via email — when one row gets unsubscribed,
+// the email-send API checks for any prior unsubscribed=true row for
+// the same address and skips sending. unsubscribeToken is a per-row
+// secret used in the link footer of every email.
+model Subscriber {
+  id               String   @id @default(cuid())
+  email            String
+  source           String   // "quiz" | "recipe" | "footer"
+  referenceId      String?  // recipe slug, protocol id, etc.
+  marketingOptIn   Boolean  @default(false)
+  unsubscribed     Boolean  @default(false)
+  unsubscribeToken String   @unique @default(cuid())
+  createdAt        DateTime @default(now())
+
+  @@index([email])
+  @@index([unsubscribeToken])
+}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import BuyNowButton from "../../components/BuyNowButton";
+import EmailOptIn from "../../components/EmailOptIn";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
@@ -234,6 +235,14 @@ export default function ResultsPage() {
           <p style={{ fontSize: "13px", color: "#3d6b4f", lineHeight: 1.6 }}>
             {protocol.weeklyTip}
           </p>
+        </div>
+
+        {/* Email opt-in — lets users save their plan to their inbox so
+            they can revisit it without coming back to /quiz/results
+            via localStorage (which doesn't survive a cleared cache or
+            switching devices). */}
+        <div style={{ marginBottom: "20px" }}>
+          <EmailOptIn type="quiz-protocol" payload={protocol} />
         </div>
 
         {/* Disclaimer */}

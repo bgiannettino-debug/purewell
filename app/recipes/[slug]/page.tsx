@@ -3,6 +3,7 @@ import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import EmailOptIn from "../../components/EmailOptIn";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -193,6 +194,29 @@ export default async function RecipePage({ params, searchParams }: Props) {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Email opt-in — lets users send the recipe to themselves so
+            they can cook from their phone without juggling tabs in the
+            kitchen. The payload shape matches RecipeEmailPayload in
+            lib/emailTemplates.ts. */}
+        <div style={{ marginBottom: "16px" }}>
+          <EmailOptIn
+            type="recipe"
+            referenceId={recipe.slug}
+            payload={{
+              name: recipe.name,
+              slug: recipe.slug,
+              description: recipe.description,
+              type: recipe.type,
+              prepTime: recipe.prepTime,
+              servings: recipe.servings,
+              costPerServing: recipe.costPerServing,
+              difficulty: recipe.difficulty,
+              ingredients,
+              steps,
+            }}
+          />
         </div>
 
         {/* Shop CTA */}
