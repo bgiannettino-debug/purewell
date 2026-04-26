@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import BuyNowButton from "../../components/BuyNowButton";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 // Shape returned by /api/quiz: each item is either a supplement (with
 // a full product row) or a recipe (with the bits we need to preview).
@@ -102,19 +104,10 @@ export default function ResultsPage() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
-      {/* Nav */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", padding: "14px 24px", display: "flex", alignItems: "center" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: "28px", height: "28px", background: "#3d6b4f", borderRadius: "7px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path d="M8 2 Q11 5 11 9 Q8 13 5 9 Q5 5 8 2Z" fill="white"/>
-            </svg>
-          </div>
-          <span style={{ fontSize: "15px", fontWeight: "600", color: "#2d2a24" }}>
-            pure<span style={{ color: "#3d6b4f" }}>well</span>
-          </span>
-        </Link>
-      </div>
+      {/* Standard site Navbar so the cart sidebar is mounted on this
+          page — without it, BuyNowButton's "open cart" action has no
+          UI to slide open and the click feels like nothing happens. */}
+      <Navbar />
 
       <div style={{ maxWidth: "560px", margin: "0 auto", padding: "36px 24px" }}>
 
@@ -258,6 +251,8 @@ export default function ResultsPage() {
           </Link>
         </div>
       </div>
+
+      <Footer />
     </main>
   );
 }
