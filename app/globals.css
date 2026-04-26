@@ -31,6 +31,19 @@ html, body {
   select {
     font-size: 16px !important;
   }
+
+  /* Search-suggest dropdown switches from overlay (absolute) to inline
+     (static) on mobile. Absolute positioning was hiding the dropdown
+     under the on-screen keyboard, which made suggestions look like
+     they "weren't showing" on iOS. Inline positioning pushes the rest
+     of the mobile menu down so the suggestions are always visible
+     above the keyboard. Drop the shadow too — without overlay there's
+     nothing to lift the panel off of. */
+  .search-suggest-dropdown {
+    position: static !important;
+    box-shadow: none !important;
+    margin-top: 6px;
+  }
 }
 
 body {

@@ -152,7 +152,8 @@ export default function SearchSuggest({
             <line x1="9" y1="9" x2="13" y2="13" />
           </svg>
           <input
-            type="text"
+            type="search"
+            inputMode="search"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -160,6 +161,9 @@ export default function SearchSuggest({
               setActiveIndex(-1);
             }}
             onFocus={() => setIsOpen(true)}
+            // Backup for onFocus on iOS, where focus events occasionally
+            // get swallowed by the keyboard transition.
+            onClick={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             autoComplete="off"
@@ -187,9 +191,16 @@ export default function SearchSuggest({
         </div>
       </form>
 
-      {/* Suggestions dropdown */}
+      {/* Suggestions dropdown. Default is `position: absolute` so it
+          overlays page content without shifting layout — but on mobile
+          the on-screen keyboard would hide an absolutely-positioned
+          dropdown below the input. The .search-suggest-dropdown class
+          (rule in app/globals.css) flips it to static on ≤768px so
+          the dropdown lands inline, pushing surrounding content
+          down, where it's always visible above the keyboard. */}
       {showDropdown && (
         <div
+          className="search-suggest-dropdown"
           style={{
             position: "absolute",
             top: "calc(100% + 4px)",
