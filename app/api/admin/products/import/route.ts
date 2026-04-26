@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "../../../../../lib/db";
+import { isAuthenticated } from "../../../../../lib/adminAuth";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -24,11 +24,6 @@ const VALID_CERTIFICATIONS = [
   "Kosher",
   "Fair Trade",
 ];
-
-async function isAuthenticated() {
-  const cookieStore = await cookies();
-  return cookieStore.get("admin_session")?.value === "authenticated";
-}
 
 /**
  * Pull a 10-character ASIN out of an Amazon URL. Covers /dp/, /gp/product/,

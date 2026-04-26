@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { db } from "../../../../lib/db";
-
-async function isAuthenticated() {
-  const cookieStore = await cookies();
-  return cookieStore.get("admin_session")?.value === "authenticated";
-}
+import { isAuthenticated } from "../../../../lib/adminAuth";
 
 export async function GET() {
   if (!await isAuthenticated()) {
