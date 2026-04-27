@@ -6,7 +6,7 @@ import Link from "next/link";
 import SupplierMismatchWarning from "../../../components/SupplierMismatchWarning";
 import AdminNav from "../../../components/AdminNav";
 
-const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "nutrition", "fitness"];
+const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "personal-care", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
 
 const inputStyle = { width: "100%", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", outline: "none", color: "#2d2a24", background: "#faf8f5", boxSizing: "border-box" as const };

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 {
   "productName": "string",
   "brand": "string or null",
-  "category": "one of: supplements, essential-oils, herbal-teas, skincare, nutrition, fitness",
+  "category": "one of: supplements, essential-oils, herbal-teas, skincare, personal-care, nutrition, fitness",
   "productType": "string short canonical type, e.g. 'magnesium glycinate', 'vitamin d3', 'lavender essential oil', 'whey protein'. Lowercase, no brand names.",
   "overallRating": number 1-10,
   "overallVerdict": "string one sentence",

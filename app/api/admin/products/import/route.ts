@@ -10,6 +10,7 @@ const VALID_CATEGORIES = [
   "essential-oils",
   "herbal-teas",
   "skincare",
+  "personal-care",
   "nutrition",
   "fitness",
 ];
