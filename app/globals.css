@@ -19,6 +19,22 @@ html, body {
   overflow-x: clip;
 }
 
+/* Sticky-on-scroll category/retailer filter row. The exact `top` offset
+   needs to match the navbar height so the filter bar sits flush below
+   it. The navbar is shorter on mobile (tighter padding via .main-nav
+   media query above), so we adjust here too. Off-by-a-few-px would
+   show a thin strip of page background between the navbar and the
+   filter when pinned, which is the kind of thing only you notice but
+   keeps bugging you forever. */
+.sticky-filter-bar {
+  top: 96px;
+}
+@media (max-width: 768px) {
+  .sticky-filter-bar {
+    top: 92px;
+  }
+}
+
 /* Stop iOS Safari from auto-zooming the page on input focus. iOS triggers
    the zoom whenever a form input has font-size < 16px, and many of our
    inputs use 13–14px to fit compact mobile layouts. Setting a 16px
