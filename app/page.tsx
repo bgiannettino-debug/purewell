@@ -55,6 +55,7 @@ export default async function Home({ searchParams }: Props) {
     { id: "herbal-teas", label: "Herbal teas" },
     { id: "nutrition", label: "Nutrition" },
     { id: "skincare", label: "Skincare" },
+    { id: "fitness", label: "Fitness" },
   ];
 
   return (

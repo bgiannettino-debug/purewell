@@ -49,6 +49,7 @@ const CATEGORIES: { id: string; label: string }[] = [
   { id: "herbal-teas", label: "Herbal teas" },
   { id: "nutrition", label: "Nutrition" },
   { id: "skincare", label: "Skincare" },
+  { id: "fitness", label: "Fitness" },
 ];
 
 export default function AdminProducts() {
