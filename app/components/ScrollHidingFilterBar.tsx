@@ -9,12 +9,15 @@ import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
 // - Past threshold, actively scrolling for HIDE_AFTER_MS continuously
 //   in either direction: hide. Chrome stays out of the way during fast
 //   scroll.
-// - Past threshold, scroll just stopped: after IDLE_SHOW_DELAY_MS the
-//   bar reveals itself, giving the user a window to grab a filter
-//   without scrolling back to the top.
-// - Past threshold, bar shown but no scroll for AUTO_HIDE_AFTER_IDLE_MS:
-//   auto-hide. If the user paused to read a product card rather than
-//   filter, we get out of the way and maximize their viewing area.
+// - Past threshold, scroll just stopped AFTER going UP: bar reveals
+//   after IDLE_SHOW_DELAY_MS so the user can grab a filter without
+//   scrolling back to the top. Going up signals intent to interact.
+// - Past threshold, scroll just stopped AFTER going DOWN: bar stays
+//   hidden. The user is reading a product card — leave them alone
+//   so they get full viewing area. They have to scroll up to summon
+//   the bar.
+// - Bar shown on idle pause for AUTO_HIDE_AFTER_IDLE_MS without
+//   further scroll: auto-hide. Avoids the bar lingering forever.
 // - Any scroll restarts the cycle.
 //
 // We use transform (not display:none / position changes) so the
@@ -45,6 +48,11 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
     let autoHideTimer: ReturnType<typeof setTimeout> | null = null;
     let isHidden = false;
     let scrolling = false;
+    // Track the last scroll direction so the idle-show callback can
+    // decide whether to reveal: only on pause-after-up-scroll.
+    // pause-after-down-scroll keeps the bar hidden (user is reading).
+    let lastY = window.scrollY;
+    let lastDirection: "down" | "up" | null = null;
 
     const setHidden = (h: boolean) => {
       if (isHidden === h) return;
@@ -67,6 +75,14 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
 
     const onScroll = () => {
       const currentY = window.scrollY;
+
+      // Track direction on every event so the idle-show callback can
+      // make a directional decision. Only update when there's actual
+      // movement; a fired event with delta==0 (rare) keeps the prior
+      // direction.
+      if (currentY > lastY) lastDirection = "down";
+      else if (currentY < lastY) lastDirection = "up";
+      lastY = currentY;
 
       // Above the scroll threshold — always show, reset all state.
       if (currentY <= SCROLL_THRESHOLD) {
@@ -100,11 +116,17 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
         scrolling = false;
         clear(scrollHideTimer);
         scrollHideTimer = null;
-        setHidden(false);
         idleShowTimer = null;
 
+        // Direction-aware reveal: only un-hide on pause-after-up-scroll.
+        // Pause-after-down-scroll = user is reading a product card, so
+        // we leave the bar hidden and give them full viewing area.
+        if (lastDirection !== "up") return;
+
+        setHidden(false);
+
         // Bar is now revealed on idle. Schedule auto-hide so it tucks
-        // away if the user is reading rather than filtering.
+        // away if the user doesn't engage within AUTO_HIDE_AFTER_IDLE_MS.
         clear(autoHideTimer);
         autoHideTimer = setTimeout(() => {
           setHidden(true);
