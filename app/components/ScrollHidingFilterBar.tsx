@@ -29,7 +29,7 @@ import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
 const SCROLL_THRESHOLD = 200;            // never hide above this scrollY
 const HIDE_AFTER_MS = 500;               // continuous active scrolling required to hide
 const IDLE_SHOW_DELAY_MS = 150;          // how long after scroll stops before bar reveals
-const AUTO_HIDE_AFTER_IDLE_MS = 1000;    // bar auto-hides this long after being revealed on idle
+const AUTO_HIDE_AFTER_IDLE_MS = 2000;    // bar auto-hides this long after being revealed on idle
 
 type Props = {
   children: ReactNode;
