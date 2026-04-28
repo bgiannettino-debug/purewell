@@ -29,7 +29,13 @@ export default async function Home({ searchParams }: Props) {
     ? retailers.split(",").map((r) => r.trim()).filter((r) => VALID_RETAILERS.includes(r))
     : [];
 
-  const totalProductCount = await db.product.count();
+  // Live counts so the hero stat tiles never lie about catalog size.
+  // Hardcoding these means they go stale every time we add or remove
+  // a product / recipe.
+  const [totalProductCount, totalRecipeCount] = await Promise.all([
+    db.product.count(),
+    db.recipe.count(),
+  ]);
 
   const products = await db.product.findMany({
     where: {
@@ -89,7 +95,7 @@ export default async function Home({ searchParams }: Props) {
               </Link>
             </div>
             <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
-              {[[`${totalProductCount}+`, "Natural products"], ["8", "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
+              {[[`${totalProductCount}+`, "Natural products"], [`${totalRecipeCount}`, "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
                   <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>

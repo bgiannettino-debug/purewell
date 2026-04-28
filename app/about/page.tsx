@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { db } from "../../lib/db";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +9,16 @@ export const metadata: Metadata = {
   description: "PureWell is a curated natural health marketplace combining AI-powered wellness protocols with homemade recipes and third-party tested supplements.",
 };
 
-export default function AboutPage() {
+// Force-dynamic so the stat tiles always reflect the current
+// product / recipe counts. Without this Next.js could pre-render
+// and freeze the numbers at build time.
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const [totalProductCount, totalRecipeCount] = await Promise.all([
+    db.product.count(),
+    db.recipe.count(),
+  ]);
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
       <Navbar />
@@ -48,8 +58,8 @@ export default function AboutPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
             {[
-              { num: "26+", label: "Curated products" },
-              { num: "8", label: "Free recipes" },
+              { num: `${totalProductCount}+`, label: "Curated products" },
+              { num: `${totalRecipeCount}`, label: "Free recipes" },
               { num: "100%", label: "All natural" },
               { num: "AI", label: "Powered protocols" },
             ].map((stat) => (
