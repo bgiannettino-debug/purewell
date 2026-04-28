@@ -15,8 +15,19 @@ import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
 // just moves it up by its own height, which puts it behind the
 // already-sticky navbar (z:30 > our z:20).
 
-const SCROLL_THRESHOLD = 200; // never hide above this scrollY (initial view stays interactive)
-const HIDE_AFTER_MS = 500;    // continuous down-scroll required to trigger hide
+// Tunable timing/distance thresholds. The previous values felt "touchy"
+// because the timer fired whether or not the user was still scrolling —
+// so a brief down-then-pause-to-read would still hide the bar after
+// 500ms. Combined with a low scroll threshold, even small scroll
+// movements would dismiss the filter row.
+//
+// The new model is: hide only if the user has been scrolling DOWN
+// continuously for HIDE_AFTER_MS AND was still actively scrolling
+// within ACTIVE_SCROLL_GRACE_MS of the timer firing. Paused readers
+// keep their filter bar visible.
+const SCROLL_THRESHOLD = 240;        // never hide above this scrollY
+const HIDE_AFTER_MS = 1000;          // continuous downward scrolling required (was 500)
+const ACTIVE_SCROLL_GRACE_MS = 250;  // must have scrolled within this window of timer fire
 
 type Props = {
   children: ReactNode;
@@ -34,6 +45,11 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
     let hideTimer: ReturnType<typeof setTimeout> | null = null;
     let isHidden = false;
     let direction: "down" | "up" | null = null;
+    // Timestamp of the most recent scroll event. Used at timer fire
+    // to verify the user is still actively scrolling (vs. paused to
+    // read), which is the missing condition that made the previous
+    // implementation feel touchy.
+    let lastScrollAt = Date.now();
 
     const setHidden = (h: boolean) => {
       if (isHidden === h) return;
@@ -49,6 +65,7 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
     };
 
     const onScroll = () => {
+      lastScrollAt = Date.now();
       const currentY = window.scrollY;
       const newDirection: "down" | "up" | null =
         currentY > lastY ? "down" : currentY < lastY ? "up" : null;
@@ -75,8 +92,12 @@ export default function ScrollHidingFilterBar({ children, style }: Props) {
         } else if (newDirection === "down") {
           // Schedule hide. If user pivots up before the timer fires,
           // the next direction change cancels it via clearHideTimer.
+          // At fire time we also check the user is STILL actively
+          // scrolling (last scroll event within ACTIVE_SCROLL_GRACE_MS)
+          // — if they paused to read, the bar stays visible.
           hideTimer = setTimeout(() => {
-            setHidden(true);
+            const stillActive = Date.now() - lastScrollAt < ACTIVE_SCROLL_GRACE_MS;
+            if (stillActive) setHidden(true);
             hideTimer = null;
           }, HIDE_AFTER_MS);
         }
