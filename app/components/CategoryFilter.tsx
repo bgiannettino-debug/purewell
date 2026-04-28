@@ -16,7 +16,7 @@ export default function CategoryFilter({ categories, activeCategory }: Props) {
   const router = useRouter();
 
   return (
-    <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "2px" }}>
+    <div className="category-chips" style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "2px" }}>
       {categories.map((cat) => (
         <button
           key={cat.id}

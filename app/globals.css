@@ -74,6 +74,55 @@ html, body {
    to a drawer triggered from the navbar Filters button. See
    app/components/FilterDrawer.tsx and FilterButton.tsx.) */
 
+/* Stacked-vertical layout for chip clusters when they're inside the
+   FilterDrawer. The chip components were originally designed for a
+   horizontal scroll lane (sticky filter bar). In a narrow drawer
+   column, stacked full-width rows read better — like a settings
+   list. We scope these overrides under .drawer-filters so the chip
+   components can keep their original layout if reused elsewhere. */
+.drawer-filters .category-chips,
+.drawer-filters .retailer-chips,
+.drawer-filters .cert-chips {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;
+  overflow-x: visible !important;
+  /* Disable the mobile horizontal-scroll affordances. */
+  -webkit-mask-image: none !important;
+          mask-image: none !important;
+  padding-bottom: 0 !important;
+  gap: 6px !important;
+}
+.drawer-filters .category-chips::-webkit-scrollbar,
+.drawer-filters .retailer-chips::-webkit-scrollbar,
+.drawer-filters .cert-chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each chip becomes a full-width row: label on the left, count
+   badge / checkmark on the right via space-between. Slightly bigger
+   touch targets than the inline pill chips (good for thumbs). */
+.drawer-filters .category-chips > button,
+.drawer-filters .retailer-chips > button,
+.drawer-filters .cert-chips > button {
+  width: 100%;
+  justify-content: space-between !important;
+  text-align: left !important;
+  padding: 11px 14px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+}
+
+/* The "Clear" / "Clear preference" anchor-style buttons inside
+   RetailerFilter and CertFilter shouldn't expand to full width —
+   they're meta-actions, not filter rows. Keep them inline-ish. */
+.drawer-filters .retailer-chips > button[style*="underline"],
+.drawer-filters .cert-chips > button[style*="underline"] {
+  width: auto;
+  align-self: flex-start;
+  padding: 6px 10px !important;
+}
+
 /* Stop iOS Safari from auto-zooming the page on input focus. iOS triggers
    the zoom whenever a form input has font-size < 16px, and many of our
    inputs use 13–14px to fit compact mobile layouts. Setting a 16px

@@ -138,8 +138,12 @@ export default function FilterDrawer({
           </button>
         </div>
 
-        {/* Content — scrolls if filters get long. */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+        {/* Content — scrolls if filters get long. The drawer-filters
+            class lets globals.css restyle the chip clusters as a
+            stacked vertical list (instead of the default horizontal
+            scrolling row), since wider stacked rows read better in
+            a drawer's narrow column. */}
+        <div className="drawer-filters" style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
           {/* Category section */}
           <section style={{ marginBottom: "20px" }}>
             <div
