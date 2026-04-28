@@ -4,6 +4,7 @@ import { db } from "../lib/db";
 import BuyNowButton from "./components/BuyNowButton";
 import CategoryFilter from "./components/CategoryFilter";
 import RetailerFilter from "./components/RetailerFilter";
+import CertFilter from "./components/CertFilter";
 import SearchSuggest from "./components/SearchSuggest";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -17,16 +18,32 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 type Props = {
-  searchParams: Promise<{ category?: string; search?: string; retailers?: string }>;
+  searchParams: Promise<{ category?: string; search?: string; retailers?: string; certs?: string }>;
 };
 
 const VALID_RETAILERS = ["amazon", "iherb", "thrive", "other"];
+const VALID_CERTS = [
+  "USDA Organic",
+  "Non-GMO",
+  "Vegan",
+  "Gluten-free",
+  "Third-party tested",
+  "GMP Certified",
+  "Kosher",
+  "Fair Trade",
+];
 
 export default async function Home({ searchParams }: Props) {
-  const { category, search, retailers } = await searchParams;
+  const { category, search, retailers, certs } = await searchParams;
 
   const activeRetailers = retailers
     ? retailers.split(",").map((r) => r.trim()).filter((r) => VALID_RETAILERS.includes(r))
+    : [];
+
+  // Whitelist incoming cert ids so an attacker can't shove arbitrary
+  // strings into a Prisma query via the URL.
+  const activeCerts = certs
+    ? certs.split(",").map((c) => c.trim()).filter((c) => VALID_CERTS.includes(c))
     : [];
 
   // Live counts so the hero stat tiles never lie about catalog size.
@@ -37,19 +54,46 @@ export default async function Home({ searchParams }: Props) {
     db.recipe.count(),
   ]);
 
+  // Filters that apply to BOTH the cert-count pool and the displayed
+  // products. The cert filter is layered on top of these for the
+  // displayed set but excluded from the count pool, so per-chip
+  // counts reflect "how many products in the current
+  // category/retailer/search slice carry this cert" rather than
+  // "how many remain after applying this cert too" (which would make
+  // the count of the just-clicked chip drop to displayed.length and
+  // confuse the user).
+  const baseWhere = {
+    ...(category && category !== "all" ? { category } : {}),
+    ...(activeRetailers.length > 0 ? { supplier: { in: activeRetailers } } : {}),
+    ...(search
+      ? {
+          OR: [
+            { name: { contains: search, mode: "insensitive" as const } },
+            { brand: { contains: search, mode: "insensitive" as const } },
+            { description: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  // Cheap query — only pulls the certifications array per row to
+  // tally per-chip counts.
+  const certPool = await db.product.findMany({
+    where: baseWhere,
+    select: { certifications: true },
+  });
+  const certCounts: Record<string, number> = {};
+  for (const c of VALID_CERTS) certCounts[c] = 0;
+  for (const p of certPool) {
+    for (const c of p.certifications) {
+      if (c in certCounts) certCounts[c]++;
+    }
+  }
+
   const products = await db.product.findMany({
     where: {
-      ...(category && category !== "all" ? { category } : {}),
-      ...(activeRetailers.length > 0 ? { supplier: { in: activeRetailers } } : {}),
-      ...(search
-        ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { brand: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {}),
+      ...baseWhere,
+      ...(activeCerts.length > 0 ? { certifications: { hasEvery: activeCerts } } : {}),
     },
     orderBy: { createdAt: "asc" },
   });
@@ -149,6 +193,15 @@ export default async function Home({ searchParams }: Props) {
             <RetailerFilter activeRetailers={activeRetailers} />
           </div>
         </div>
+        {/* Certification filter on its own row so the chip cluster has
+            the full content width to wrap into. Only renders when at
+            least one product in the catalog carries any cert — saves
+            visual noise on a brand-new empty database. */}
+        {certPool.length > 0 && (
+          <div style={{ maxWidth: "1200px", margin: "10px auto 0" }}>
+            <CertFilter activeCerts={activeCerts} certCounts={certCounts} />
+          </div>
+        )}
       </div>
 
       {/* Products */}
@@ -192,12 +245,21 @@ export default async function Home({ searchParams }: Props) {
                           No image
                         </div>
                       )}
-                      <div style={{ position: "absolute", top: "8px", left: "8px" }}>
-                        {product.certifications.slice(0, 1).map((cert) => (
-                          <span key={cert} style={{ fontSize: "10px", background: "rgba(255,255,255,0.92)", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: "500", border: "1px solid #c8ddd0" }}>
-                            {cert}
-                          </span>
-                        ))}
+                      <div style={{ position: "absolute", top: "8px", left: "8px", display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                        {/* Pick up to 2 certs in priority order — buyer-
+                            facing labels (Organic, Vegan, Non-GMO,
+                            Gluten-free) read sooner than facility/process
+                            certs (GMP, Third-party tested). 'USDA
+                            Organic' is shortened to 'Organic' on the
+                            card to save space. */}
+                        {(["USDA Organic", "Vegan", "Non-GMO", "Gluten-free", "Fair Trade", "Kosher", "Third-party tested", "GMP Certified"] as const)
+                          .filter((c) => product.certifications.includes(c))
+                          .slice(0, 2)
+                          .map((cert) => (
+                            <span key={cert} style={{ fontSize: "10px", background: "rgba(255,255,255,0.92)", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: "500", border: "1px solid #c8ddd0" }}>
+                              {cert === "USDA Organic" ? "Organic" : cert}
+                            </span>
+                          ))}
                       </div>
                     </div>
                     <div style={{ padding: "14px 14px 0 14px", flex: 1 }}>
