@@ -82,19 +82,9 @@ export default function RetailerFilter({ activeRetailers }: Props) {
 
   return (
     <div className="retailer-filter" style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-      <div
-        className="retailer-filter-label"
-        style={{
-          fontSize: "11px",
-          fontWeight: 500,
-          color: "#9c9488",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        Shop from
-      </div>
+      {/* Inline 'Shop from' label removed — the FilterDrawer renders
+          its own section header above this component, and it was the
+          only consumer left after the sticky-bar UI was retired. */}
       <div className="retailer-chips" style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
         {RETAILERS.map((r) => {
           const selected = activeRetailers.includes(r.id);

@@ -61,19 +61,8 @@ export default function CertFilter({ activeCerts, certCounts }: Props) {
       className="cert-filter"
       style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}
     >
-      <div
-        className="cert-filter-label"
-        style={{
-          fontSize: "11px",
-          fontWeight: 500,
-          color: "#9c9488",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        Certified
-      </div>
+      {/* Inline 'Certified' label removed — the FilterDrawer renders
+          its own section header above this component. */}
       <div className="cert-chips" style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
         {CERTS.map((c) => {
           const selected = activeCerts.includes(c.id);
