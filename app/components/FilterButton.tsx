@@ -23,7 +23,7 @@ export default function FilterButton() {
   const certs = searchParams.get("certs");
 
   const activeCount =
-    (category && category !== "all" ? 1 : 0) +
+    (category ? category.split(",").filter((c) => c && c !== "all").length : 0) +
     (retailers ? retailers.split(",").filter(Boolean).length : 0) +
     (certs ? certs.split(",").filter(Boolean).length : 0);
 

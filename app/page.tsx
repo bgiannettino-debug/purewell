@@ -20,6 +20,15 @@ type Props = {
 };
 
 const VALID_RETAILERS = ["amazon", "iherb", "thrive", "other"];
+const VALID_CATEGORIES = [
+  "supplements",
+  "essential-oils",
+  "herbal-teas",
+  "skincare",
+  "personal-care",
+  "nutrition",
+  "fitness",
+];
 const VALID_CERTS = [
   "USDA Organic",
   "Non-GMO",
@@ -36,6 +45,15 @@ export default async function Home({ searchParams }: Props) {
 
   const activeRetailers = retailers
     ? retailers.split(",").map((r) => r.trim()).filter((r) => VALID_RETAILERS.includes(r))
+    : [];
+
+  // Category became multi-select — comma-separated like retailers and
+  // certs. Backward-compatible with the old single-value links since
+  // a single id like 'supplements' parses to a one-element array. The
+  // 'all' value (sometimes seen on legacy links) is filtered out via
+  // the whitelist.
+  const activeCategories = category
+    ? category.split(",").map((c) => c.trim()).filter((c) => VALID_CATEGORIES.includes(c))
     : [];
 
   // Whitelist incoming cert ids so an attacker can't shove arbitrary
@@ -61,7 +79,7 @@ export default async function Home({ searchParams }: Props) {
   // the count of the just-clicked chip drop to displayed.length and
   // confuse the user).
   const baseWhere = {
-    ...(category && category !== "all" ? { category } : {}),
+    ...(activeCategories.length > 0 ? { category: { in: activeCategories } } : {}),
     ...(activeRetailers.length > 0 ? { supplier: { in: activeRetailers } } : {}),
     ...(search
       ? {
@@ -162,7 +180,7 @@ export default async function Home({ searchParams }: Props) {
           much screen real estate during product browsing. */}
       <FilterDrawer
         categories={categories}
-        activeCategory={category || "all"}
+        activeCategories={activeCategories}
         activeRetailers={activeRetailers}
         activeCerts={activeCerts}
         certCounts={certCounts}
@@ -174,9 +192,16 @@ export default async function Home({ searchParams }: Props) {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
             <h2 style={{ fontSize: "17px", fontWeight: "600", color: "#2d2a24" }}>
-              {category && category !== "all"
-                ? categories.find((c) => c.id === category)?.label
-                : "All products"}{" "}
+              {/* Header reflects the multi-select category state:
+                  - 0 selected → 'All products'
+                  - 1 selected → that category's label
+                  - 2+ selected → 'Selected products' (we could list
+                    them, but it gets long quickly with 3+ picks). */}
+              {activeCategories.length === 0
+                ? "All products"
+                : activeCategories.length === 1
+                  ? (categories.find((c) => c.id === activeCategories[0])?.label ?? "Products")
+                  : "Selected products"}{" "}
               <span style={{ color: "#9c9488", fontWeight: "400", fontSize: "14px" }}>
                 ({products.length} items)
               </span>

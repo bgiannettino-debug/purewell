@@ -92,7 +92,7 @@ type Category = { id: string; label: string };
 
 type Props = {
   categories: Category[];
-  activeCategory: string;
+  activeCategories: string[];
   activeRetailers: string[];
   activeCerts: string[];
   certCounts: Record<string, number>;
@@ -105,7 +105,7 @@ type Props = {
 
 export default function FilterDrawer({
   categories,
-  activeCategory,
+  activeCategories,
   activeRetailers,
   activeCerts,
   certCounts,
@@ -130,9 +130,11 @@ export default function FilterDrawer({
 
   // Pretty-print summaries for each collapsed section header.
   const productsSummary =
-    activeCategory === "all" || !activeCategory
+    activeCategories.length === 0
       ? null
-      : (categories.find((c) => c.id === activeCategory)?.label ?? null);
+      : activeCategories.length === 1
+        ? (categories.find((c) => c.id === activeCategories[0])?.label ?? null)
+        : `${activeCategories.length} selected`;
   const retailersSummary =
     activeRetailers.length === 0
       ? null
@@ -169,9 +171,7 @@ export default function FilterDrawer({
   }, [isOpen, close]);
 
   const totalActive =
-    (activeCategory && activeCategory !== "all" ? 1 : 0) +
-    activeRetailers.length +
-    activeCerts.length;
+    activeCategories.length + activeRetailers.length + activeCerts.length;
 
   const clearAll = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -251,7 +251,7 @@ export default function FilterDrawer({
             open={openSections.products}
             onToggle={() => toggleSection("products")}
           >
-            <CategoryFilter categories={categories} activeCategory={activeCategory} />
+            <CategoryFilter categories={categories} activeCategories={activeCategories} />
           </FilterSection>
 
           <FilterSection
