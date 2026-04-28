@@ -6,6 +6,7 @@ import CategoryFilter from "./components/CategoryFilter";
 import RetailerFilter from "./components/RetailerFilter";
 import CertFilter from "./components/CertFilter";
 import SearchSuggest from "./components/SearchSuggest";
+import ScrollHidingFilterBar from "./components/ScrollHidingFilterBar";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import type { Metadata } from "next";
@@ -157,20 +158,20 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Category + retailer filters. On desktop these sit side by side; on
-          mobile the .filter-row class stacks them vertically (CSS rule lives
-          in app/globals.css) so the retailer chips have full width to wrap
-          and the category row gets its own dedicated scroll lane.
+      {/* Category + retailer + cert filters. On desktop these sit side by
+          side; on mobile the .filter-row class stacks them vertically
+          and each chip cluster scrolls horizontally (CSS in globals.css).
 
-          Sticky behavior: pinned just below the navbar (which is itself
-          sticky at top:0). Scrolling down pins this row below the header;
-          scrolling back up returns it automatically — that's how
-          position: sticky works. z-index 20 keeps it under the cart
-          sidebar (z:50, z:40 overlay) and search dropdown (z:100) but
-          above page content. The .sticky-filter-bar class lets globals.css
-          adjust `top` per-viewport so it sits flush with the navbar
-          (which is shorter on mobile due to tighter padding). */}
-      <div className="sticky-filter-bar" style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
+          Sticky behavior: pinned just below the navbar (top offset
+          matches navbar height per viewport via .sticky-filter-bar).
+          z-index 20 keeps it under the cart sidebar (z:50, z:40 overlay)
+          and search dropdown (z:100) but above page content.
+
+          Scroll-aware behavior: ScrollHidingFilterBar is a small client
+          component that watches scroll direction. Continuous downward
+          scrolling past 200px for ~500ms slides this bar up behind the
+          navbar (translateY); any upward scroll slides it back. */}
+      <ScrollHidingFilterBar style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
         <div
           className="filter-row"
           style={{
@@ -202,7 +203,7 @@ export default async function Home({ searchParams }: Props) {
             <CertFilter activeCerts={activeCerts} certCounts={certCounts} />
           </div>
         )}
-      </div>
+      </ScrollHidingFilterBar>
 
       {/* Products */}
       <div style={{ background: "#faf8f5", padding: "28px 24px" }}>
