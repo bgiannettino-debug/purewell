@@ -6,6 +6,7 @@ import CategoryFilter from "./components/CategoryFilter";
 import RetailerFilter from "./components/RetailerFilter";
 import CertFilter from "./components/CertFilter";
 import SearchSuggest from "./components/SearchSuggest";
+import ScrollHidingFilterBar from "./components/ScrollHidingFilterBar";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import type { Metadata } from "next";
@@ -164,8 +165,13 @@ export default async function Home({ searchParams }: Props) {
           Sticky behavior: pinned just below the navbar (top offset
           matches navbar height per viewport via .sticky-filter-bar).
           z-index 20 keeps it under the cart sidebar (z:50, z:40 overlay)
-          and search dropdown (z:100) but above page content. */}
-      <div className="sticky-filter-bar" style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
+          and search dropdown (z:100) but above page content.
+
+          Scroll-aware behavior: ScrollHidingFilterBar watches scroll
+          direction. Continuous downward scrolling past 200px for
+          ~500ms slides this bar up behind the navbar (translateY);
+          any upward scroll slides it back. */}
+      <ScrollHidingFilterBar style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
         <div
           className="filter-row"
           style={{
@@ -197,7 +203,7 @@ export default async function Home({ searchParams }: Props) {
             <CertFilter activeCerts={activeCerts} certCounts={certCounts} />
           </div>
         )}
-      </div>
+      </ScrollHidingFilterBar>
 
       {/* Products */}
       <div style={{ background: "#faf8f5", padding: "28px 24px" }}>

@@ -79,6 +79,19 @@ html, body {
   }
 }
 
+/* Scroll-aware show/hide: continuous down-scroll past the threshold
+   tucks the filter bar up behind the navbar so the user gets the
+   full viewport for browsing; any upward scroll slides it back. The
+   transform is GPU-accelerated and doesn't reflow the page. */
+.sticky-filter-bar.scroll-hiding {
+  transition: transform 0.28s ease;
+  will-change: transform;
+}
+.sticky-filter-bar.is-scroll-hidden {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
 /* Stop iOS Safari from auto-zooming the page on input focus. iOS triggers
    the zoom whenever a form input has font-size < 16px, and many of our
    inputs use 13–14px to fit compact mobile layouts. Setting a 16px
