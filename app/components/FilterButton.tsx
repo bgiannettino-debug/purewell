@@ -31,26 +31,26 @@ export default function FilterButton() {
     <button
       onClick={open}
       aria-label="Open filters"
+      title="Filters"
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "6px",
+        gap: "4px",
         background: "#2d2a24",
         color: "#fff",
-        fontSize: "13px",
-        fontWeight: 500,
-        padding: "8px 14px",
+        padding: "8px 10px",
         borderRadius: "10px",
         border: "none",
         cursor: "pointer",
       }}
     >
-      {/* Funnel/filter icon. Tiny SVG so we don't pull in lucide-react
-          or another icon dep just for this. */}
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Funnel/filter icon, icon-only at all viewports for a minimal
+          look that matches the cart button's mobile state. Sized
+          slightly larger (15px) so the bare icon reads at a glance
+          without the supporting text label. */}
+      <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <path d="M1 2h12l-4.5 6v4l-3 1V8L1 2z" />
       </svg>
-      <span className="filter-btn-label">Filters</span>
       {activeCount > 0 && (
         <span
           style={{
