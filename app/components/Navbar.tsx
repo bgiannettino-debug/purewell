@@ -23,9 +23,15 @@ export default function Navbar() {
     // but above default page content. Background is solid white so
     // scrolling content doesn't bleed through.
     <header style={{ background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", top: 0, zIndex: 30 }}>
-      {/* Announcement bar */}
-      <div style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", textAlign: "center", padding: "8px 16px" }}>
-        🌿 All natural · Third-party tested · AI-powered wellness recommendations
+      {/* Announcement bar — must stay one line at all viewport widths,
+          otherwise the sticky filter bar's `top` offset (which is
+          calibrated to navbar height) gets thrown off and the
+          category chips slide under the navbar. The trailing AI line
+          is the most expendable bit, so it gets hidden on ≤768px via
+          .announcement-tail in globals.css. */}
+      <div style={{ background: "#3d6b4f", color: "#fff", fontSize: "12px", textAlign: "center", padding: "8px 16px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        🌿 All natural · Third-party tested
+        <span className="announcement-tail"> · AI-powered wellness recommendations</span>
       </div>
 
       {/* Main nav. Padding is reduced on mobile via the .main-nav class

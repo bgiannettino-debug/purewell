@@ -95,7 +95,7 @@ export default function RetailerFilter({ activeRetailers }: Props) {
       >
         Shop from
       </div>
-      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+      <div className="retailer-chips" style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
         {RETAILERS.map((r) => {
           const selected = activeRetailers.includes(r.id);
           return (

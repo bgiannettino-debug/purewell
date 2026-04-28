@@ -74,7 +74,7 @@ export default function CertFilter({ activeCerts, certCounts }: Props) {
       >
         Certified
       </div>
-      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+      <div className="cert-chips" style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
         {CERTS.map((c) => {
           const selected = activeCerts.includes(c.id);
           const count = certCounts[c.id] ?? 0;

@@ -19,6 +19,50 @@ html, body {
   overflow-x: clip;
 }
 
+/* Hide the trailing 'AI-powered wellness recommendations' segment of
+   the announcement bar on mobile so the bar always fits one line.
+   Two-line bars made the sticky-filter-bar `top` offset wrong because
+   the navbar height changed mid-render. */
+@media (max-width: 768px) {
+  .announcement-tail {
+    display: none;
+  }
+}
+
+/* Mobile: convert the retailer + cert chip rows from wrap-to-many-
+   lines to single-row horizontal scroll, matching the category row.
+   On desktop they stay wrapping (less common to need scroll, and the
+   horizontal real estate is plentiful). */
+@media (max-width: 768px) {
+  .retailer-chips,
+  .cert-chips {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Match the category-row fade affordance so users can tell it
+       scrolls. The thin scrollbar comes from scrollbar-color below. */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+            mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+    scrollbar-color: #9c9488 #f0ece6;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
+  }
+  .retailer-chips::-webkit-scrollbar,
+  .cert-chips::-webkit-scrollbar {
+    height: 5px;
+  }
+  .retailer-chips::-webkit-scrollbar-track,
+  .cert-chips::-webkit-scrollbar-track {
+    background: #f0ece6;
+    border-radius: 99px;
+  }
+  .retailer-chips::-webkit-scrollbar-thumb,
+  .cert-chips::-webkit-scrollbar-thumb {
+    background: #9c9488;
+    border-radius: 99px;
+  }
+}
+
 /* Sticky-on-scroll category/retailer filter row. The exact `top` offset
    needs to match the navbar height so the filter bar sits flush below
    it. The navbar is shorter on mobile (tighter padding via .main-nav
