@@ -187,8 +187,11 @@ export default async function Home({ searchParams }: Props) {
         hasCerts={certPool.length > 0}
       />
 
-      {/* Products */}
-      <div style={{ background: "#faf8f5", padding: "28px 24px" }}>
+      {/* Products — id="products" anchors the section so the
+          FilterDrawer's 'See results' button can scroll the grid into
+          view. scroll-margin-top in globals.css offsets for the
+          sticky navbar so the section header isn't hidden under it. */}
+      <div id="products" style={{ background: "#faf8f5", padding: "28px 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
             <h2 style={{ fontSize: "17px", fontWeight: "600", color: "#2d2a24" }}>

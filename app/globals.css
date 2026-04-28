@@ -74,6 +74,20 @@ html, body {
    to a drawer triggered from the navbar Filters button. See
    app/components/FilterDrawer.tsx and FilterButton.tsx.) */
 
+/* The products grid anchor used by the filter drawer's 'See results'
+   button. scroll-margin-top creates a buffer so when scrollIntoView
+   targets #products, the navbar (which is sticky at top:0) doesn't
+   end up covering the section header. Values match the navbar
+   height per viewport. */
+#products {
+  scroll-margin-top: 100px;
+}
+@media (max-width: 768px) {
+  #products {
+    scroll-margin-top: 96px;
+  }
+}
+
 /* Stacked-vertical layout for chip clusters when they're inside the
    FilterDrawer. The chip components were originally designed for a
    horizontal scroll lane (sticky filter bar). In a narrow drawer

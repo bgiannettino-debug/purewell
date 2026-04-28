@@ -297,7 +297,16 @@ export default function FilterDrawer({
             Clear all
           </button>
           <button
-            onClick={close}
+            onClick={() => {
+              close();
+              // Scroll the products grid into view so the user lands
+              // on what they just filtered for, not whatever scroll
+              // position they happened to have when they opened the
+              // drawer. scroll-margin-top on #products offsets the
+              // sticky navbar so the section header is visible.
+              const el = document.getElementById("products");
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
             style={{
               flex: 1,
               background: "#3d6b4f",
