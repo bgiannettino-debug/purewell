@@ -2,11 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
 import BuyNowButton from "./components/BuyNowButton";
-import CategoryFilter from "./components/CategoryFilter";
-import RetailerFilter from "./components/RetailerFilter";
-import CertFilter from "./components/CertFilter";
 import SearchSuggest from "./components/SearchSuggest";
-import ScrollHidingFilterBar from "./components/ScrollHidingFilterBar";
+import FilterDrawer from "./components/FilterDrawer";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import type { Metadata } from "next";
@@ -158,52 +155,19 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Category + retailer + cert filters. On desktop these sit side by
-          side; on mobile the .filter-row class stacks them vertically
-          and each chip cluster scrolls horizontally (CSS in globals.css).
-
-          Sticky behavior: pinned just below the navbar (top offset
-          matches navbar height per viewport via .sticky-filter-bar).
-          z-index 20 keeps it under the cart sidebar (z:50, z:40 overlay)
-          and search dropdown (z:100) but above page content.
-
-          Scroll-aware behavior: ScrollHidingFilterBar watches scroll
-          direction. Continuous downward scrolling past 200px for
-          ~500ms slides this bar up behind the navbar (translateY);
-          any upward scroll slides it back. */}
-      <ScrollHidingFilterBar style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
-        <div
-          className="filter-row"
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px",
-          }}
-        >
-          {/* scroll-fade adds a right-edge gradient + slim scrollbar on
-              mobile so users can tell the chip row is horizontally
-              scrollable, plus a tiny chevron hint as a final cue. */}
-          <div className="scroll-fade" style={{ flex: "1 1 auto", minWidth: 0, overflowX: "auto", position: "relative" }}>
-            <CategoryFilter categories={categories} activeCategory={category || "all"} />
-          </div>
-          <div className="retailer-filter-wrap" style={{ flexShrink: 0 }}>
-            <RetailerFilter activeRetailers={activeRetailers} />
-          </div>
-        </div>
-        {/* Certification filter on its own row so the chip cluster has
-            the full content width to wrap into. Only renders when at
-            least one product in the catalog carries any cert — saves
-            visual noise on a brand-new empty database. */}
-        {certPool.length > 0 && (
-          <div style={{ maxWidth: "1200px", margin: "10px auto 0" }}>
-            <CertFilter activeCerts={activeCerts} certCounts={certCounts} />
-          </div>
-        )}
-      </ScrollHidingFilterBar>
+      {/* Filter drawer — opened via the FilterButton in the navbar
+          (which only appears on this route). Holds category, retailer,
+          and cert filters in a left-side slide-in panel. The previous
+          always-visible sticky bar was retired because it ate too
+          much screen real estate during product browsing. */}
+      <FilterDrawer
+        categories={categories}
+        activeCategory={category || "all"}
+        activeRetailers={activeRetailers}
+        activeCerts={activeCerts}
+        certCounts={certCounts}
+        hasCerts={certPool.length > 0}
+      />
 
       {/* Products */}
       <div style={{ background: "#faf8f5", padding: "28px 24px" }}>

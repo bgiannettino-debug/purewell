@@ -1,12 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import CartSidebar from "./CartSidebar";
 import SearchSuggest from "./SearchSuggest";
+import FilterButton from "./FilterButton";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  // Filter button only makes sense on the storefront (where products
+  // and the FilterDrawer live). On other pages (recipes, about, admin)
+  // it'd be a dead button.
+  const pathname = usePathname();
+  const showFilterButton = pathname === "/";
 
   const navLinks = [
   { href: "/", label: "Products" },
@@ -97,6 +104,7 @@ export default function Navbar() {
           <Link href="/quiz" className="nav-links" style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: "500", padding: "8px 16px", borderRadius: "10px", textDecoration: "none" }}>
             Take the quiz
           </Link>
+          {showFilterButton && <FilterButton />}
           <CartSidebar />
         </div>
       </nav>

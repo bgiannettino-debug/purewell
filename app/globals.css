@@ -70,27 +70,9 @@ html, body {
    show a thin strip of page background between the navbar and the
    filter when pinned, which is the kind of thing only you notice but
    keeps bugging you forever. */
-.sticky-filter-bar {
-  top: 96px;
-}
-@media (max-width: 768px) {
-  .sticky-filter-bar {
-    top: 92px;
-  }
-}
-
-/* Scroll-aware show/hide: continuous down-scroll past the threshold
-   tucks the filter bar up behind the navbar so the user gets the
-   full viewport for browsing; any upward scroll slides it back. The
-   transform is GPU-accelerated and doesn't reflow the page. */
-.sticky-filter-bar.scroll-hiding {
-  transition: transform 0.28s ease;
-  will-change: transform;
-}
-.sticky-filter-bar.is-scroll-hidden {
-  transform: translateY(-100%);
-  pointer-events: none;
-}
+/* (Sticky-filter-bar + scroll-hide rules removed — filter UI moved
+   to a drawer triggered from the navbar Filters button. See
+   app/components/FilterDrawer.tsx and FilterButton.tsx.) */
 
 /* Stop iOS Safari from auto-zooming the page on input focus. iOS triggers
    the zoom whenever a form input has font-size < 16px, and many of our
