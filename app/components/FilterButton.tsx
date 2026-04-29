@@ -31,26 +31,29 @@ export default function FilterButton() {
     <button
       onClick={open}
       aria-label="Open filters"
-      title="Filters"
+      // Mirrors the cart button's structure exactly: same padding, gap,
+      // font size, icon size, and label-hide-on-mobile pattern. The
+      // .filter-btn class lets globals.css collapse the label and
+      // tighten the padding on ≤768px in lockstep with .cart-btn.
+      className="filter-btn"
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "4px",
+        gap: "8px",
         background: "#2d2a24",
         color: "#fff",
-        padding: "8px 10px",
+        fontSize: "13px",
+        fontWeight: 500,
+        padding: "8px 16px",
         borderRadius: "10px",
         border: "none",
         cursor: "pointer",
       }}
     >
-      {/* Funnel/filter icon, icon-only at all viewports for a minimal
-          look that matches the cart button's mobile state. Sized
-          slightly larger (15px) so the bare icon reads at a glance
-          without the supporting text label. */}
-      <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <path d="M1 2h12l-4.5 6v4l-3 1V8L1 2z" />
       </svg>
+      <span className="filter-btn-label">Filters</span>
       {activeCount > 0 && (
         <span
           style={{

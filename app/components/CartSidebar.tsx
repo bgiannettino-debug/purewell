@@ -190,8 +190,10 @@ export default function CartSidebar() {
           tap target instead of a pill that pushes against the screen edge. */}
       <style>{`
         @media (max-width: 768px) {
-          .cart-btn-label { display: none !important; }
-          .cart-btn { padding: 8px 10px !important; gap: 4px !important; }
+          .cart-btn-label,
+          .filter-btn-label { display: none !important; }
+          .cart-btn,
+          .filter-btn { padding: 8px 10px !important; gap: 4px !important; }
         }
       `}</style>
 
