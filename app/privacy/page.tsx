@@ -109,7 +109,10 @@ export default function PrivacyPage() {
             </p>
             <ul style={{ paddingLeft: "20px", margin: "10px 0 0" }}>
               <li style={li}>
-                <strong>Vercel</strong> — site hosting. Sees standard request logs.
+                <strong>Vercel</strong> — site hosting and Web Analytics. Sees standard
+                request logs and aggregate page-view data (top pages, referrers, country,
+                device). No cookies, no persistent identifiers, no cross-site tracking;
+                IP addresses are anonymized.
               </li>
               <li style={li}>
                 <strong>Cloudflare</strong> — DNS, CDN, and email forwarding for replies sent to
@@ -160,9 +163,10 @@ export default function PrivacyPage() {
               </li>
             </ul>
             <p style={{ ...p, marginTop: "10px" }}>
-              We don&apos;t currently use third-party advertising or analytics cookies. If we add
-              analytics in the future, we&apos;ll update this policy and prefer privacy-respecting
-              tools (e.g., Plausible, Fathom).
+              We use Vercel Web Analytics for aggregate page-view metrics — it&apos;s
+              cookie-free and doesn&apos;t set any persistent identifiers, so it isn&apos;t
+              listed above. We don&apos;t use any third-party advertising or cross-site
+              tracking cookies.
             </p>
           </div>
 

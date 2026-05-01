@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // Explicit viewport export — without this, mobile browsers can render at
@@ -51,7 +52,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel Web Analytics — aggregate page-view tracking. No
+            cookies, no persistent identifiers. Disclosed in our
+            Privacy Policy under third-party services. */}
+        <Analytics />
+      </body>
     </html>
   );
 }
