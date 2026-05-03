@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import BuyNowButton from "../../components/BuyNowButton";
 import EmailOptIn from "../../components/EmailOptIn";
+import CopyButton from "../../components/CopyButton";
+import { formatProtocolForClipboard } from "../../../lib/clipboardFormatters";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
@@ -120,9 +122,46 @@ export default function ResultsPage() {
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#2d2a24", marginBottom: "10px" }}>
             {protocol.protocolName}
           </h1>
-          <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7 }}>
+          <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "12px" }}>
             {protocol.summary}
           </p>
+          {/* Copy-to-clipboard for the whole protocol — name, summary,
+              each item with timing/reason/links, and the weekly tip.
+              Drops cleanly into Notes / Word / Mail for users who
+              want to keep their plan offline. */}
+          <CopyButton
+            text={formatProtocolForClipboard({
+              protocolName: protocol.protocolName,
+              summary: protocol.summary,
+              weeklyTip: protocol.weeklyTip,
+              items: protocol.items.map((item) =>
+                item.kind === "supplement"
+                  ? {
+                      kind: "supplement" as const,
+                      timing: item.timing,
+                      reason: item.reason,
+                      product: {
+                        name: item.product.name,
+                        brand: item.product.brand,
+                        price: item.product.price,
+                        slug: item.product.slug,
+                      },
+                    }
+                  : {
+                      kind: "recipe" as const,
+                      timing: item.timing,
+                      reason: item.reason,
+                      recipe: {
+                        name: item.recipe.name,
+                        slug: item.recipe.slug,
+                        type: item.recipe.type,
+                        prepTime: item.recipe.prepTime,
+                      },
+                    },
+              ),
+            })}
+            label="Copy plan"
+          />
         </div>
 
         {/* Protocol items */}

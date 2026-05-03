@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import CopyButton from "../components/CopyButton";
+import { formatAnalyzerResultForClipboard } from "../../lib/clipboardFormatters";
 
 type Ingredient = {
   name: string;
@@ -318,6 +320,26 @@ export default function AnalyzePage() {
         {/* Results */}
         {analysis && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+            {/* Copy-to-clipboard affordance — sits above the result
+                cards so users can stash the analysis in Notes/Word
+                without scrolling to find a button. Plain-text format
+                preserves structure across pasting targets. */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <CopyButton
+                text={formatAnalyzerResultForClipboard({
+                  productName: analysis.productName,
+                  brand: analysis.brand,
+                  category: analysis.category,
+                  overallRating: analysis.overallRating,
+                  overallVerdict: analysis.overallVerdict,
+                  summary: analysis.summary,
+                  ingredients: analysis.ingredients,
+                  concerns: analysis.concerns,
+                })}
+                label="Copy analysis"
+              />
+            </div>
 
             {/* Overall rating */}
             <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "24px" }}>

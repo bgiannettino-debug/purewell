@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import EmailOptIn from "../../components/EmailOptIn";
+import CopyButton from "../../components/CopyButton";
+import { formatRecipeForClipboard } from "../../../lib/clipboardFormatters";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -131,10 +133,30 @@ export default async function RecipePage({ params, searchParams }: Props) {
           })}
         </div>
 
-        {/* Title */}
-        <h1 style={{ fontSize: "26px", fontWeight: "700", color: "#2d2a24", marginBottom: "10px", textTransform: "capitalize" }}>
-          {recipe.name}
-        </h1>
+        {/* Title + copy-to-clipboard. Copy button puts the recipe
+            (ingredients + numbered steps + meta + source link) onto
+            the clipboard as plain text — drops cleanly into Notes,
+            Word, Mail, etc. without retyping. */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px", marginBottom: "10px", flexWrap: "wrap" }}>
+          <h1 style={{ fontSize: "26px", fontWeight: "700", color: "#2d2a24", textTransform: "capitalize", margin: 0, flex: "1 1 auto", minWidth: 0 }}>
+            {recipe.name}
+          </h1>
+          <CopyButton
+            text={formatRecipeForClipboard({
+              name: recipe.name,
+              slug: recipe.slug,
+              description: recipe.description,
+              type: recipe.type,
+              prepTime: recipe.prepTime,
+              servings: recipe.servings,
+              difficulty: recipe.difficulty,
+              goals: goals,
+              ingredients: ingredients,
+              steps: steps,
+            })}
+            label="Copy recipe"
+          />
+        </div>
         <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "24px" }}>
           {recipe.description}
         </p>
