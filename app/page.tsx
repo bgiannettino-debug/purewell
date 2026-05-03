@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "../lib/db";
 import BuyNowButton from "./components/BuyNowButton";
+import CategoryFilter from "./components/CategoryFilter";
+import RetailerFilter from "./components/RetailerFilter";
+import CertFilter from "./components/CertFilter";
 import SearchSuggest from "./components/SearchSuggest";
 import FilterDrawer from "./components/FilterDrawer";
 import Navbar from "./components/Navbar";
@@ -173,11 +176,44 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Filter drawer — opened via the FilterButton in the navbar
-          (which only appears on this route). Holds category, retailer,
-          and cert filters in a left-side slide-in panel. The previous
-          always-visible sticky bar was retired because it ate too
-          much screen real estate during product browsing. */}
+      {/* DESKTOP-ONLY sticky filter bar. Pinned below the navbar so
+          all three filter dimensions stay accessible while scrolling.
+          Hidden on ≤768px via the .desktop-filter-bar class — mobile
+          uses the FilterDrawer (triggered from the navbar Filters
+          button) instead because horizontal real estate is too tight
+          for a chip row stack on phones. Inline labels here ('Products',
+          'Shop from', 'Certified') replace the per-component labels we
+          dropped when the drawer became the primary mobile UX. */}
+      <div className="desktop-filter-bar" style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #e7e3dc", position: "sticky", zIndex: 20 }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: "1 1 auto", minWidth: 0 }}>
+            <span style={{ fontSize: "11px", fontWeight: 500, color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+              Products
+            </span>
+            <div style={{ flex: "1 1 auto", minWidth: 0, overflowX: "auto" }}>
+              <CategoryFilter categories={categories} activeCategories={activeCategories} />
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+            <span style={{ fontSize: "11px", fontWeight: 500, color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+              Shop from
+            </span>
+            <RetailerFilter activeRetailers={activeRetailers} />
+          </div>
+        </div>
+        {certPool.length > 0 && (
+          <div style={{ maxWidth: "1200px", margin: "10px auto 0", display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 500, color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+              Certified
+            </span>
+            <CertFilter activeCerts={activeCerts} certCounts={certCounts} />
+          </div>
+        )}
+      </div>
+
+      {/* Filter drawer — mobile filter UX. The button that opens it
+          lives in the Navbar and is hidden on desktop (where the
+          sticky bar above handles filtering instead). */}
       <FilterDrawer
         categories={categories}
         activeCategories={activeCategories}

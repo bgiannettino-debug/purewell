@@ -70,9 +70,27 @@ html, body {
    show a thin strip of page background between the navbar and the
    filter when pinned, which is the kind of thing only you notice but
    keeps bugging you forever. */
-/* (Sticky-filter-bar + scroll-hide rules removed — filter UI moved
-   to a drawer triggered from the navbar Filters button. See
-   app/components/FilterDrawer.tsx and FilterButton.tsx.) */
+/* Desktop-only sticky filter bar. Pinned below the navbar with the
+   same top offset we calculated earlier. Hidden on ≤768px because
+   the chip rows are too cramped on phones — mobile uses the
+   FilterDrawer instead. */
+.desktop-filter-bar {
+  top: 96px;
+}
+@media (max-width: 768px) {
+  .desktop-filter-bar {
+    display: none !important;
+  }
+}
+
+/* And the inverse: the mobile Filter button in the navbar is
+   redundant when the desktop sticky bar is visible, so hide it on
+   desktop. Mobile keeps the button as the primary filter trigger. */
+@media (min-width: 769px) {
+  .filter-btn {
+    display: none !important;
+  }
+}
 
 /* Product card action row responsiveness. The 2-column mobile grid
    leaves about 140px per card, which the full "Buy on Amazon →" +
