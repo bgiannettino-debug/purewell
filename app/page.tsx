@@ -176,6 +176,99 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </div>
 
+      {/* Label analyzer spotlight. Placed between the hero and the
+          products section because it's a discovery-friendly feature
+          that benefits from a dedicated callout — most visitors won't
+          know to look for it as a CTA in the hero. Two columns on
+          desktop (pitch left, fake analyzer-result preview right);
+          stacks vertically on mobile via the .analyzer-spotlight
+          class in globals.css. */}
+      <div style={{ background: "#eef5f0", borderBottom: "1px solid #c8ddd0", padding: "48px 24px" }}>
+        <div className="analyzer-spotlight" style={{ maxWidth: "1100px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
+          {/* Left: pitch */}
+          <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fff", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: 500, padding: "5px 12px", borderRadius: "99px", marginBottom: "14px" }}>
+              🔬 AI label analyzer
+            </div>
+            <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#2d2a24", lineHeight: 1.25, marginBottom: "12px" }}>
+              Snap a supplement label.<br />
+              <span style={{ color: "#3d6b4f" }}>See what&apos;s really inside.</span>
+            </h2>
+            <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: 1.7, marginBottom: "20px", maxWidth: "440px" }}>
+              Drop in a photo of any supplement label. Our AI breaks down each ingredient by quality, flags fillers and synthetic additives, and tells you which ones are worth your money — and which to skip.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
+              {[
+                { icon: "✓", text: "Identifies red-flag ingredients (artificial dyes, magnesium stearate, titanium dioxide)" },
+                { icon: "✓", text: "Spots dosing red flags — under-dosed actives, proprietary blends" },
+                { icon: "✓", text: "Suggests cleaner alternatives from our curated catalog" },
+                { icon: "✓", text: "Free, instant, and works on any brand — even ones we don't carry" },
+              ].map((item) => (
+                <div key={item.text} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                  <span style={{ width: "20px", height: "20px", background: "#3d6b4f", color: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700, flexShrink: 0, marginTop: "2px" }}>
+                    {item.icon}
+                  </span>
+                  <span style={{ fontSize: "13px", color: "#2d2a24", lineHeight: 1.6 }}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <Link
+              href="/analyze"
+              style={{ background: "#3d6b4f", color: "#fff", fontSize: "14px", fontWeight: 600, padding: "13px 28px", borderRadius: "12px", textDecoration: "none", display: "inline-block" }}
+            >
+              Try the label analyzer →
+            </Link>
+            <div style={{ fontSize: "12px", color: "#9c9488", marginTop: "10px" }}>
+              Takes about 10 seconds. No signup required.
+            </div>
+          </div>
+
+          {/* Right: faux analyzer result preview. Hand-rolled JSX so it
+              matches the rest of the site's palette and breakpoints
+              instead of needing a real screenshot. */}
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", boxShadow: "0 8px 24px rgba(45,42,36,0.06)" }}>
+            <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>
+              Sample analysis
+            </div>
+            <div style={{ fontSize: "15px", fontWeight: 600, color: "#2d2a24", marginBottom: "10px" }}>
+              Generic Brand Magnesium Complex
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#fef6e7", border: "1px solid #f0d4a0", color: "#8a6020", fontSize: "12px", fontWeight: 600, padding: "5px 11px", borderRadius: "99px" }}>
+                ⚠️ 6/10 — Mediocre
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {[
+                { name: "Magnesium oxide", note: "Cheapest form. Low absorption (~4%).", quality: "warning" },
+                { name: "Magnesium glycinate", note: "Highly bioavailable. Good for sleep.", quality: "good" },
+                { name: "Microcrystalline cellulose", note: "Filler. Inert but adds bulk.", quality: "neutral" },
+                { name: "Titanium dioxide", note: "EU-banned colorant. Avoid.", quality: "warning" },
+              ].map((ing) => {
+                const colors =
+                  ing.quality === "good"
+                    ? { bg: "#eef5f0", border: "#c8ddd0", dot: "#3d6b4f" }
+                    : ing.quality === "warning"
+                      ? { bg: "#fdf0ee", border: "#f5c6c0", dot: "#c0392b" }
+                      : { bg: "#f5f2ed", border: "#e7e3dc", dot: "#9c9488" };
+                return (
+                  <div key={ing.name} style={{ background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: "10px", padding: "10px 12px", display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: colors.dot, flexShrink: 0, marginTop: "6px" }} />
+                    <div>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "#2d2a24", marginBottom: "2px" }}>{ing.name}</div>
+                      <div style={{ fontSize: "11px", color: "#6b6560", lineHeight: 1.5 }}>{ing.note}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* DESKTOP-ONLY sticky filter bar. Pinned below the navbar so
           all three filter dimensions stay accessible while scrolling.
           Hidden on ≤768px via the .desktop-filter-bar class — mobile

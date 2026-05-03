@@ -70,6 +70,15 @@ html, body {
    show a thin strip of page background between the navbar and the
    filter when pinned, which is the kind of thing only you notice but
    keeps bugging you forever. */
+/* Label-analyzer spotlight on the homepage. Two-column grid on
+   desktop (pitch + faux preview); stacks vertically on mobile. */
+@media (max-width: 768px) {
+  .analyzer-spotlight {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+}
+
 /* Desktop-only sticky filter bar. Pinned below the navbar with the
    same top offset we calculated earlier. Hidden on ≤768px because
    the chip rows are too cramped on phones — mobile uses the
