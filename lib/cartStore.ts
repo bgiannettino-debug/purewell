@@ -19,7 +19,13 @@ type CartStore = {
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: Omit<CartItem, "qty">) => void;
+  // addItem stages an item in the cart. By default it pops the cart
+  // sidebar open so the user knows the click landed (matches the old
+  // "Add to cart" behavior). Pass { silent: true } when the user is
+  // simultaneously being routed to the retailer (the new "Buy on
+  // Amazon →" path) — we want the item recorded for repeat purchases
+  // without stealing focus from the retailer tab.
+  addItem: (item: Omit<CartItem, "qty">, opts?: { silent?: boolean }) => void;
   removeItem: (id: string) => void;
   updateQty: (id: string, qty: number) => void;
   clearCart: () => void;
@@ -43,7 +49,7 @@ export const useCart = create<CartStore>()(
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
 
-      addItem: (item) => {
+      addItem: (item, opts) => {
         const existing = get().items.find((i) => i.id === item.id);
         if (existing) {
           set({
@@ -54,7 +60,11 @@ export const useCart = create<CartStore>()(
         } else {
           set({ items: [...get().items, { ...item, qty: 1 }] });
         }
-        set({ isOpen: true });
+        // Silent mode skips the auto-open — used when the user is
+        // already being navigated to the retailer's tab.
+        if (!opts?.silent) {
+          set({ isOpen: true });
+        }
       },
 
       removeItem: (id) =>
