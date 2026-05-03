@@ -1,6 +1,7 @@
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 // One-time backfill: loop every product in the catalog, ask Claude
 // which wellness goals it supports, and save the result on the
@@ -33,7 +34,13 @@ const VALID_GOALS = [
 
 const onlyEmpty = process.argv.includes("--only-empty");
 
-const prisma = new PrismaClient();
+// Prisma 7 requires the PrismaPg adapter explicitly — same pattern as
+// lib/db.ts. We can't import from lib/db.ts directly because it uses
+// globalThis caching that doesn't make sense in a one-off CLI script.
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+const prisma = new PrismaClient({ adapter });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 async function inferGoals(name: string, brand: string, description: string): Promise<string[]> {
