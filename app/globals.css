@@ -92,6 +92,23 @@ html, body {
   .buy-now-btn {
     padding: 7px 12px !important;
   }
+  /* Stack price above Buy button on the narrowest cards. With a
+     2-col grid and ~140px content width, even a 6-char price
+     ($20.00) + Buy button doesn't fit on one row. Stacking keeps
+     both visible and gives the Buy button a comfortable full-width
+     tap target. */
+  .product-action-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .product-action-row .buy-now-row {
+    width: 100%;
+  }
+  .product-action-row .buy-now-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* The products grid anchor used by the filter drawer's 'See results'

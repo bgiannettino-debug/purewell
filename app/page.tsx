@@ -290,7 +290,7 @@ export default async function Home({ searchParams }: Props) {
                       </div>
                     </div>
                   </Link>
-                  <div style={{ padding: "0 14px 14px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginTop: "auto" }}>
+                  <div className="product-action-row" style={{ padding: "0 14px 14px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginTop: "auto" }}>
                     <span style={{ fontSize: "15px", fontWeight: "700", color: "#2d2a24" }}>
                       ${product.price.toFixed(2)}
                     </span>
