@@ -102,10 +102,16 @@ export default function BuyNowButton({
   }
 
   return (
-    <div style={{ display: "flex", gap: "6px", alignItems: "stretch" }}>
+    // Action row. Two buttons on desktop (Buy + Add), collapsed to
+    // just Buy on narrow mobile cards (the 2-col product grid leaves
+    // ~140px per card which can't fit both). Supplier name hidden on
+    // small screens to keep the Buy button compact — see the rules
+    // in app/globals.css under .buy-now-row.
+    <div className="buy-now-row" style={{ display: "flex", gap: "6px", alignItems: "stretch" }}>
       <button
         onClick={handleBuy}
         title={`Buy on ${supplierName} (opens ${supplierName} in a new tab)`}
+        className="buy-now-btn"
         style={{
           background: "#3d6b4f",
           color: "#fff",
@@ -119,12 +125,13 @@ export default function BuyNowButton({
           lineHeight: 1.3,
         }}
       >
-        Buy on {supplierName} →
+        Buy<span className="buy-now-supplier"> on {supplierName}</span> →
       </button>
       <button
         onClick={handleAdd}
         aria-label="Add to PureWell cart"
         title="Add to cart for multi-item checkout"
+        className="buy-now-add"
         style={{
           background: "#fff",
           color: "#3d6b4f",

@@ -74,6 +74,26 @@ html, body {
    to a drawer triggered from the navbar Filters button. See
    app/components/FilterDrawer.tsx and FilterButton.tsx.) */
 
+/* Product card action row responsiveness. The 2-column mobile grid
+   leaves about 140px per card, which the full "Buy on Amazon →" +
+   "+" combo can't fit. Step down progressively:
+     ≤768px : drop "on <Retailer>" so the button reads "Buy →"
+     ≤480px : also hide the secondary "+" button — single Buy button
+              fills the row */
+@media (max-width: 768px) {
+  .buy-now-supplier {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .buy-now-add {
+    display: none;
+  }
+  .buy-now-btn {
+    padding: 7px 12px !important;
+  }
+}
+
 /* The products grid anchor used by the filter drawer's 'See results'
    button. scroll-margin-top creates a buffer so when scrollIntoView
    targets #products, the navbar (which is sticky at top:0) doesn't
