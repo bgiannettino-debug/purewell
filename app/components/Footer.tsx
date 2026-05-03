@@ -22,6 +22,7 @@ export default function Footer() {
   const companyLinks = [
     { label: "About PureWell", href: "/about" },
     { label: "Brands we trust", href: "/brands" },
+    { label: "Top 10 herbal brands", href: "/top-brands" },
     { label: "Contact us", href: "mailto:hello@purewellnatural.com" },
     { label: "Affiliate disclosure", href: "/disclosure" },
     { label: "Privacy policy", href: "/privacy" },
