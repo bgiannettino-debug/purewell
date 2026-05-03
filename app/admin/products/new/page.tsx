@@ -8,6 +8,7 @@ import AdminNav from "../../../components/AdminNav";
 
 const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "personal-care", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
+const goalOptions = ["sleep", "stress", "energy", "immune", "gut", "joints", "hormones", "skin", "mood", "focus", "detox", "kids", "beauty"];
 
 const inputStyle = { width: "100%", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", outline: "none", color: "#2d2a24", background: "#faf8f5", boxSizing: "border-box" as const };
 const labelStyle = { display: "block" as const, fontSize: "12px", fontWeight: "600" as const, color: "#6b6560", marginBottom: "5px" };
@@ -28,6 +29,7 @@ export default function NewProduct() {
     supplier: "amazon", 
     asin: "",
     certifications: [] as string[],
+    goals: [] as string[],
   });
 
   const handleNameChange = (name: string) => {
@@ -41,6 +43,15 @@ export default function NewProduct() {
       certifications: prev.certifications.includes(cert)
         ? prev.certifications.filter((c) => c !== cert)
         : [...prev.certifications, cert],
+    }));
+  };
+
+  const toggleGoal = (goal: string) => {
+    setForm((prev) => ({
+      ...prev,
+      goals: prev.goals.includes(goal)
+        ? prev.goals.filter((g) => g !== goal)
+        : [...prev.goals, goal],
     }));
   };
 
@@ -146,6 +157,24 @@ export default function NewProduct() {
             onFix={(s) => setForm((p) => ({ ...p, supplier: s }))}
           />
           </div>
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>Wellness goals</div>
+            <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px" }}>
+              Pick 1–3 goals this product supports. Powers the &ldquo;leads with goals&rdquo; product card layout.
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+              {goalOptions.map((goal) => {
+                const selected = form.goals.includes(goal);
+                return (
+                  <button key={goal} type="button" onClick={() => toggleGoal(goal)}
+                    style={{ padding: "9px 12px", borderRadius: "10px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#faf8f5", cursor: "pointer", fontSize: "12px", fontWeight: "500", color: selected ? "#3d6b4f" : "#6b6560", textAlign: "left", textTransform: "capitalize" }}>
+                    {goal}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px" }}>
             <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "12px" }}>Certifications</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>

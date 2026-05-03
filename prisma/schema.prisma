@@ -24,6 +24,13 @@ model Product {
   price          Float
   category       String
   certifications String[]
+  // goals: which wellness goals this product supports — sleep, stress,
+  // energy, immune, gut, joints, hormones, skin, mood, focus, detox,
+  // kids, beauty. Same vocabulary as Recipe.goals so the two surfaces
+  // share filtering logic. Default empty so newly-imported products
+  // backfill cleanly when the column is added; populated by the
+  // import-flow Claude extraction and editable in the admin form.
+  goals          String[]
   imageUrl       String?
   affiliateUrl   String?
   supplier       String?

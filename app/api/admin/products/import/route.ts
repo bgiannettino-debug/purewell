@@ -26,6 +26,22 @@ const VALID_CERTIFICATIONS = [
   "Fair Trade",
 ];
 
+const VALID_GOALS = [
+  "sleep",
+  "stress",
+  "energy",
+  "immune",
+  "gut",
+  "joints",
+  "hormones",
+  "skin",
+  "mood",
+  "focus",
+  "detox",
+  "kids",
+  "beauty",
+];
+
 /**
  * Pull a 10-character ASIN out of an Amazon URL. Covers /dp/, /gp/product/,
  * and the variant where Amazon stuffs the ASIN as a query param. Returns null
@@ -181,12 +197,14 @@ Schema:
   "price": number — the current numeric price in USD, no currency symbol. Use the main listed price (not 'subscribe and save', 'member price', or strikethrough originals),
   "category": "one of: ${VALID_CATEGORIES.join(", ")}",
   "certifications": ["zero or more from this exact list: ${VALID_CERTIFICATIONS.join(", ")}"],
+  "goals": ["one to three from this exact list: ${VALID_GOALS.join(", ")}"],
   "confidence": "high or medium or low — how confident you are the extraction is correct"
 }
 
 Rules:
 - category MUST be exactly one of the listed values. Pick the closest fit.
 - certifications MUST come from the listed values verbatim. Only include ones explicitly claimed on the page; never infer. Empty array if none.
+- goals MUST come from the listed values verbatim. Pick 1-3 wellness goals this product supports based on its ingredients and the page copy. Be precise: ashwagandha → stress + sleep + mood; collagen → skin + joints; magnesium → sleep + stress; vitamin D → immune + mood. If the product is too generic to map to specific goals, return an empty array.
 - If the page text doesn't include a price, set price to 0 and confidence to "low".
 - If the text is clearly not a product page (e.g. it's a category landing page, search results, or a homepage), return {"error": "Page text doesn't look like a product page"}.
 
@@ -216,6 +234,7 @@ ${trimmedText}
       price?: number;
       category?: string;
       certifications?: string[];
+      goals?: string[];
       confidence?: string;
       error?: string;
     };
@@ -243,6 +262,8 @@ ${trimmedText}
       VALID_CERTIFICATIONS.includes(c),
     );
 
+    const goals = (extracted.goals || []).filter((g) => VALID_GOALS.includes(g));
+
     const name = (extracted.name || "").trim();
     const baseSlug = name ? toSlug(name) : "";
     const { slug, adjusted: slugAdjusted } = await resolveUniqueSlug(baseSlug);
@@ -256,6 +277,7 @@ ${trimmedText}
         price: typeof extracted.price === "number" ? extracted.price.toString() : "",
         category,
         certifications,
+        goals,
         imageUrl: imageUrl?.trim() || "",
         affiliateUrl: affiliateUrl.trim(),
         supplier,

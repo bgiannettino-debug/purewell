@@ -256,8 +256,35 @@ export default async function Home({ searchParams }: Props) {
                       </div>
                     </div>
                     <div style={{ padding: "14px 14px 0 14px", flex: 1 }}>
-                      <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "3px" }}>{product.brand}</div>
-                      <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px", lineHeight: "1.3" }}>{product.name}</div>
+                      {/* Goal pills lead — what this product helps with
+                          is the buyer's main mental hook (sleep, stress,
+                          immune). Show up to 2 to keep the card clean. */}
+                      {product.goals.length > 0 && (
+                        <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "6px" }}>
+                          {product.goals.slice(0, 2).map((goal) => (
+                            <span
+                              key={goal}
+                              style={{
+                                fontSize: "10px",
+                                background: "#eef5f0",
+                                color: "#3d6b4f",
+                                border: "1px solid #c8ddd0",
+                                padding: "2px 8px",
+                                borderRadius: "99px",
+                                fontWeight: 500,
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {goal}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {/* Product name leads — it's the "what's in it" bit
+                          (e.g. 'Magnesium Glycinate 400mg'). Brand
+                          becomes a small byline below. */}
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "#2d2a24", marginBottom: "2px", lineHeight: "1.3" }}>{product.name}</div>
+                      <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px" }}>by {product.brand}</div>
                       <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "8px", lineHeight: "1.5", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                         {product.description}
                       </div>

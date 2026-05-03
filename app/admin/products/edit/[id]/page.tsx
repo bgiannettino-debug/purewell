@@ -8,6 +8,7 @@ import AdminNav from "../../../../components/AdminNav";
 
 const categories = ["supplements", "essential-oils", "herbal-teas", "skincare", "personal-care", "nutrition", "fitness"];
 const certificationOptions = ["USDA Organic", "Non-GMO", "Vegan", "Gluten-free", "GMP Certified", "Third-party tested", "Kosher", "Fair Trade"];
+const goalOptions = ["sleep", "stress", "energy", "immune", "gut", "joints", "hormones", "skin", "mood", "focus", "detox", "kids", "beauty"];
 
 const inputStyle = { width: "100%", border: "1px solid #e7e3dc", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", outline: "none", color: "#2d2a24", background: "#faf8f5", boxSizing: "border-box" as const };
 const labelStyle = { display: "block" as const, fontSize: "12px", fontWeight: "600" as const, color: "#6b6560", marginBottom: "5px" };
@@ -23,7 +24,7 @@ export default function EditProduct() {
   const [form, setForm] = useState({
   id: "", name: "", slug: "", brand: "", description: "", price: "",
   category: "supplements", imageUrl: "", affiliateUrl: "",
-  supplier: "amazon", asin: "", certifications: [] as string[], inStock: true,
+  supplier: "amazon", asin: "", certifications: [] as string[], goals: [] as string[], inStock: true,
 });
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function EditProduct() {
         supplier: product.supplier || "amazon",
         asin: product.asin || "",
         certifications: product.certifications || [],
+        goals: product.goals || [],
         inStock: product.inStock,
     });
       setLoading(false);
@@ -52,6 +54,15 @@ export default function EditProduct() {
   const handleNameChange = (name: string) => {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     setForm((prev) => ({ ...prev, name, slug }));
+  };
+
+  const toggleGoal = (goal: string) => {
+    setForm((prev) => ({
+      ...prev,
+      goals: prev.goals.includes(goal)
+        ? prev.goals.filter((g) => g !== goal)
+        : [...prev.goals, goal],
+    }));
   };
 
   const toggleCert = (cert: string) => {
@@ -174,6 +185,24 @@ export default function EditProduct() {
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <input type="checkbox" id="inStock" checked={form.inStock} onChange={(e) => setForm((p) => ({ ...p, inStock: e.target.checked }))} style={{ width: "16px", height: "16px", accentColor: "#3d6b4f" }} />
               <label htmlFor="inStock" style={{ fontSize: "13px", color: "#6b6560", cursor: "pointer" }}>In stock</label>
+            </div>
+          </div>
+
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "20px", marginBottom: "12px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "600", color: "#2d2a24", marginBottom: "4px" }}>Wellness goals</div>
+            <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "12px" }}>
+              Pick 1–3 goals this product supports.
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+              {goalOptions.map((goal) => {
+                const selected = form.goals.includes(goal);
+                return (
+                  <button key={goal} type="button" onClick={() => toggleGoal(goal)}
+                    style={{ padding: "9px 12px", borderRadius: "10px", border: selected ? "2px solid #3d6b4f" : "1px solid #e7e3dc", background: selected ? "#eef5f0" : "#faf8f5", cursor: "pointer", fontSize: "12px", fontWeight: "500", color: selected ? "#3d6b4f" : "#6b6560", textAlign: "left", textTransform: "capitalize" }}>
+                    {goal}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
