@@ -1,4 +1,12 @@
-import "dotenv/config";
+// Mirror Next.js / prisma.config.ts dotenv loading order: .env.local
+// wins over .env. Without this the script reads only .env (which has
+// placeholders) and hits ECONNREFUSED because DATABASE_URL is empty
+// or stale. First-load wins; the .env fallback fills in any vars
+// not redeclared in .env.local.
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
+
 import Anthropic from "@anthropic-ai/sdk";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
