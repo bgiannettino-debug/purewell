@@ -58,6 +58,7 @@ export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Counts per category for the chip badges. Computed once per
   // products change so chips can show "(N)" without re-filtering on
@@ -70,10 +71,20 @@ export default function AdminProducts() {
     return counts;
   }, [products]);
 
+  // Filtered list combines the category chip + the search box.
+  // Search matches name OR brand case-insensitively — the two fields
+  // an admin would actually search by. ASIN/slug-based lookups can
+  // be added later if needed.
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "all") return products;
-    return products.filter((p) => p.category === activeCategory);
-  }, [products, activeCategory]);
+    const q = searchQuery.trim().toLowerCase();
+    return products.filter((p) => {
+      if (activeCategory !== "all" && p.category !== activeCategory) return false;
+      if (q && !p.name.toLowerCase().includes(q) && !p.brand.toLowerCase().includes(q)) {
+        return false;
+      }
+      return true;
+    });
+  }, [products, activeCategory, searchQuery]);
 
   const fetchProducts = async () => {
     try {
@@ -124,7 +135,11 @@ export default function AdminProducts() {
           <div>
             <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24", marginBottom: "2px" }}>Products</h1>
             <p style={{ fontSize: "13px", color: "#9c9488" }}>
-              {activeCategory === "all"
+              {/* Reflects both filters: category chip AND search. When
+                  no filter is active, show the full catalog count;
+                  otherwise show "X of Y products" so the admin knows
+                  how much they've narrowed. */}
+              {activeCategory === "all" && !searchQuery
                 ? `${products.length} products in your catalog`
                 : `${filteredProducts.length} of ${products.length} products`}
             </p>
@@ -144,6 +159,68 @@ export default function AdminProducts() {
             </Link>
           </div>
         </div>
+
+        {/* Search box. Filters by product name or brand,
+            case-insensitive, instant (no debounce — table is
+            already in memory). Combines with the category chip
+            below. */}
+        {!loading && (
+          <div style={{ position: "relative", marginBottom: "12px" }}>
+            <svg
+              style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9c9488", pointerEvents: "none" }}
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+            >
+              <circle cx="5.5" cy="5.5" r="4" />
+              <line x1="9" y1="9" x2="13" y2="13" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products by name or brand…"
+              style={{
+                width: "100%",
+                paddingLeft: "38px",
+                paddingRight: searchQuery ? "60px" : "14px",
+                paddingTop: "10px",
+                paddingBottom: "10px",
+                fontSize: "14px",
+                background: "#fff",
+                border: "1px solid #e7e3dc",
+                borderRadius: "10px",
+                outline: "none",
+                color: "#2d2a24",
+                boxSizing: "border-box",
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  fontSize: "12px",
+                  color: "#9c9488",
+                  cursor: "pointer",
+                  padding: "4px 8px",
+                  fontWeight: 500,
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Category filter chips. Disabled-looking chips for empty
             categories make it obvious there's nothing in that bucket
@@ -191,14 +268,28 @@ export default function AdminProducts() {
           <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", padding: "48px", textAlign: "center" }}>
             <div style={{ fontSize: "36px", marginBottom: "10px" }}>🌿</div>
             <div style={{ fontSize: "14px", color: "#6b6560", marginBottom: "12px" }}>
-              No products in this category yet.
+              {searchQuery
+                ? `No products match "${searchQuery}"${activeCategory !== "all" ? ` in this category` : ""}.`
+                : "No products in this category yet."}
             </div>
-            <Link
-              href="/admin/products/new"
-              style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: 600, padding: "8px 16px", borderRadius: "10px", textDecoration: "none" }}
-            >
-              + Add your first
-            </Link>
+            {searchQuery ? (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setActiveCategory("all");
+                }}
+                style={{ background: "#fff", color: "#3d6b4f", fontSize: "13px", fontWeight: 600, padding: "8px 16px", borderRadius: "10px", border: "1px solid #c8ddd0", cursor: "pointer" }}
+              >
+                Clear filters
+              </button>
+            ) : (
+              <Link
+                href="/admin/products/new"
+                style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: 600, padding: "8px 16px", borderRadius: "10px", textDecoration: "none" }}
+              >
+                + Add your first
+              </Link>
+            )}
           </div>
         ) : (
           <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "16px", overflow: "hidden" }}>
