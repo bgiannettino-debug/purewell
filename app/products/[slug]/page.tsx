@@ -43,13 +43,32 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   if (!product) notFound();
 
-  const relatedProducts = await db.product.findMany({
+  // Related products — fetch a candidate pool sharing this product's
+  // goals OR category, then rank in JS by overlap so goal-matched
+  // results win over plain category matches. Goals are the truer
+  // signal of "is this useful for the same use case" than category.
+  // Cap at 4. If the product has no goals (legacy data), the OR
+  // collapses to category-only and behaves like the old query.
+  const productGoals = product.goals as string[];
+  const relatedCandidates = await db.product.findMany({
     where: {
-      category: product.category,
-      NOT: { id: product.id },
+      id: { not: product.id },
+      inStock: true,
+      OR: [
+        ...(productGoals.length > 0 ? [{ goals: { hasSome: productGoals } }] : []),
+        { category: product.category },
+      ],
     },
-    take: 4,
   });
+  const relatedProducts = relatedCandidates
+    .map((p) => {
+      const sharedGoals = (p.goals as string[]).filter((g) => productGoals.includes(g)).length;
+      const categoryMatch = p.category === product.category ? 0.5 : 0;
+      return { product: p, score: sharedGoals + categoryMatch };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map((x) => x.product);
 
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>

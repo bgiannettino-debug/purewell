@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "../../../lib/db";
 import { notFound } from "next/navigation";
 import Navbar from "../../components/Navbar";
@@ -91,6 +92,56 @@ export default async function RecipePage({ params, searchParams }: Props) {
   const goals = recipe.goals as string[];
   const steps = recipe.steps as Step[];
   const ingredients = recipe.ingredients as Ingredient[];
+
+  // Pull a candidate pool of recipes that share at least one goal OR
+  // the same type. We rank in JS rather than in SQL because Prisma's
+  // array-overlap operators don't support custom scoring — and the
+  // pool is small enough (a few dozen recipes max) that this is
+  // trivial. Score: +1 per shared goal, +0.5 if same type, capped
+  // top 4. Keeps the "you might also like" relevant without surfacing
+  // unrelated recipes.
+  const relatedCandidates = await db.recipe.findMany({
+    where: {
+      slug: { not: recipe.slug },
+      OR: [
+        { goals: { hasSome: goals } },
+        { type: recipe.type },
+      ],
+    },
+  });
+  const relatedRecipes = relatedCandidates
+    .map((r) => {
+      const sharedGoals = (r.goals as string[]).filter((g) => goals.includes(g)).length;
+      const typeMatch = r.type === recipe.type ? 0.5 : 0;
+      return { recipe: r, score: sharedGoals + typeMatch };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map((x) => x.recipe);
+
+  // Match recipe ingredients to products in the catalog so we can
+  // suggest "use these in your kitchen" cross-sells. Loose match:
+  // any product whose name contains an ingredient keyword (or vice
+  // versa). Handful of products at most so a simple fetch+filter is
+  // fine. Excludes the empty-keyword case.
+  const ingredientKeywords = ingredients
+    .map((i) => i.name.toLowerCase())
+    .filter((n) => n.length > 3);
+  const allProducts =
+    ingredientKeywords.length > 0
+      ? await db.product.findMany({
+          where: { inStock: true },
+          select: { id: true, slug: true, name: true, brand: true, imageUrl: true, price: true },
+        })
+      : [];
+  const matchedProducts = allProducts
+    .filter((p) =>
+      ingredientKeywords.some((kw) => {
+        const productName = p.name.toLowerCase();
+        return productName.includes(kw) || kw.includes(productName.split(" ")[0]);
+      }),
+    )
+    .slice(0, 3);
 
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
@@ -256,6 +307,78 @@ export default async function RecipePage({ params, searchParams }: Props) {
             Browse products →
           </Link>
         </div>
+
+        {/* Cross-sell: matched products from the catalog that show up
+            in this recipe's ingredient list. Light suggestion ('shop
+            ingredients'), not a hard CTA. Only renders when at least
+            one ingredient maps to an in-stock product. */}
+        {matchedProducts.length > 0 && (
+          <div style={{ marginBottom: "20px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" }}>
+              Shop ingredients
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }} className="related-grid">
+              {matchedProducts.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/products/${p.slug}`}
+                  style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "12px", padding: "10px", textDecoration: "none", display: "block" }}
+                >
+                  <div style={{ position: "relative", width: "100%", height: "80px", background: "#f5f2ed", borderRadius: "8px", overflow: "hidden", marginBottom: "8px" }}>
+                    {p.imageUrl && (
+                      <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: "contain" }} />
+                    )}
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "2px" }}>{p.brand}</div>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "#2d2a24", lineHeight: 1.3, marginBottom: "4px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                    {p.name}
+                  </div>
+                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#3d6b4f" }}>${p.price.toFixed(2)}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Related recipes — ranked by shared goals + same type so the
+            suggestion is genuinely contextual, not random. Hidden if
+            the catalog has no overlapping recipes (early-stage state). */}
+        {relatedRecipes.length > 0 && (
+          <div style={{ marginBottom: "20px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "#3d6b4f", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" }}>
+              You might also like
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }} className="related-grid">
+              {relatedRecipes.map((r) => {
+                const rGoals = r.goals as string[];
+                return (
+                  <Link
+                    key={r.id}
+                    href={`/recipes/${r.slug}`}
+                    style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "12px", padding: "12px", textDecoration: "none", display: "block" }}
+                  >
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "6px" }}>
+                      <span style={{ fontSize: "10px", background: "#f5f2ed", color: "#6b6560", padding: "2px 8px", borderRadius: "99px", fontWeight: 500, textTransform: "capitalize" }}>
+                        {r.type}
+                      </span>
+                      {rGoals.slice(0, 2).map((g) => (
+                        <span key={g} style={{ fontSize: "10px", background: "#eef5f0", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: 500, textTransform: "capitalize" }}>
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#2d2a24", lineHeight: 1.3, marginBottom: "4px", textTransform: "capitalize" }}>
+                      {r.name}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#9c9488" }}>
+                      {r.prepTime} min · ${r.costPerServing.toFixed(2)}/serving
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Disclaimer */}
         <div style={{ fontSize: "11px", color: "#9c9488", textAlign: "center", lineHeight: 1.6 }}>
