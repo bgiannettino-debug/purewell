@@ -111,8 +111,128 @@ export default async function ProductPage({ params, searchParams }: Props) {
     })
     .slice(0, 3);
 
+  // Pretty category label for the breadcrumb (matches the homepage
+  // chip labels). Falls back to the raw id if we ever add a category
+  // that's not in this map.
+  const categoryLabels: Record<string, string> = {
+    supplements: "Supplements",
+    "essential-oils": "Essential oils",
+    "herbal-teas": "Herbal teas",
+    nutrition: "Nutrition",
+    skincare: "Skincare",
+    "personal-care": "Personal care",
+    fitness: "Fitness",
+  };
+  const categoryLabel = categoryLabels[product.category] ?? product.category;
+
+  // Pretty supplier name for the schema's seller field. PureWell
+  // doesn't sell directly — purchases happen on the retailer's site
+  // — so the seller in structured data should reflect that.
+  const supplierNames: Record<string, string> = {
+    amazon: "Amazon",
+    iherb: "iHerb",
+    thrive: "Thrive Market",
+    other: "PureWell",
+  };
+  const sellerName = supplierNames[product.supplier ?? "amazon"] ?? "PureWell";
+
+  // Schema.org Product JSON-LD. Powers Google's product rich
+  // results — the cards in search showing price, availability,
+  // image, brand. Affiliate sites can fully participate in this
+  // surface; the Offer.url just points at the affiliate link.
+  //
+  // Required fields: name, image (we have it), offers.
+  // Recommended (and we include): description, brand, sku/productID,
+  // category, additional properties for our cert/goal data.
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    ...(product.imageUrl ? { image: [product.imageUrl] } : {}),
+    brand: {
+      "@type": "Brand",
+      name: product.brand,
+    },
+    category: categoryLabel,
+    ...(product.asin ? { sku: product.asin, productID: product.asin } : {}),
+    offers: {
+      "@type": "Offer",
+      price: product.price.toFixed(2),
+      priceCurrency: "USD",
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url:
+        product.affiliateUrl ??
+        `https://purewellnatural.com/products/${product.slug}`,
+      seller: {
+        "@type": "Organization",
+        name: sellerName,
+      },
+    },
+    // Surface our cert + goal data as PropertyValue extensions so
+    // Google has more semantic signal even if it doesn't render
+    // them in the rich result. Useful for AI overview surfacing.
+    additionalProperty: [
+      ...product.certifications.map((c) => ({
+        "@type": "PropertyValue",
+        name: "Certification",
+        value: c,
+      })),
+      ...product.goals.map((g) => ({
+        "@type": "PropertyValue",
+        name: "Wellness goal",
+        value: g,
+      })),
+    ],
+  };
+
+  // Breadcrumb structured data. Already render visually via the
+  // breadcrumb component below; adding the JSON-LD lets Google show
+  // the breadcrumb path in search results too (between the URL and
+  // the snippet) — small CTR lift especially on mobile SERPs.
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://purewellnatural.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: categoryLabel,
+        item: `https://purewellnatural.com/?category=${product.category}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.name,
+        item: `https://purewellnatural.com/products/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      {/* Structured data — Product schema for Google's product rich
+          results, BreadcrumbList for the path-in-snippet treatment.
+          Both render as inline <script> tags; Google parses head and
+          body JSON-LD identically. Two scripts not one because they
+          describe different things and that's the conventional
+          encoding. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Navbar />
 
       {/* Breadcrumb */}
