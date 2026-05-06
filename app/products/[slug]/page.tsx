@@ -70,6 +70,47 @@ export default async function ProductPage({ params, searchParams }: Props) {
     .slice(0, 4)
     .map((x) => x.product);
 
+  // Recipes that use this product. Inverse of the recipe page's
+  // ingredient → product matching: scan every recipe's ingredient
+  // list and look for a fuzzy substring match on this product's
+  // name. Same loose heuristic in both directions so a match in
+  // one place implies a match in the other.
+  //
+  // We pull the full recipe set with select-only ingredient/meta
+  // fields. Catalog stays small (~20 recipes); when it grows past
+  // 100+, swap in a Postgres trigram index or a pre-computed
+  // ingredient-to-product join table.
+  const productNameLower = product.name.toLowerCase();
+  const productFirstWord = productNameLower.split(" ")[0];
+  const allRecipes = await db.recipe.findMany({
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      type: true,
+      prepTime: true,
+      costPerServing: true,
+      goals: true,
+      ingredients: true,
+    },
+  });
+  const usedInRecipes = allRecipes
+    .filter((r) => {
+      const ings = r.ingredients as { amount: string; name: string }[];
+      return ings.some((ing) => {
+        const ingLower = ing.name.toLowerCase();
+        return (
+          // Bidirectional contains so 'Ashwagandha KSM-66' matches
+          // 'ashwagandha root powder' and vice versa.
+          ingLower.includes(productNameLower) ||
+          productNameLower.includes(ingLower) ||
+          ingLower.includes(productFirstWord) ||
+          (ingLower.length > 3 && productNameLower.includes(ingLower.split(" ")[0]))
+        );
+      });
+    })
+    .slice(0, 3);
+
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
       <Navbar />
@@ -179,6 +220,54 @@ export default async function ProductPage({ params, searchParams }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Recipes that use this product. Inverse of the recipe
+            page's ingredient → product linking — surfaces recipes
+            that have this product (or a near-match) in their
+            ingredient list. Drives users into the recipe content
+            after looking at a product, increasing session depth. */}
+        {usedInRecipes.length > 0 && (
+          <div style={{ marginTop: "48px" }}>
+            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#2d2a24", marginBottom: "6px" }}>
+              Use this in our recipes
+            </h2>
+            <p style={{ fontSize: "13px", color: "#9c9488", marginBottom: "16px" }}>
+              Free DIY ways to put {product.name} to work — pulled from our recipe library.
+            </p>
+            <div className="related-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${usedInRecipes.length}, minmax(0, 1fr))`, gap: "12px" }}>
+              {usedInRecipes.map((r) => {
+                const rGoals = r.goals as string[];
+                return (
+                  <Link
+                    key={r.id}
+                    href={`/recipes/${r.slug}`}
+                    style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "14px", padding: "14px", textDecoration: "none", display: "block" }}
+                  >
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "10px", background: "#f5f2ed", color: "#6b6560", padding: "2px 8px", borderRadius: "99px", fontWeight: 500, textTransform: "capitalize" }}>
+                        {r.type}
+                      </span>
+                      {rGoals.slice(0, 2).map((g) => (
+                        <span
+                          key={g}
+                          style={{ fontSize: "10px", background: "#eef5f0", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: 500, textTransform: "capitalize" }}
+                        >
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: "14px", fontWeight: 600, color: "#2d2a24", lineHeight: 1.3, marginBottom: "6px", textTransform: "capitalize" }}>
+                      {r.name}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#9c9488" }}>
+                      {r.prepTime} min · ${r.costPerServing.toFixed(2)}/serving
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Related products */}
         {relatedProducts.length > 0 && (
