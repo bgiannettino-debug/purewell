@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import RecipeGenerator from "./RecipeGenerator";
 
 type RecipeCard = {
@@ -15,6 +16,7 @@ type RecipeCard = {
   servings: number;
   costPerServing: number;
   difficulty: string;
+  imageUrl: string | null;
 };
 
 const goalColors: Record<string, { bg: string; color: string }> = {
@@ -375,10 +377,51 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                       background: "#fff",
                       border: "1px solid #e7e3dc",
                       borderRadius: "16px",
-                      padding: "20px",
+                      overflow: "hidden",
                       cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
                     }}
                   >
+                    {/* Thumbnail when imageUrl is set; falls back to a
+                        soft cream tile with the type emoji centered
+                        so cards stay visually balanced even when only
+                        some recipes are photographed. */}
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        aspectRatio: "16 / 9",
+                        background: "#f5f2ed",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {recipe.imageUrl ? (
+                        <Image
+                          src={recipe.imageUrl}
+                          alt={recipe.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
+                          style={{ objectFit: "cover" }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "48px",
+                            opacity: 0.6,
+                          }}
+                          aria-hidden
+                        >
+                          {typeMeta[recipe.type]?.emoji ?? "🌿"}
+                        </div>
+                      )}
+                    </div>
+                  <div style={{ padding: "16px 20px 20px" }}>
                     <div
                       style={{
                         display: "flex",
@@ -489,6 +532,7 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                         Free →
                       </span>
                     </div>
+                  </div>{/* closes the inner padding wrapper added with the thumbnail */}
                   </div>
                 </Link>
               ))}

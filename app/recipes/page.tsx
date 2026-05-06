@@ -28,6 +28,7 @@ export default async function RecipesPage() {
     servings: r.servings,
     costPerServing: r.costPerServing,
     difficulty: r.difficulty,
+    imageUrl: r.imageUrl,
   }));
 
   return (

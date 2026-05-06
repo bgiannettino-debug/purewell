@@ -23,6 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: recipe.name,
       description: recipe.description,
+      // Use the recipe's image for social-share previews when set.
+      // Falls back to the site-wide OG image (handled by root layout)
+      // when imageUrl is null.
+      ...(recipe.imageUrl ? { images: [recipe.imageUrl] } : {}),
     },
   };
 }
@@ -174,18 +178,18 @@ export default async function RecipePage({ params, searchParams }: Props) {
   // that show in search results. Required fields per Google's
   // structured data docs: name, recipeIngredient, recipeInstructions.
   // Recommended (and we include): description, author, datePublished,
-  // prepTime (ISO 8601), recipeYield, recipeCategory, keywords.
+  // prepTime (ISO 8601), recipeYield, recipeCategory, keywords, image.
   //
-  // Image is OMITTED — recipes don't have photos yet. Without an
-  // image Google won't show the visual rich-result card, but the
-  // structured data still helps ranking and enables enhanced text
-  // snippets. When recipe photos get added later, drop the imageUrl
-  // into this object and rich results activate automatically.
+  // image is conditionally added when recipe.imageUrl is set —
+  // that's the field that activates the visual rich-result card.
+  // When imageUrl is null (un-photographed recipes), the schema
+  // still validates and helps ranking, just without the carousel.
   const recipeSchema = {
     "@context": "https://schema.org",
     "@type": "Recipe",
     name: recipe.name,
     description: recipe.description,
+    ...(recipe.imageUrl ? { image: [recipe.imageUrl] } : {}),
     author: {
       "@type": "Organization",
       name: "PureWell",
@@ -236,6 +240,33 @@ export default async function RecipePage({ params, searchParams }: Props) {
         >
           ← {fromQuiz ? "Back to recommendations" : "Back to recipes"}
         </Link>
+
+        {/* Hero image — only renders when recipe.imageUrl is set.
+            Wrapped in a 16:9 container so different photo aspect
+            ratios crop consistently. object-fit: cover fills the
+            frame without distortion. */}
+        {recipe.imageUrl && (
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              aspectRatio: "16 / 9",
+              borderRadius: "16px",
+              overflow: "hidden",
+              marginBottom: "20px",
+              background: "#f5f2ed",
+            }}
+          >
+            <Image
+              src={recipe.imageUrl}
+              alt={recipe.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 680px"
+              style={{ objectFit: "cover" }}
+              priority
+            />
+          </div>
+        )}
 
         {/* Type + goal tags */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>

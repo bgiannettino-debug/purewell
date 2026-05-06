@@ -62,6 +62,13 @@ model Recipe {
   // the migration runs before seedRecipes is re-run.
   type           String   @default("tea")
   goals          String[]
+  // imageUrl: optional photo for the recipe. When present, the
+  // recipe page renders it as a hero, the recipes index shows it
+  // as a thumbnail (replacing the emoji tile), and the Recipe
+  // JSON-LD includes it (which is what activates Google's recipe
+  // rich-result carousel cards). Stays nullable so legacy / new
+  // un-photographed recipes still display gracefully.
+  imageUrl       String?
   steps          Json
   ingredients    Json
   createdAt      DateTime @default(now())
