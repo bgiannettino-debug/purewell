@@ -139,39 +139,128 @@ export default async function Home({ searchParams }: Props) {
             <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "99px", marginBottom: "16px" }}>
               🌿 AI-powered natural wellness
             </div>
-            <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#2d2a24", lineHeight: "1.25", marginBottom: "14px" }}>
-              Your natural health<br />
-              <span style={{ color: "#3d6b4f" }}>companion</span>
+            {/* Stronger hook: leads with the user's pain ('confused
+                about supplements') and the outcome ('actually work
+                for you') instead of the generic 'companion' framing.
+                The earlier headline was friendly but didn't promise
+                anything specific. */}
+            <h1 style={{ fontSize: "36px", fontWeight: 700, color: "#2d2a24", lineHeight: "1.2", marginBottom: "14px" }}>
+              Find supplements that<br />
+              <span style={{ color: "#3d6b4f" }}>actually work for you</span>
             </h1>
-            <p style={{ fontSize: "14px", color: "#6b6560", lineHeight: "1.7", marginBottom: "24px", maxWidth: "400px" }}>
-              Curated all-natural supplements, homemade wellness recipes, and AI-powered health protocols — all in one place.
+            <p style={{ fontSize: "15px", color: "#6b6560", lineHeight: 1.7, marginBottom: "24px", maxWidth: "460px" }}>
+              Skip the trial-and-error. Our 90-second wellness quiz builds a personalized protocol — supplements matched to your goals, recipes you&apos;ll actually make, all curated for clean ingredients and real evidence.
             </p>
-            <div className="hero-cta-row" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <Link href="/quiz" className="hero-cta" style={{ background: "#3d6b4f", color: "#fff", fontWeight: "600", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
-                Take the wellness quiz →
+
+            {/* Single dominant CTA. Quiz wins because it's the
+                highest-engagement entry point and feeds every other
+                surface (product recommendations, recipe matches,
+                email opt-in). The two former CTAs (analyze, browse)
+                move down into smaller text-link affordances below. */}
+            <Link
+              href="/quiz"
+              style={{ background: "#3d6b4f", color: "#fff", fontWeight: 600, padding: "14px 28px", borderRadius: "12px", textDecoration: "none", fontSize: "15px", display: "inline-block" }}
+            >
+              Take the wellness quiz →
+            </Link>
+
+            {/* Trust line right under the CTA. Three quick reassurances
+                that knock down the most common pre-click hesitations:
+                cost, signup wall, time commitment. */}
+            <div style={{ display: "flex", gap: "16px", marginTop: "12px", fontSize: "12px", color: "#9c9488", flexWrap: "wrap" }}>
+              <span>✓ Free</span>
+              <span>✓ No signup required</span>
+              <span>✓ 90 seconds</span>
+            </div>
+
+            {/* Secondary paths — text-link styled so they don't
+                compete with the primary CTA. Users who already know
+                what they want still have a fast path. */}
+            <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px solid #e7e3dc", fontSize: "13px", color: "#6b6560" }}>
+              Already know what you need?{" "}
+              <Link href="/" style={{ color: "#3d6b4f", fontWeight: 500, textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                Browse {totalProductCount}+ products
               </Link>
-              <Link href="/analyze" className="hero-cta" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
+              {" · "}
+              <Link href="/analyze" style={{ color: "#3d6b4f", fontWeight: 500, textDecoration: "underline", textUnderlineOffset: "3px" }}>
                 Analyze a label
               </Link>
-              <Link href="/recipes" className="hero-cta" style={{ background: "#fff", color: "#2d2a24", border: "1px solid #e7e3dc", fontWeight: "500", padding: "12px 24px", borderRadius: "12px", textDecoration: "none", fontSize: "14px", textAlign: "center" }}>
-                Browse recipes
+              {" · "}
+              <Link href="/recipes" style={{ color: "#3d6b4f", fontWeight: 500, textDecoration: "underline", textUnderlineOffset: "3px" }}>
+                {totalRecipeCount} free recipes
               </Link>
             </div>
-            <div style={{ display: "flex", gap: "32px", marginTop: "28px" }}>
-              {[[`${totalProductCount}+`, "Natural products"], [`${totalRecipeCount}`, "Free recipes"], ["100%", "All natural"]].map(([num, label]) => (
-                <div key={label}>
-                  <div style={{ fontSize: "20px", fontWeight: "700", color: "#2d2a24" }}>{num}</div>
-                  <div style={{ fontSize: "11px", color: "#9c9488" }}>{label}</div>
+          </div>
+
+          {/* Right column — faux personalized protocol preview.
+              Replaces the four decorative emoji boxes with something
+              that demonstrates the quiz's output. Shows what users
+              actually get after taking the quiz, which is more
+              persuasive than abstract imagery. */}
+          <div style={{ background: "#fff", border: "1px solid #e7e3dc", borderRadius: "20px", padding: "20px", boxShadow: "0 12px 32px rgba(45,42,36,0.08)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+              <div>
+                <div style={{ fontSize: "10px", color: "#9c9488", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600, marginBottom: "2px" }}>
+                  Your wellness plan
+                </div>
+                <div style={{ fontSize: "16px", fontWeight: 700, color: "#2d2a24" }}>
+                  Sleep & Recovery Protocol
+                </div>
+              </div>
+              <div style={{ background: "#eef5f0", border: "1px solid #c8ddd0", color: "#3d6b4f", fontSize: "10px", fontWeight: 600, padding: "4px 10px", borderRadius: "99px" }}>
+                Sample
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {[
+                {
+                  name: "Magnesium Glycinate",
+                  brand: "Pure Encapsulations",
+                  timing: "Evening",
+                  reason: "Supports sleep + muscle relaxation",
+                  goal: "sleep",
+                },
+                {
+                  name: "Chamomile + Lavender Tea",
+                  brand: "Recipe",
+                  timing: "Bedtime",
+                  reason: "Wind-down ritual, calming herbs",
+                  goal: "stress",
+                },
+                {
+                  name: "Ashwagandha KSM-66",
+                  brand: "Himalaya",
+                  timing: "Morning",
+                  reason: "Adaptogen for cortisol balance",
+                  goal: "stress",
+                },
+              ].map((item) => (
+                <div
+                  key={item.name}
+                  style={{ background: "#faf8f5", border: "1px solid #e7e3dc", borderRadius: "12px", padding: "12px" }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px", marginBottom: "4px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#2d2a24", lineHeight: 1.3 }}>
+                      {item.name}
+                    </div>
+                    <span style={{ fontSize: "10px", background: "#eef5f0", color: "#3d6b4f", padding: "2px 8px", borderRadius: "99px", fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0 }}>
+                      {item.timing}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#9c9488", marginBottom: "4px" }}>
+                    {item.brand}
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#6b6560", lineHeight: 1.5 }}>
+                    {item.reason}
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            {[["#eef5f0", "🌿"], ["#fef6e7", "🍯"], ["#faf0ee", "🌸"], ["#eef5f0", "🫚"]].map(([bg, emoji], i) => (
-              <div key={i} style={{ background: bg, borderRadius: "16px", height: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px" }}>
-                {emoji}
-              </div>
-            ))}
+
+            <div style={{ marginTop: "14px", fontSize: "11px", color: "#9c9488", textAlign: "center", lineHeight: 1.5 }}>
+              Personalized based on your goals, dietary preferences, and budget.
+            </div>
           </div>
         </div>
       </div>
