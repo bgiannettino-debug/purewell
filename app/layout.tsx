@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 // Explicit viewport export — without this, mobile browsers can render at
@@ -58,6 +59,7 @@ export default function RootLayout({
             cookies, no persistent identifiers. Disclosed in our
             Privacy Policy under third-party services. */}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
