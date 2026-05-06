@@ -143,6 +143,32 @@ export default async function RecipePage({ params, searchParams }: Props) {
     )
     .slice(0, 3);
 
+  // Per-ingredient product mapping so we can render the ingredient
+  // name itself as a link inside the ingredients list. Goes
+  // ingredient-by-ingredient (the previous matchedProducts is
+  // catalog-side and de-duplicated). First product whose name shares
+  // a substring with the ingredient wins — good enough at this
+  // catalog size; we can swap in trigram/embeddings if it ever
+  // matters at scale.
+  const matchByIngredient = new Map<string, (typeof allProducts)[number]>();
+  for (const ing of ingredients) {
+    const ingLower = ing.name.toLowerCase();
+    if (ingLower.length <= 3) continue;
+    const match = allProducts.find((p) => {
+      const productName = p.name.toLowerCase();
+      const firstWord = productName.split(" ")[0];
+      return (
+        productName.includes(ingLower) ||
+        // Match the ingredient's first significant word against the
+        // product, so 'ashwagandha root powder' matches 'Ashwagandha
+        // KSM-66' even though the suffix differs.
+        productName.includes(ingLower.split(" ")[0]) ||
+        ingLower.includes(firstWord)
+      );
+    });
+    if (match) matchByIngredient.set(ing.name, match);
+  }
+
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
       <Navbar />
@@ -233,15 +259,40 @@ export default async function RecipePage({ params, searchParams }: Props) {
             Ingredients
           </h2>
           <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-            {ingredients.map((ing, i) => (
-              <li key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#3d6b4f", flexShrink: 0 }} />
-                <span style={{ fontSize: "13px", fontWeight: "600", color: "#3d6b4f", minWidth: "64px" }}>
-                  {ing.amount}
-                </span>
-                <span style={{ fontSize: "13px", color: "#2d2a24" }}>{ing.name}</span>
-              </li>
-            ))}
+            {ingredients.map((ing, i) => {
+              // If this ingredient maps to a product in our catalog,
+              // render the name as a link to the product page.
+              // Otherwise plain text. The link gets a subtle dotted
+              // underline so it reads as "this is shoppable" without
+              // the loud styling of a normal hyperlink.
+              const matched = matchByIngredient.get(ing.name);
+              return (
+                <li key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#3d6b4f", flexShrink: 0 }} />
+                  <span style={{ fontSize: "13px", fontWeight: "600", color: "#3d6b4f", minWidth: "64px" }}>
+                    {ing.amount}
+                  </span>
+                  {matched ? (
+                    <Link
+                      href={`/products/${matched.slug}`}
+                      title={`Shop ${matched.brand} — ${matched.name}`}
+                      style={{
+                        fontSize: "13px",
+                        color: "#2d2a24",
+                        textDecoration: "underline",
+                        textDecorationStyle: "dotted",
+                        textDecorationColor: "#9c9488",
+                        textUnderlineOffset: "3px",
+                      }}
+                    >
+                      {ing.name}
+                    </Link>
+                  ) : (
+                    <span style={{ fontSize: "13px", color: "#2d2a24" }}>{ing.name}</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
 
