@@ -169,8 +169,60 @@ export default async function RecipePage({ params, searchParams }: Props) {
     if (match) matchByIngredient.set(ing.name, match);
   }
 
+  // Schema.org Recipe JSON-LD. Powers Google's recipe rich-result
+  // treatment — the carousel cards with prep time, image, ratings
+  // that show in search results. Required fields per Google's
+  // structured data docs: name, recipeIngredient, recipeInstructions.
+  // Recommended (and we include): description, author, datePublished,
+  // prepTime (ISO 8601), recipeYield, recipeCategory, keywords.
+  //
+  // Image is OMITTED — recipes don't have photos yet. Without an
+  // image Google won't show the visual rich-result card, but the
+  // structured data still helps ranking and enables enhanced text
+  // snippets. When recipe photos get added later, drop the imageUrl
+  // into this object and rich results activate automatically.
+  const recipeSchema = {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    name: recipe.name,
+    description: recipe.description,
+    author: {
+      "@type": "Organization",
+      name: "PureWell",
+      url: "https://purewellnatural.com",
+    },
+    datePublished: recipe.createdAt.toISOString().split("T")[0],
+    prepTime: `PT${recipe.prepTime}M`,
+    totalTime: `PT${recipe.prepTime}M`,
+    recipeYield: `${recipe.servings} ${recipe.servings === 1 ? "serving" : "servings"}`,
+    recipeCategory: recipe.type,
+    keywords: [...goals, recipe.type, "natural", "wellness", "DIY"].join(", "),
+    recipeIngredient: ingredients.map((i) => `${i.amount} ${i.name}`.trim()),
+    recipeInstructions: steps.map((s) => ({
+      "@type": "HowToStep",
+      name: s.title,
+      text: s.instruction,
+    })),
+    // Estimated cost — not part of standard Recipe schema but Google
+    // ignores unknown fields and it doesn't hurt to keep it for our
+    // own consumers of the JSON-LD.
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "USD",
+      value: recipe.costPerServing,
+    },
+  };
+
   return (
     <main style={{ minHeight: "100vh", background: "#faf8f5" }}>
+      {/* JSON-LD structured data. Rendered as a script tag inline
+          (not via Next.js metadata) because Recipe schema lives in
+          the body and is per-recipe data, not page metadata. Google
+          parses both head and body JSON-LD equally. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(recipeSchema) }}
+      />
       <Navbar />
 
       <div style={{ maxWidth: "680px", margin: "0 auto", padding: "32px 24px" }}>
