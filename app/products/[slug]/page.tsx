@@ -221,6 +221,37 @@ export default async function ProductPage({ params, searchParams }: Props) {
           </div>
         </div>
 
+        {/* Quiz nudge for undecided buyers. Suppressed when the
+            user arrived from /quiz (?from=quiz) — they've already
+            taken it, no need to suggest again. Soft banner styling
+            (less prominent than the Buy button) so it reads as an
+            alternative path, not a competing CTA.
+            Designed to catch the wandering eye between reading the
+            product details and bouncing — about ⅔ of the people
+            who get this far without buying could benefit from a
+            personalized recommendation. */}
+        {!fromQuiz && (
+          <div style={{ marginTop: "48px", background: "#fff", border: "1px solid #c8ddd0", borderRadius: "16px", padding: "20px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <div style={{ width: "44px", height: "44px", background: "#eef5f0", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", flexShrink: 0 }}>
+              💭
+            </div>
+            <div style={{ flex: "1 1 280px", minWidth: 0 }}>
+              <div style={{ fontSize: "15px", fontWeight: 600, color: "#2d2a24", marginBottom: "2px" }}>
+                Not sure this is right for you?
+              </div>
+              <div style={{ fontSize: "13px", color: "#6b6560", lineHeight: 1.5 }}>
+                Our 90-second AI wellness quiz builds a personalized protocol based on your goals — supplements and recipes that actually fit what you&apos;re working on.
+              </div>
+            </div>
+            <Link
+              href="/quiz"
+              style={{ background: "#3d6b4f", color: "#fff", fontSize: "13px", fontWeight: 600, padding: "11px 20px", borderRadius: "10px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}
+            >
+              Take the quiz →
+            </Link>
+          </div>
+        )}
+
         {/* Recipes that use this product. Inverse of the recipe
             page's ingredient → product linking — surfaces recipes
             that have this product (or a near-match) in their
