@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import RecipeGenerator from "./RecipeGenerator";
 
 type RecipeCard = {
@@ -383,10 +382,16 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                       flexDirection: "column",
                     }}
                   >
-                    {/* Thumbnail when imageUrl is set; falls back to a
-                        soft cream tile with the type emoji centered
-                        so cards stay visually balanced even when only
-                        some recipes are photographed. */}
+                    {/* Soft cream tile with the type emoji centered. We
+                        used to render `recipe.imageUrl` here when set, but
+                        sourcing reliable photos turned into a yak-shave —
+                        for now every card uses the emoji tile so the grid
+                        stays visually consistent. The Image-based render
+                        path is intentionally gone (not commented out) so
+                        next/image isn't tree-shaken into bundles that no
+                        longer need it. To bring photos back: render an
+                        <Image> when recipe.imageUrl is non-null and re-add
+                        the next/image import. */}
                     <div
                       style={{
                         position: "relative",
@@ -396,30 +401,20 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                         flexShrink: 0,
                       }}
                     >
-                      {recipe.imageUrl ? (
-                        <Image
-                          src={recipe.imageUrl}
-                          alt={recipe.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
-                          style={{ objectFit: "cover" }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "48px",
-                            opacity: 0.6,
-                          }}
-                          aria-hidden
-                        >
-                          {typeMeta[recipe.type]?.emoji ?? "🌿"}
-                        </div>
-                      )}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "48px",
+                          opacity: 0.6,
+                        }}
+                        aria-hidden
+                      >
+                        {typeMeta[recipe.type]?.emoji ?? "🌿"}
+                      </div>
                     </div>
                   <div style={{ padding: "16px 20px 20px" }}>
                     <div

@@ -241,32 +241,12 @@ export default async function RecipePage({ params, searchParams }: Props) {
           ← {fromQuiz ? "Back to recommendations" : "Back to recipes"}
         </Link>
 
-        {/* Hero image — only renders when recipe.imageUrl is set.
-            Wrapped in a 16:9 container so different photo aspect
-            ratios crop consistently. object-fit: cover fills the
-            frame without distortion. */}
-        {recipe.imageUrl && (
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "16 / 9",
-              borderRadius: "16px",
-              overflow: "hidden",
-              marginBottom: "20px",
-              background: "#f5f2ed",
-            }}
-          >
-            <Image
-              src={recipe.imageUrl}
-              alt={recipe.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 680px"
-              style={{ objectFit: "cover" }}
-              priority
-            />
-          </div>
-        )}
+        {/* Hero image intentionally removed — sourcing reliable photos
+            turned into a yak-shave, so the detail page goes straight
+            from the back-link into the meta chips. The Recipe.imageUrl
+            field is still in the schema and the recipe-images.json /
+            updateRecipeImages.ts tooling is still wired up, so flipping
+            this back on later is an isolated change. */}
 
         {/* Type + goal tags */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
