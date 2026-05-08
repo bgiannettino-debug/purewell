@@ -378,45 +378,19 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                       borderRadius: "16px",
                       overflow: "hidden",
                       cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
+                      padding: "20px",
                     }}
                   >
-                    {/* Soft cream tile with the type emoji centered. We
-                        used to render `recipe.imageUrl` here when set, but
-                        sourcing reliable photos turned into a yak-shave —
-                        for now every card uses the emoji tile so the grid
-                        stays visually consistent. The Image-based render
-                        path is intentionally gone (not commented out) so
-                        next/image isn't tree-shaken into bundles that no
-                        longer need it. To bring photos back: render an
-                        <Image> when recipe.imageUrl is non-null and re-add
-                        the next/image import. */}
-                    <div
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        aspectRatio: "16 / 9",
-                        background: "#f5f2ed",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "48px",
-                          opacity: 0.6,
-                        }}
-                        aria-hidden
-                      >
-                        {typeMeta[recipe.type]?.emoji ?? "🌿"}
-                      </div>
-                    </div>
-                  <div style={{ padding: "16px 20px 20px" }}>
+                    {/* Card body — no thumbnail tile. We had a 16:9 cream
+                        tile here while imageUrl was on, but with photos
+                        removed it left a huge empty box with a tiny emoji
+                        floating in it, doubling each card's height. The
+                        type chip below already carries the emoji, so the
+                        type is still visible without the tile. To bring
+                        photos back, restore the tile (and its emoji
+                        fallback) above this block — see git history for
+                        commit 0612871 for the prior shape. */}
+                    <div>
                     <div
                       style={{
                         display: "flex",
@@ -527,7 +501,7 @@ export default function RecipesTabs({ recipes }: { recipes: RecipeCard[] }) {
                         Free →
                       </span>
                     </div>
-                  </div>{/* closes the inner padding wrapper added with the thumbnail */}
+                  </div>{/* end card body */}
                   </div>
                 </Link>
               ))}
